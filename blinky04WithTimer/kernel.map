@@ -1,0 +1,50 @@
+
+Discarded input sections
+
+ .bss           0x0000000000000000        0x0 build/systemTimer.o
+ .ARM.attributes
+                0x0000000000000000       0x14 build/systemTimer.o
+ .bss           0x0000000000000000        0x0 build/gpio.o
+ .ARM.attributes
+                0x0000000000000000       0x14 build/gpio.o
+ .bss           0x0000000000000000        0x0 build/main.o
+ .ARM.attributes
+                0x0000000000000000       0x14 build/main.o
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+*default*        0x0000000000000000 0xffffffffffffffff
+
+Linker script and memory map
+
+LOAD build/systemTimer.o
+LOAD build/gpio.o
+LOAD build/main.o
+
+.init           0x0000000000008000        0x4
+ *(.init)
+ .init          0x0000000000008000        0x4 build/main.o
+                0x0000000000008000                _start
+
+.text           0x0000000000008004      0x104
+ *(.text)
+ .text          0x0000000000008004       0x40 build/systemTimer.o
+                0x0000000000008004                GetTimerBase
+                0x000000000000800c                GetTimeStamp
+                0x000000000000801c                Micros
+ .text          0x0000000000008044       0x80 build/gpio.o
+                0x0000000000008044                GetGpioAddress
+                0x000000000000804c                SetGpioFunction
+                0x0000000000008084                SetGpio
+ .text          0x00000000000080c4       0x44 build/main.o
+
+.data           0x0000000000008108        0x0
+ *(.data)
+ .data          0x0000000000008108        0x0 build/systemTimer.o
+ .data          0x0000000000008108        0x0 build/gpio.o
+ .data          0x0000000000008108        0x0 build/main.o
+
+/DISCARD/
+ *(*)
+OUTPUT(build/output.elf elf32-littlearm)
