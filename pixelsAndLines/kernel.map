@@ -1,0 +1,77 @@
+
+Discarded input sections
+
+ .bss           0x0000000000000000        0x0 build/mailbox.o
+ .ARM.attributes
+                0x0000000000000000       0x14 build/mailbox.o
+ .bss           0x0000000000000000        0x0 build/frameBuffer.o
+ .ARM.attributes
+                0x0000000000000000       0x14 build/frameBuffer.o
+ .bss           0x0000000000000000        0x0 build/systemTimer.o
+ .ARM.attributes
+                0x0000000000000000       0x14 build/systemTimer.o
+ .bss           0x0000000000000000        0x0 build/drawing.o
+ .ARM.attributes
+                0x0000000000000000       0x14 build/drawing.o
+ .bss           0x0000000000000000        0x0 build/gpio.o
+ .ARM.attributes
+                0x0000000000000000       0x14 build/gpio.o
+ .bss           0x0000000000000000        0x0 build/main.o
+ .ARM.attributes
+                0x0000000000000000       0x14 build/main.o
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+*default*        0x0000000000000000 0xffffffffffffffff
+
+Linker script and memory map
+
+LOAD build/mailbox.o
+LOAD build/frameBuffer.o
+LOAD build/systemTimer.o
+LOAD build/drawing.o
+LOAD build/gpio.o
+LOAD build/main.o
+
+.init           0x0000000000008000        0x4
+ *(.init)
+ .init          0x0000000000008000        0x4 build/main.o
+                0x0000000000008000                _start
+
+.text           0x0000000000008004      0x310
+ *(.text)
+ .text          0x0000000000008004       0x78 build/mailbox.o
+                0x0000000000008004                GetMailboxBase
+                0x000000000000800c                MailboxWrite
+                0x0000000000008040                MailboxRead
+ .text          0x000000000000807c       0x60 build/frameBuffer.o
+                0x000000000000807c                InitialiseFrameBuffer
+ .text          0x00000000000080dc       0x40 build/systemTimer.o
+                0x00000000000080dc                GetTimerBase
+                0x00000000000080e4                GetTimeStamp
+                0x00000000000080f4                Micros
+ .text          0x000000000000811c       0xbc build/drawing.o
+                0x000000000000811c                SetForeColour
+                0x0000000000008134                SetGraphicsAddress
+                0x0000000000008140                DrawPixel
+                0x0000000000008190                FullScreenToForeColour
+ .text          0x00000000000081d8       0x80 build/gpio.o
+                0x00000000000081d8                GetGpioAddress
+                0x00000000000081e0                SetGpioFunction
+                0x0000000000008218                SetGpio
+ .text          0x0000000000008258       0xbc build/main.o
+
+.data           0x0000000000009000       0x30
+ *(.data)
+ .data          0x0000000000009000        0x0 build/mailbox.o
+ .data          0x0000000000009000       0x28 build/frameBuffer.o
+                0x0000000000009000                FrameBufferInfo
+ .data          0x0000000000009028        0x0 build/systemTimer.o
+ .data          0x0000000000009028        0x8 build/drawing.o
+ .data          0x0000000000009030        0x0 build/gpio.o
+ .data          0x0000000000009030        0x0 build/main.o
+
+/DISCARD/
+ *(*)
+OUTPUT(build/output.elf elf32-littlearm)
