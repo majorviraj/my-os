@@ -1,1 +1,1 @@
-My bare-metal experiments with the Rasspberry-Pi
+My bare-metal experiments with the Raspberry-Pi.
