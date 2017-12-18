@@ -1,4 +1,4 @@
-/* micros function generates a delay of r0 microseconds. 2^32 = 4294967 milliseconds = 4294 seconds =  71.582 minutes = 1.193 hours. Clock freq is 1 MHz. */
+/* micros function generates a delay of r0 microseconds. 2^32 = 4294967 milliseconds = 4294 seconds =  71.582 minutes = 1.193 hours. Clock freq is 1 MHz.*/
 
 .globl GetTimerBase
 GetTimerBase:

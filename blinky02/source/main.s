@@ -6,6 +6,7 @@
 .section .init
 .globl _start
 _start:
+ldr r0,=0x20200000
 mov r1,#1
 lsl r1,#21 			@bit number
 str r1,[r0,#16] 	@r0+16 is the register address for FSEL1.

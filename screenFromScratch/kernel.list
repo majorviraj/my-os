@@ -9,71 +9,71 @@ Disassembly of section .init:
 
 Disassembly of section .text:
 
-00008004 <GetMailboxBase>:
-    8004:	e59f006c 	ldr	r0, [pc, #108]	; 8078 <rightmail$+0x24>
-    8008:	e1a0f00e 	mov	pc, lr
-
-0000800c <MailboxWrite>:
-    800c:	e310000f 	tst	r0, #15
-    8010:	11a0f00e 	movne	pc, lr
-    8014:	e351000f 	cmp	r1, #15
+00008004 <frameBufferInit>:
+    8004:	e52de004 	push	{lr}		; (str lr, [sp, #-4]!)
+    8008:	e3500a01 	cmp	r0, #4096	; 0x1000
+    800c:	93510a01 	cmpls	r1, #4096	; 0x1000
+    8010:	93520020 	cmpls	r2, #32
+    8014:	83a00000 	movhi	r0, #0
     8018:	81a0f00e 	movhi	pc, lr
-    801c:	e1a02000 	mov	r2, r0
-    8020:	e52de004 	push	{lr}		; (str lr, [sp, #-4]!)
-    8024:	ebfffff6 	bl	8004 <GetMailboxBase>
+    801c:	e59f3044 	ldr	r3, [pc, #68]	; 8068 <frameBufferInit+0x64>
+    8020:	e5830000 	str	r0, [r3]
+    8024:	e5831004 	str	r1, [r3, #4]
+    8028:	e5830008 	str	r0, [r3, #8]
+    802c:	e583100c 	str	r1, [r3, #12]
+    8030:	e5832014 	str	r2, [r3, #20]
+    8034:	e1a00003 	mov	r0, r3
+    8038:	e2800101 	add	r0, r0, #1073741824	; 0x40000000
+    803c:	e3a01001 	mov	r1, #1
+    8040:	e52d3004 	push	{r3}		; (str r3, [sp, #-4]!)
+    8044:	eb00000a 	bl	8074 <mailboxWrite>
+    8048:	e3a00001 	mov	r0, #1
+    804c:	eb000013 	bl	80a0 <mailboxRead>
+    8050:	e49d3004 	pop	{r3}		; (ldr r3, [sp], #4)
+    8054:	e3300000 	teq	r0, #0
+    8058:	13a00000 	movne	r0, #0
+    805c:	149df004 	popne	{pc}		; (ldrne pc, [sp], #4)
+    8060:	e1a00003 	mov	r0, r3
+    8064:	e49df004 	pop	{pc}		; (ldr pc, [sp], #4)
+    8068:	00009000 	.word	0x00009000
 
-00008028 <wait1$>:
-    8028:	e5903018 	ldr	r3, [r0, #24]
-    802c:	e3130102 	tst	r3, #-2147483648	; 0x80000000
-    8030:	1afffffc 	bne	8028 <wait1$>
-    8034:	e0822001 	add	r2, r2, r1
-    8038:	e5802020 	str	r2, [r0, #32]
-    803c:	e49df004 	pop	{pc}		; (ldr pc, [sp], #4)
+0000806c <getMailBoxBaseAddress>:
+    806c:	e59f0064 	ldr	r0, [pc, #100]	; 80d8 <wait2$+0x24>
+    8070:	e1a0f00e 	mov	pc, lr
 
-00008040 <MailboxRead>:
-    8040:	e350000f 	cmp	r0, #15
-    8044:	81a0f00e 	movhi	pc, lr
-    8048:	e1a01000 	mov	r1, r0
-    804c:	e52de004 	push	{lr}		; (str lr, [sp, #-4]!)
-    8050:	ebffffeb 	bl	8004 <GetMailboxBase>
+00008074 <mailboxWrite>:
+    8074:	e52de004 	push	{lr}		; (str lr, [sp, #-4]!)
+    8078:	e1a03000 	mov	r3, r0
+    807c:	ebfffffa 	bl	806c <getMailBoxBaseAddress>
+    8080:	e351000f 	cmp	r1, #15
+    8084:	849df004 	pophi	{pc}		; (ldrhi pc, [sp], #4)
 
-00008054 <rightmail$>:
-    8054:	e5902018 	ldr	r2, [r0, #24]
-    8058:	e3120101 	tst	r2, #1073741824	; 0x40000000
-    805c:	1afffffc 	bne	8054 <rightmail$>
-    8060:	e5902000 	ldr	r2, [r0]
-    8064:	e202300f 	and	r3, r2, #15
-    8068:	e1330001 	teq	r3, r1
-    806c:	1afffff8 	bne	8054 <rightmail$>
-    8070:	e3c2000f 	bic	r0, r2, #15
-    8074:	e49df004 	pop	{pc}		; (ldr pc, [sp], #4)
-    8078:	2000b880 	.word	0x2000b880
+00008088 <wait1$>:
+    8088:	e5902018 	ldr	r2, [r0, #24]
+    808c:	e3120102 	tst	r2, #-2147483648	; 0x80000000
+    8090:	1afffffc 	bne	8088 <wait1$>
+    8094:	e0811003 	add	r1, r1, r3
+    8098:	e5801020 	str	r1, [r0, #32]
+    809c:	e49df004 	pop	{pc}		; (ldr pc, [sp], #4)
 
-0000807c <InitialiseFrameBuffer>:
-    807c:	e3500a01 	cmp	r0, #4096	; 0x1000
-    8080:	93510a01 	cmpls	r1, #4096	; 0x1000
-    8084:	93520020 	cmpls	r2, #32
-    8088:	83a00000 	movhi	r0, #0
-    808c:	81a0f00e 	movhi	pc, lr
-    8090:	e92d4010 	push	{r4, lr}
-    8094:	e59f403c 	ldr	r4, [pc, #60]	; 80d8 <InitialiseFrameBuffer+0x5c>
-    8098:	e5840000 	str	r0, [r4]
-    809c:	e5841004 	str	r1, [r4, #4]
-    80a0:	e5840008 	str	r0, [r4, #8]
-    80a4:	e584100c 	str	r1, [r4, #12]
-    80a8:	e5842014 	str	r2, [r4, #20]
-    80ac:	e1a00004 	mov	r0, r4
-    80b0:	e2800101 	add	r0, r0, #1073741824	; 0x40000000
-    80b4:	e3a01001 	mov	r1, #1
-    80b8:	ebffffd3 	bl	800c <MailboxWrite>
-    80bc:	e3a00001 	mov	r0, #1
-    80c0:	ebffffde 	bl	8040 <MailboxRead>
-    80c4:	e3300000 	teq	r0, #0
-    80c8:	13a00000 	movne	r0, #0
-    80cc:	18bd8010 	popne	{r4, pc}
-    80d0:	e1a00004 	mov	r0, r4
-    80d4:	e8bd8010 	pop	{r4, pc}
-    80d8:	00009000 	.word	0x00009000
+000080a0 <mailboxRead>:
+    80a0:	e52de004 	push	{lr}		; (str lr, [sp, #-4]!)
+    80a4:	e350000f 	cmp	r0, #15
+    80a8:	81a0f00e 	movhi	pc, lr
+    80ac:	e1a01000 	mov	r1, r0
+    80b0:	ebffffed 	bl	806c <getMailBoxBaseAddress>
+
+000080b4 <wait2$>:
+    80b4:	e5903018 	ldr	r3, [r0, #24]
+    80b8:	e3130101 	tst	r3, #1073741824	; 0x40000000
+    80bc:	1afffffc 	bne	80b4 <wait2$>
+    80c0:	e5902000 	ldr	r2, [r0]
+    80c4:	e202300f 	and	r3, r2, #15
+    80c8:	e1330001 	teq	r3, r1
+    80cc:	1afffff8 	bne	80b4 <wait2$>
+    80d0:	e3c2000f 	bic	r0, r2, #15
+    80d4:	e49df004 	pop	{pc}		; (ldr pc, [sp], #4)
+    80d8:	2000b880 	.word	0x2000b880
 
 000080dc <GetTimerBase>:
     80dc:	e59f0034 	ldr	r0, [pc, #52]	; 8118 <waitLoop$+0x14>
@@ -144,7 +144,7 @@ Disassembly of section .text:
     81a0:	e3a00b01 	mov	r0, #1024	; 0x400
     81a4:	e3a01c03 	mov	r1, #768	; 0x300
     81a8:	e3a02010 	mov	r2, #16
-    81ac:	ebffffb2 	bl	807c <InitialiseFrameBuffer>
+    81ac:	ebffff94 	bl	8004 <frameBufferInit>
     81b0:	e3300000 	teq	r0, #0
     81b4:	1a000006 	bne	81d4 <noError$>
     81b8:	e3a0002f 	mov	r0, #47	; 0x2f
@@ -175,7 +175,7 @@ Disassembly of section .text:
     81fc:	e2411001 	sub	r1, r1, #1
     8200:	e3310000 	teq	r1, #0
     8204:	1afffff6 	bne	81e4 <drawRow1$>
-    8208:	e59f0118 	ldr	r0, [pc, #280]	; 8328 <drawPixel6$+0x28>
+    8208:	e59f00e0 	ldr	r0, [pc, #224]	; 82f0 <drawPixel6$+0x28>
     820c:	ebffffb8 	bl	80f4 <Micros>
     8210:	e3a00e7e 	mov	r0, #2016	; 0x7e0
     8214:	e5943020 	ldr	r3, [r4, #32]
@@ -193,7 +193,7 @@ Disassembly of section .text:
     8234:	e2411001 	sub	r1, r1, #1
     8238:	e3310000 	teq	r1, #0
     823c:	1afffff6 	bne	821c <drawRow2$>
-    8240:	e59f00e0 	ldr	r0, [pc, #224]	; 8328 <drawPixel6$+0x28>
+    8240:	e59f00a8 	ldr	r0, [pc, #168]	; 82f0 <drawPixel6$+0x28>
     8244:	ebffffaa 	bl	80f4 <Micros>
     8248:	e3a0001f 	mov	r0, #31
     824c:	e5943020 	ldr	r3, [r4, #32]
@@ -211,62 +211,43 @@ Disassembly of section .text:
     826c:	e2411001 	sub	r1, r1, #1
     8270:	e3310000 	teq	r1, #0
     8274:	1afffff6 	bne	8254 <drawRow3$>
-    8278:	e59f00a8 	ldr	r0, [pc, #168]	; 8328 <drawPixel6$+0x28>
+    8278:	e59f0070 	ldr	r0, [pc, #112]	; 82f0 <drawPixel6$+0x28>
     827c:	ebffff9c 	bl	80f4 <Micros>
-    8280:	e59f00a4 	ldr	r0, [pc, #164]	; 832c <drawPixel6$+0x2c>
+    8280:	e59f006c 	ldr	r0, [pc, #108]	; 82f4 <drawPixel6$+0x2c>
     8284:	e5943020 	ldr	r3, [r4, #32]
     8288:	e3a01c03 	mov	r1, #768	; 0x300
 
-0000828c <drawRow4$>:
+0000828c <drawRow5$>:
     828c:	e3a02b01 	mov	r2, #1024	; 0x400
 
-00008290 <drawPixel4$>:
+00008290 <drawPixel5$>:
     8290:	e1c300b0 	strh	r0, [r3]
     8294:	e2833002 	add	r3, r3, #2
     8298:	e2422001 	sub	r2, r2, #1
     829c:	e3320000 	teq	r2, #0
-    82a0:	1afffffa 	bne	8290 <drawPixel4$>
+    82a0:	1afffffa 	bne	8290 <drawPixel5$>
     82a4:	e2411001 	sub	r1, r1, #1
     82a8:	e3310000 	teq	r1, #0
-    82ac:	1afffff6 	bne	828c <drawRow4$>
-    82b0:	e59f0070 	ldr	r0, [pc, #112]	; 8328 <drawPixel6$+0x28>
+    82ac:	1afffff6 	bne	828c <drawRow5$>
+    82b0:	e59f0038 	ldr	r0, [pc, #56]	; 82f0 <drawPixel6$+0x28>
     82b4:	ebffff8e 	bl	80f4 <Micros>
-    82b8:	e59f0070 	ldr	r0, [pc, #112]	; 8330 <drawPixel6$+0x30>
+    82b8:	e3a00000 	mov	r0, #0
     82bc:	e5943020 	ldr	r3, [r4, #32]
     82c0:	e3a01c03 	mov	r1, #768	; 0x300
 
-000082c4 <drawRow5$>:
+000082c4 <drawRow6$>:
     82c4:	e3a02b01 	mov	r2, #1024	; 0x400
 
-000082c8 <drawPixel5$>:
+000082c8 <drawPixel6$>:
     82c8:	e1c300b0 	strh	r0, [r3]
     82cc:	e2833002 	add	r3, r3, #2
     82d0:	e2422001 	sub	r2, r2, #1
     82d4:	e3320000 	teq	r2, #0
-    82d8:	1afffffa 	bne	82c8 <drawPixel5$>
+    82d8:	1afffffa 	bne	82c8 <drawPixel6$>
     82dc:	e2411001 	sub	r1, r1, #1
     82e0:	e3310000 	teq	r1, #0
-    82e4:	1afffff6 	bne	82c4 <drawRow5$>
-    82e8:	e59f0038 	ldr	r0, [pc, #56]	; 8328 <drawPixel6$+0x28>
+    82e4:	1afffff6 	bne	82c4 <drawRow6$>
+    82e8:	e51f0000 	ldr	r0, [pc, #-0]	; 82f0 <drawPixel6$+0x28>
     82ec:	ebffff80 	bl	80f4 <Micros>
-    82f0:	e3a00000 	mov	r0, #0
-    82f4:	e5943020 	ldr	r3, [r4, #32]
-    82f8:	e3a01c03 	mov	r1, #768	; 0x300
-
-000082fc <drawRow6$>:
-    82fc:	e3a02b01 	mov	r2, #1024	; 0x400
-
-00008300 <drawPixel6$>:
-    8300:	e1c300b0 	strh	r0, [r3]
-    8304:	e2833002 	add	r3, r3, #2
-    8308:	e2422001 	sub	r2, r2, #1
-    830c:	e3320000 	teq	r2, #0
-    8310:	1afffffa 	bne	8300 <drawPixel6$>
-    8314:	e2411001 	sub	r1, r1, #1
-    8318:	e3310000 	teq	r1, #0
-    831c:	1afffff6 	bne	82fc <drawRow6$>
-    8320:	e51f0000 	ldr	r0, [pc, #-0]	; 8328 <drawPixel6$+0x28>
-    8324:	ebffff72 	bl	80f4 <Micros>
-    8328:	001e8480 	.word	0x001e8480
-    832c:	0000ffe1 	.word	0x0000ffe1
-    8330:	0000ffff 	.word	0x0000ffff
+    82f0:	001e8480 	.word	0x001e8480
+    82f4:	0000ffff 	.word	0x0000ffff
