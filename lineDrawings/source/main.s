@@ -32,14 +32,6 @@ main:
 
 	noError$:
 
-	ldr r0, =#512
-	ldr r1, =#767
-	bl drawPixel
-
-	ldr r0,= #2000000
-	bl Micros
-
-
 	fbInfoAddr .req r4
 	ldr fbInfoAddr, =frameBufferData
 
@@ -148,64 +140,6 @@ main:
 	bl drawLine
 	ldr r0,= #2000000
 	bl Micros
-/*
-
-		#BLUE
-		ldr r0,= #31
-
-		fbAddr .req r3
-		ldr fbAddr,[fbInfoAddr,#32]
-
-		colour .req r0
-		y .req r1
-		mov y,#768
-		drawRow3$:
-			x .req r2
-			mov x,#1024
-			drawPixel3$:
-				strh colour,[fbAddr]
-				add fbAddr,#2
-				sub x,#1
-				teq x,#0
-				bne drawPixel3$
-
-			sub y,#1
-			#add colour,#1
-			teq y,#0
-			bne drawRow3$
-
-		ldr r0,= #2000000
-		bl Micros
-
-
-		#WHITE
-		ldr r0,= #65535
-
-		fbAddr .req r3
-		ldr fbAddr,[fbInfoAddr,#32]
-
-		colour .req r0
-		y .req r1
-		mov y,#768
-		drawRow5$:
-			x .req r2
-			mov x,#1024
-			drawPixel5$:
-				strh colour,[fbAddr]
-				add fbAddr,#2
-				sub x,#1
-				teq x,#0
-				bne drawPixel5$
-
-			sub y,#1
-			#add colour,#1
-			teq y,#0
-			bne drawRow5$
-
-		ldr r0,= #2000000
-		bl Micros
-
-*/
 
 		#BLACK
 		ldr r0,= #0
