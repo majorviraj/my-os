@@ -10,9 +10,9 @@ b main
 .align 2
 
 test:
-	.byte 0x0041
+	.ascii "hello"
 	.byte '\n'
-	.byte 0x0042
+	.ascii "world"
 
 
 .section .text
@@ -40,7 +40,7 @@ main:
 		b error$
 
 	noError$:
-/*
+
 	mov r0,#9
 	bl FindTag
 	ldr r1,[r0]
@@ -50,23 +50,18 @@ main:
 	mov r2,#0
 	mov r3,#0
 	bl printString
-		loop$:
-		b loop$
+
+	ldr r0,= #5000000
+	bl delayMicro
 
 
 	ldr r0, =test
-	mov r1, #3
+	mov r1, #11
 	mov r2, #0
-	mov r3, #0
+	mov r3, #500
 
 	bl printString
 
-	loop$:
-		b loop$
-*/
+	loop1$:
+		b loop1$
 
-ldr r0, =#1023
-mov r1, #0
-bl drawPixel
-loop$:
-	b loop$	

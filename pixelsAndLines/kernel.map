@@ -39,7 +39,7 @@ LOAD build/main.o
  .init          0x0000000000008000        0x4 build/main.o
                 0x0000000000008000                _start
 
-.text           0x0000000000008004      0x310
+.text           0x0000000000008004      0x4d8
  *(.text)
  .text          0x0000000000008004       0x78 build/mailbox.o
                 0x0000000000008004                GetMailboxBase
@@ -51,16 +51,17 @@ LOAD build/main.o
                 0x00000000000080dc                GetTimerBase
                 0x00000000000080e4                GetTimeStamp
                 0x00000000000080f4                Micros
- .text          0x000000000000811c       0xbc build/drawing.o
+ .text          0x000000000000811c      0x138 build/drawing.o
                 0x000000000000811c                SetForeColour
                 0x0000000000008134                SetGraphicsAddress
                 0x0000000000008140                DrawPixel
                 0x0000000000008190                FullScreenToForeColour
- .text          0x00000000000081d8       0x80 build/gpio.o
-                0x00000000000081d8                GetGpioAddress
-                0x00000000000081e0                SetGpioFunction
-                0x0000000000008218                SetGpio
- .text          0x0000000000008258       0xbc build/main.o
+                0x00000000000081d0                DrawLine
+ .text          0x0000000000008254       0x80 build/gpio.o
+                0x0000000000008254                GetGpioAddress
+                0x000000000000825c                SetGpioFunction
+                0x0000000000008294                SetGpio
+ .text          0x00000000000082d4      0x208 build/main.o
 
 .data           0x0000000000009000       0x30
  *(.data)

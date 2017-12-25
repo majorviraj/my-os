@@ -31,13 +31,13 @@ main:
 		b error$
 
 	noError$:
-/*
-	mov r0, #0x41
+
+	ldr r0, =#107
 	mov r1, #5
 	mov r2, #5
 
 	bl drawCharacter
-*/
+
 
 mov r0, #540
 mov r1, #440

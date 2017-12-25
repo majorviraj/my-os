@@ -224,8 +224,8 @@ printString:
     mov r2, #0
     bl drawCharacter
 
-    r0 .req charWidth
-    r1 .req charHeight
+    charWidth .req r0
+    charHeight .req r1 
 
     charPrintLoop$:
         ldrb char, [string]
@@ -240,7 +240,7 @@ printString:
         addeq x, charWidth, lsl #2
         beq charPrintLoop$
 
-        cmp x, #1023
+        cmp x, #1024
         addeq y, charHeight
         moveq x, orignalX
 

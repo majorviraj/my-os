@@ -74,7 +74,7 @@ Disassembly of section .text:
     80d0:	e1a00003 	mov	r0, r3
     80d4:	eb000011 	bl	8120 <setGraphicsAddress>
     80d8:	e49df004 	pop	{pc}		; (ldr pc, [sp], #4)
-    80dc:	00008440 	.word	0x00008440
+    80dc:	00008470 	.word	0x00008470
 
 000080e0 <GetTimerBase>:
     80e0:	e59f0034 	ldr	r0, [pc, #52]	; 811c <waitLoop$+0x14>
@@ -236,10 +236,10 @@ Disassembly of section .text:
     82e0:	e2555001 	subs	r5, r5, #1
     82e4:	1affffec 	bne	829c <charPrintLoop$>
     82e8:	e8bd43f0 	pop	{r4, r5, r6, r7, r8, r9, lr}
-    82ec:	00008474 	.word	0x00008474
-    82f0:	00008470 	.word	0x00008470
-    82f4:	00008440 	.word	0x00008440
-    82f8:	00008480 	.word	0x00008480
+    82ec:	000084a4 	.word	0x000084a4
+    82f0:	000084a0 	.word	0x000084a0
+    82f4:	00008470 	.word	0x00008470
+    82f8:	000084b0 	.word	0x000084b0
 
 000082fc <FindTag>:
     82fc:	e2400001 	sub	r0, r0, #1
@@ -273,7 +273,7 @@ Disassembly of section .text:
     835c:	e5923000 	ldr	r3, [r2]
     8360:	e0822103 	add	r2, r2, r3, lsl #2
     8364:	eafffff4 	b	833c <tagLoop$>
-    8368:	00008c80 	.word	0x00008c80
+    8368:	00008cb0 	.word	0x00008cb0
 
 0000836c <GetGpioAddress>:
     836c:	e59f0074 	ldr	r0, [pc, #116]	; 83e8 <SetGpio+0x3c>
@@ -317,7 +317,7 @@ Disassembly of section .text:
 
 000083ec <main>:
     83ec:	e3a0d902 	mov	sp, #32768	; 0x8000
-    83f0:	e59f003c 	ldr	r0, [pc, #60]	; 8434 <loop$+0x4>
+    83f0:	e3a00b01 	mov	r0, #1024	; 0x400
     83f4:	e3a01c03 	mov	r1, #768	; 0x300
     83f8:	e3a02010 	mov	r2, #16
     83fc:	ebffff1c 	bl	8074 <frameBufferInit>
@@ -334,11 +334,24 @@ Disassembly of section .text:
     8420:	eafffffe 	b	8420 <error$>
 
 00008424 <noError$>:
-    8424:	e59f000c 	ldr	r0, [pc, #12]	; 8438 <loop$+0x8>
-    8428:	e3a01000 	mov	r1, #0
-    842c:	ebffff43 	bl	8140 <drawPixel>
+    8424:	e3a00009 	mov	r0, #9
+    8428:	ebffffb3 	bl	82fc <FindTag>
+    842c:	e5901000 	ldr	r1, [r0]
+    8430:	e1a01101 	lsl	r1, r1, #2
+    8434:	e2411008 	sub	r1, r1, #8
+    8438:	e2800008 	add	r0, r0, #8
+    843c:	e3a02000 	mov	r2, #0
+    8440:	e3a03000 	mov	r3, #0
+    8444:	ebffff8a 	bl	8274 <printString>
+    8448:	e59f0018 	ldr	r0, [pc, #24]	; 8468 <loop1$+0x4>
+    844c:	ebffff29 	bl	80f8 <delayMicro>
+    8450:	e59f0014 	ldr	r0, [pc, #20]	; 846c <loop1$+0x8>
+    8454:	e3a0100b 	mov	r1, #11
+    8458:	e3a02000 	mov	r2, #0
+    845c:	e3a03f7d 	mov	r3, #500	; 0x1f4
+    8460:	ebffff83 	bl	8274 <printString>
 
-00008430 <loop$>:
-    8430:	eafffffe 	b	8430 <loop$>
-    8434:	00000556 	.word	0x00000556
-    8438:	00000555 	.word	0x00000555
+00008464 <loop1$>:
+    8464:	eafffffe 	b	8464 <loop1$>
+    8468:	004c4b40 	.word	0x004c4b40
+    846c:	00008cd4 	.word	0x00008cd4
