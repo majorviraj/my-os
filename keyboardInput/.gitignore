@@ -1,2 +1,6 @@
 build/
 .vscode
+kernel.img
+kernel.nm
+kernel.list
+libcsud.a

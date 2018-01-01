@@ -225,7 +225,11 @@ printString:
     bl drawCharacter
 
     charWidth .req r0
+<<<<<<< HEAD
     charHeight .req r1
+=======
+    charHeight .req r1 
+>>>>>>> 1443e47b8460506c3efa164c0d2c98985812a826
 
     charPrintLoop$:
         ldrb char, [string]
@@ -240,7 +244,7 @@ printString:
         addeq x, charWidth, lsl #2
         beq charPrintLoop$
 
-        cmp x, #1023
+        cmp x, #1024
         addeq y, charHeight
         moveq x, orignalX
 

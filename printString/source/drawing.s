@@ -227,7 +227,7 @@ printString:
     charWidth .req r0
     charHeight .req r1
 
-    charPrintLoop$:
+    charPrintLoop$:     
         ldrb char, [string]
         add string, #1
 

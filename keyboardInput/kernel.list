@@ -5,7 +5,11 @@ build/output.elf:     file format elf32-littlearm
 Disassembly of section .init:
 
 00008000 <_start>:
+<<<<<<< HEAD:keyboardInput/kernel.list
     8000:	ea0000f9 	b	83ec <main>
+=======
+    8000:	ea0000dd 	b	837c <main>
+>>>>>>> 1443e47b8460506c3efa164c0d2c98985812a826:characterDrawing/kernel.list
 
 Disassembly of section .text:
 
@@ -226,8 +230,13 @@ Disassembly of section .text:
     82b8:	00866100 	addeq	r6, r6, r0, lsl #2
     82bc:	0afffff6 	beq	829c <charPrintLoop$>
     82c0:	e3560b01 	cmp	r6, #1024	; 0x400
+<<<<<<< HEAD:keyboardInput/kernel.list
     82c4:	a0877001 	addge	r7, r7, r1
     82c8:	a1a06009 	movge	r6, r9
+=======
+    82c4:	00877001 	addeq	r7, r7, r1
+    82c8:	01a06009 	moveq	r6, r9
+>>>>>>> 1443e47b8460506c3efa164c0d2c98985812a826:characterDrawing/kernel.list
     82cc:	e1a00008 	mov	r0, r8
     82d0:	e1a01006 	mov	r1, r6
     82d4:	e1a02007 	mov	r2, r7
@@ -236,6 +245,7 @@ Disassembly of section .text:
     82e0:	e2555001 	subs	r5, r5, #1
     82e4:	1affffec 	bne	829c <charPrintLoop$>
     82e8:	e8bd43f0 	pop	{r4, r5, r6, r7, r8, r9, lr}
+<<<<<<< HEAD:keyboardInput/kernel.list
     82ec:	00008484 	.word	0x00008484
     82f0:	00008480 	.word	0x00008480
     82f4:	00008450 	.word	0x00008450
@@ -346,3 +356,79 @@ Disassembly of section .text:
 
 00008448 <loop$>:
     8448:	eafffffe 	b	8448 <loop$>
+=======
+    82ec:	00009034 	.word	0x00009034
+    82f0:	00009030 	.word	0x00009030
+    82f4:	00009000 	.word	0x00009000
+    82f8:	00009040 	.word	0x00009040
+
+000082fc <GetGpioAddress>:
+    82fc:	e59f0074 	ldr	r0, [pc, #116]	; 8378 <SetGpio+0x3c>
+    8300:	e1a0f00e 	mov	pc, lr
+
+00008304 <SetGpioFunction>:
+    8304:	e3500035 	cmp	r0, #53	; 0x35
+    8308:	93510007 	cmpls	r1, #7
+    830c:	81a0f00e 	movhi	pc, lr
+    8310:	e52de004 	push	{lr}		; (str lr, [sp, #-4]!)
+    8314:	e1a02000 	mov	r2, r0
+    8318:	ebfffff7 	bl	82fc <GetGpioAddress>
+
+0000831c <functionLoop$>:
+    831c:	e3520009 	cmp	r2, #9
+    8320:	8242200a 	subhi	r2, r2, #10
+    8324:	82800004 	addhi	r0, r0, #4
+    8328:	8afffffb 	bhi	831c <functionLoop$>
+    832c:	e0822082 	add	r2, r2, r2, lsl #1
+    8330:	e1a01211 	lsl	r1, r1, r2
+    8334:	e5801000 	str	r1, [r0]
+    8338:	e49df004 	pop	{pc}		; (ldr pc, [sp], #4)
+
+0000833c <SetGpio>:
+    833c:	e3500035 	cmp	r0, #53	; 0x35
+    8340:	81a0f00e 	movhi	pc, lr
+    8344:	e52de004 	push	{lr}		; (str lr, [sp, #-4]!)
+    8348:	e1a02000 	mov	r2, r0
+    834c:	ebffffea 	bl	82fc <GetGpioAddress>
+    8350:	e1a032a2 	lsr	r3, r2, #5
+    8354:	e1a03103 	lsl	r3, r3, #2
+    8358:	e0800003 	add	r0, r0, r3
+    835c:	e202201f 	and	r2, r2, #31
+    8360:	e3a03001 	mov	r3, #1
+    8364:	e1a03213 	lsl	r3, r3, r2
+    8368:	e3310000 	teq	r1, #0
+    836c:	05803028 	streq	r3, [r0, #40]	; 0x28
+    8370:	1580301c 	strne	r3, [r0, #28]
+    8374:	e49df004 	pop	{pc}		; (ldr pc, [sp], #4)
+    8378:	20200000 	.word	0x20200000
+
+0000837c <main>:
+    837c:	e3a0d902 	mov	sp, #32768	; 0x8000
+    8380:	e3a00b01 	mov	r0, #1024	; 0x400
+    8384:	e3a01c03 	mov	r1, #768	; 0x300
+    8388:	e3a02010 	mov	r2, #16
+    838c:	ebffff38 	bl	8074 <frameBufferInit>
+    8390:	e3300000 	teq	r0, #0
+    8394:	1a000006 	bne	83b4 <noError$>
+    8398:	e3a0002f 	mov	r0, #47	; 0x2f
+    839c:	e3a01001 	mov	r1, #1
+    83a0:	ebffffd7 	bl	8304 <SetGpioFunction>
+    83a4:	e3a0002f 	mov	r0, #47	; 0x2f
+    83a8:	e3a01000 	mov	r1, #0
+    83ac:	ebffffe2 	bl	833c <SetGpio>
+
+000083b0 <error$>:
+    83b0:	eafffffe 	b	83b0 <error$>
+
+000083b4 <noError$>:
+    83b4:	e3a0006b 	mov	r0, #107	; 0x6b
+    83b8:	e3a01005 	mov	r1, #5
+    83bc:	e3a02005 	mov	r2, #5
+    83c0:	ebffff8e 	bl	8200 <drawCharacter>
+    83c4:	e3a00f87 	mov	r0, #540	; 0x21c
+    83c8:	e3a01f6e 	mov	r1, #440	; 0x1b8
+    83cc:	ebffff5b 	bl	8140 <drawPixel>
+    83d0:	e51f0000 	ldr	r0, [pc, #-0]	; 83d8 <noError$+0x24>
+    83d4:	ebffff47 	bl	80f8 <delayMicro>
+    83d8:	000f4240 	.word	0x000f4240
+>>>>>>> 1443e47b8460506c3efa164c0d2c98985812a826:characterDrawing/kernel.list

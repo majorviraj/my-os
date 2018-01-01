@@ -10,6 +10,7 @@ b main
 .align 2
 
 test:
+<<<<<<< HEAD
 	.byte 'V'
 	.byte 'i'
 	.byte 'r'
@@ -17,6 +18,11 @@ test:
 	.byte 't'
 	.byte 'a'
 	.byte 'n'
+=======
+	.ascii "hello"
+	.byte '\n'
+	.ascii "world"
+>>>>>>> 1443e47b8460506c3efa164c0d2c98985812a826
 
 
 .section .text
@@ -54,17 +60,19 @@ main:
 	mov r2,#0
 	mov r3,#0
 	bl printString
-		loop$:
-		b loop$
+
+	ldr r0,= #5000000
+	bl delayMicro
 
 /*
 	ldr r0, =test
-	mov r1, #3
+	mov r1, #11
 	mov r2, #0
-	mov r3, #0
+	mov r3, #500
 
 	bl printString
 
+<<<<<<< HEAD
 	loop$:
 		b loop$
 
@@ -75,3 +83,8 @@ bl drawPixel
 loop$:
 	b loop$	
 */
+=======
+	loop1$:
+		b loop1$
+
+>>>>>>> 1443e47b8460506c3efa164c0d2c98985812a826

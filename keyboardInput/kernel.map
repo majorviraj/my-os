@@ -47,7 +47,11 @@ LOAD build/main.o
  .init          0x0000000000008000        0x4 build/main.o
                 0x0000000000008000                _start
 
+<<<<<<< HEAD:keyboardInput/kernel.map
 .text           0x0000000000008004      0x448
+=======
+.text           0x0000000000008004      0x3d8
+>>>>>>> 1443e47b8460506c3efa164c0d2c98985812a826:characterDrawing/kernel.map
  *(.text)
  .text          0x0000000000008004       0x70 build/mailbox.o
                 0x0000000000008004                getMailBoxBaseAddress
@@ -66,6 +70,7 @@ LOAD build/main.o
                 0x0000000000008184                drawLine
                 0x0000000000008200                drawCharacter
                 0x0000000000008274                printString
+<<<<<<< HEAD:keyboardInput/kernel.map
  .text          0x00000000000082fc        0x0 build/math.o
  .text          0x00000000000082fc       0x70 build/tag.o
                 0x00000000000082fc                FindTag
@@ -74,6 +79,13 @@ LOAD build/main.o
                 0x0000000000008374                SetGpioFunction
                 0x00000000000083ac                SetGpio
  .text          0x00000000000083ec       0x60 build/main.o
+=======
+ .text          0x00000000000082fc       0x80 build/gpio.o
+                0x00000000000082fc                GetGpioAddress
+                0x0000000000008304                SetGpioFunction
+                0x000000000000833c                SetGpio
+ .text          0x000000000000837c       0x60 build/main.o
+>>>>>>> 1443e47b8460506c3efa164c0d2c98985812a826:characterDrawing/kernel.map
 
 .data           0x0000000000008450      0x865
  *(.data)

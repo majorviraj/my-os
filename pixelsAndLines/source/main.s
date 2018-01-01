@@ -140,13 +140,57 @@ main:
 	ldr r0,= #2000000
 	bl Micros
 
-	
-
 	colour .req r0
-	ldr colour,= 0xFFFF
+	ldr colour,= #2016
 	bl SetForeColour
 	.unreq colour
 	bl FullScreenToForeColour
 	ldr r0,= #2000000
 	bl Micros
 
+	#set colour to black
+	colour .req r0
+	ldr colour,= #0
+	bl SetForeColour
+	.unreq colour
+	bl FullScreenToForeColour
+	ldr r0,= #2000000
+	bl Micros
+
+	
+
+	#set colour to RED and draw line
+	colour .req r0
+	ldr colour,= #63488
+	bl SetForeColour
+	.unreq colour
+	
+	ldr r0,= #10
+	ldr r1,= #230
+	ldr r2,= #156
+	ldr r3,= #230
+	bl DrawLine
+	ldr r0,= #83
+	ldr r1,= #230
+	ldr r2,= #83
+	ldr r3,= #530
+	bl DrawLine
+	ldr r0,= #230
+	ldr r1,= #380
+	ldr r2,= #376
+	ldr r3,= #380
+	bl DrawLine
+	ldr r0,= #230
+	ldr r1,= #230
+	ldr r2,= #230
+	ldr r3,= #530
+	bl DrawLine
+	
+	ldr r0,= #450
+	ldr r1,= #230
+	ldr r2,= #450
+	ldr r3,= #530
+	bl DrawLine
+	
+	ldr r0,= #5000000
+	bl Micros
