@@ -7,7 +7,7 @@ foreColour:
 .align 2
 
 graphicsAddress:
-    .int 0
+    .int 0x00001c0c
 
 .align 4
 font:
@@ -194,7 +194,7 @@ drawCharacter:
     mov r0, #8
     mov r1, #16
 
-    pop {r4,r5,r6,r7,r8,lr}
+    pop {r4,r5,r6,r7,r8,pc}
 
     .unreq x
     .unreq y
@@ -240,9 +240,9 @@ printString:
         addeq x, charWidth, lsl #2
         beq charPrintLoop$
 
-        cmp x, #1023
-        addeq y, charHeight
-        moveq x, orignalX
+        cmp x, #1024
+        addge y, charHeight
+        movge x, orignalX
 
         mov r0, char
         mov r1, x

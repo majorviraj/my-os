@@ -1,3 +1,8 @@
+
+
+#ifndef __RPIGPIO_H__
+#define __RPIGPIO_H__
+
 #define GPIO_BASE 0x20200000UL
 
 #define LED_GPFSEL      GPIO_GPFSEL4
@@ -48,23 +53,4 @@
 #define GPIO_GPPUDCLK0  38
 #define GPIO_GPPUDCLK1  39
 
-
-volatile unsigned int* gpio;
-
-volatile unsigned int tim;
-int main() {
-    gpio = (unsigned int*) GPIO_BASE;
-
-    gpio[LED_GPFSEL] |= (1 << LED_GPIO_BIT);
-
-    while(1) {
-
-        for (tim = 0; tim < 500000; tim++);
-
-        gpio[LED_GPCLR] = (1 << LED_GPIO_BIT);
-
-        for (tim = 0; tim < 500000; tim++);
-        
-        gpio[LED_GPSET] = (1 << LED_GPIO_BIT);
-    }
-}
+#endif

@@ -1,0 +1,13 @@
+00018098 B __bss_end__
+00018098 B _bss_end__
+00018094 B __bss_start
+00018094 B __bss_start__
+00018090 D __data_start
+00018094 D _edata
+00018098 B _end
+00018098 B __end__
+00018090 D gpio
+00008000 T main
+00080000 N _stack
+         U _start
+00018094 B tim
