@@ -1,0 +1,6 @@
+build/
+.directory
+run.sh
+kernel.img
+kernel.list
+kernel.map

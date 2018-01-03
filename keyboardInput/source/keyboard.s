@@ -12,7 +12,7 @@ keyboardOldDown:
 .global keyboardInit
 keyboardInit:
     
-    push {r4,lr}
+    push {r4,r5,lr}
 
     bl UsbInitialise
     
@@ -23,7 +23,7 @@ keyboardInit:
     ldr keyboardAdr, =keyboardAddress
     ldr r0, [keyboardAdr]
     teq r0, #0
-    bne loc9
+    bne loadKeys$
 
     noKeyboardFound$:
         bl UsbCheckForChange
@@ -43,6 +43,35 @@ keyboardInit:
         popne {pc}
 
         str r0, [keyboardAdr]
+
+        mov r5, #0
+
+        loadKeys$:
+            ldr r0, [keyboardAdr]
+            mov r1, r5
+
+            bl KeyboardGetKeyDown
+
+            ldr r1, =keyboardOldDown
+            add r1, r5, lsl #1
+
+            strh r0, [r1]
+
+            add r5, #1
+            tst r5, #6
+
+            blt loadKeys$
+        
+        ldr r0, [keyboardAdr]
+        bl KeyboardPoll
+
+        teq r0, #0
+        bne noKeyboardFound$
+
+        pop {r4, r5, pc }
+        .unreq keyboardAdr
+
+
 
         
 

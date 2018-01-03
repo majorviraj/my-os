@@ -3,3 +3,5 @@ build/
 kernel.img
 kernel.nm
 kernel.list
+run.sh
+.directory

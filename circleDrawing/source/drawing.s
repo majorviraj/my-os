@@ -267,7 +267,7 @@ printString:
 .globl drawCircle
 drawCircle:
     
-    push {r4,r5,r6,r7,r8,r9,r10,lr}
+    push {r4,r5,r6,r7,r8,r9,lr}
 
     cx .req r4
     cy .req r5
@@ -276,7 +276,7 @@ drawCircle:
     cmp r0, #0
     cmpge r1, #0
     cmpge r2, #0
-    poplt {r4,r5,r6,r7,r8,r9,r10,pc}
+    poplt {r4,r5,r6,r7,r8,r9,pc}
 
     mov cx, r0
     mov cy, r1
@@ -286,8 +286,10 @@ drawCircle:
     y .req r8
     error .req r9
 
-    mov error, #0
+    mov error, #1
+    sub error, radius
     mov x, radius
+    sub x, #1
     mov y, #0
 
     drawloop$:
@@ -354,13 +356,11 @@ drawCircle:
         add error, #1
 
         subge error, x, lsl #1
-        addge error, #1
-
         subge x, #1
 
         add y, #1
         cmp y, x
-        popge {r4,r5,r6,r7,r8,r9,r10,pc}
+        popgt {r4,r5,r6,r7,r8,r9,pc}
 
         b drawloop$ 
 
