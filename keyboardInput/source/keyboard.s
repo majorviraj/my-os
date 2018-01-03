@@ -12,7 +12,7 @@ keyboardOldDown:
 .global keyboardInit
 keyboardInit:
     
-    push {lr}
+    push {r4,lr}
 
     bl UsbInitialise
     
