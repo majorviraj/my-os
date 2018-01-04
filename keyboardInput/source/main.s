@@ -1,4 +1,4 @@
-/* main file for Screen From Scratch*/
+
 
 .section .init
 .globl _start
@@ -45,17 +45,44 @@ main:
 
 	noError$:
 
-	mov r0,#9
-	bl FindTag
-	ldr r1,[r0]
-	lsl r1,#2
-	sub r1,#8
-	add r0,#8
-	mov r2,#0
-	mov r3,#0
-	bl printString
-		loop$:
-		b loop$
+	@ mov r0,#9
+	@ bl FindTag
+	@ ldr r1,[r0]
+	@ lsl r1,#2
+	@ sub r1,#8
+	@ add r0,#8
+	@ mov r2,#0
+	@ mov r3,#0
+	@ bl printString
+	@ 	loop$:
+	@ 	b loop$
+
+	bl UsbInitialise
+mov r4, #0
+mov r5, #0
+loopContinue$:
+	bl keyboardInit
+
+	bl KeyboardGetChar
+
+	teq r0, #0
+	beq loopContinue$
+
+	mov r1, r4
+	mov r2, r5
+
+	bl drawCharacter
+
+	add r4,r0
+
+	teq r4,#1024
+	addeq r5,r1
+	moveq r4,#0
+	teqeq r5,#768
+	moveq r5,#0
+
+	b loopContinue$
+
 
 /*
 	ldr r0, =test
