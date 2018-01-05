@@ -61,7 +61,7 @@ main:
 mov r4, #0
 mov r5, #0
 loopContinue$:
-	bl keyboardInit
+	bl KeyboardUpdate
 
 	bl KeyboardGetChar
 

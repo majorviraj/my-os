@@ -272,7 +272,7 @@ LOAD ./libcsud.a
  .ARM.attributes
                 0x00000000000148b0       0x32 ./libcsud.a(platform.broadcom2835.c.o)
 
-.text           0x00000000000148e4      0x624
+.text           0x00000000000148e4      0x620
  *.c.o(.text)
  *(.text)
  .text          0x00000000000148e4       0x70 build/mailbox.o
@@ -299,11 +299,11 @@ LOAD ./libcsud.a
                 0x0000000000014c54                SetGpioFunction
                 0x0000000000014c8c                SetGpio
  .text          0x0000000000014ccc       0x7c build/main.o
- .text          0x0000000000014d48      0x1c0 build/keyboard.o
+ .text          0x0000000000014d48      0x1bc build/keyboard.o
                 0x0000000000014d48                keyboardInit
-                0x0000000000014dc4                KeyboardUpdate
-                0x0000000000014e48                KeyWasDown
-                0x0000000000014e78                KeyboardGetChar
+                0x0000000000014dc0                KeyboardUpdate
+                0x0000000000014e44                KeyWasDown
+                0x0000000000014e74                KeyboardGetChar
 
 /DISCARD/
  *(*)
