@@ -58,10 +58,11 @@ main:
 	@ 	b loop$
 
 	bl UsbInitialise
-mov r4, #0
-mov r5, #0
+	mov r4, #0
+	mov r5, #0
 loopContinue$:
-	bl KeyboardUpdate
+	@ bl KeyboardUpdate
+	bl keyboardInit
 
 	bl KeyboardGetChar
 

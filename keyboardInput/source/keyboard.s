@@ -32,7 +32,7 @@ KeysShift:
 .byte 0x0, 0x0, 0x0, 0x0, 'A', 'B', 'C', 'D'
 .byte 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'
 .byte 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T'
-.byte 'U', 'V', 'W', 'X', 'Y', 'Z', '!', '"'
+.byte 'U', 'V', 'W', 'X', 'Y', 'Z', '!', '@'
 .byte '#', '$', '%', '^', '&', '*', '(', ')'
 .byte '\n', 0x0, '\b', '\t', ' ', '_', '+', '{'
 .byte '}', '|', '~', ':', '"', '~', '<', '>'
@@ -73,7 +73,7 @@ keyboardInit:
         bl KeyboardGetAddress
         
         teq r0, #0
-        popne {r4,r5,pc}
+        popeq {r4,r5,pc}
 
         str r0, [keyboardAdr]
 haveKeyboards$:
@@ -91,7 +91,7 @@ haveKeyboards$:
             strh r0, [r1]
 
             add r5, #1
-            tst r5, #6
+            cmp r5, #6
 
             blt loadKeys$
         
@@ -102,60 +102,7 @@ haveKeyboards$:
         bne noKeyboardFound$
 
         pop {r4, r5, pc}
-        .unreq keyboardAdr
-
-	
-    .globl KeyboardUpdate
-KeyboardUpdate:
-	push {r4,r5,lr}
-
-	kbd .req r4
-	ldr r0,=keyboardAddress
-	ldr kbd,[r0]
-	
-	teq kbd,#0
-	bne haveKeyboard$
-
-getKeyboard$:
-	bl UsbCheckForChange
-	bl KeyboardCount
-	teq r0,#0	
-	ldreq r1,=keyboardAddress
-	streq r0,[r1]
-	beq return$
-
-	mov r0,#0
-	bl KeyboardGetAddress
-	ldr r1,=keyboardAddress
-	str r0,[r1]
-	teq r0,#0
-	beq return$
-	mov kbd,r0
-
-haveKeyboard$:
-	mov r5,#0
-
-	saveKeys$:
-		mov r0,kbd
-		mov r1,r5
-		bl KeyboardGetKeyDown
-
-		ldr r1,=keyboardOldDown
-		add r1,r5,lsl #1
-		strh r0,[r1]
-		add r5,#1
-		cmp r5,#6
-		blt saveKeys$
-
-	mov r0,kbd
-	bl KeyboardPoll
-	teq r0,#0
-	bne getKeyboard$
-
-return$:
-	pop {r4,r5,pc} 
-	.unreq kbd
-
+    	.unreq keyboardAdr
 
 .globl KeyWasDown
 KeyWasDown:

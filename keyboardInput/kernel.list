@@ -445,7 +445,7 @@ Disassembly of section .data:
     8908:	504f4e4d 	.word	0x504f4e4d
     890c:	54535251 	.word	0x54535251
     8910:	58575655 	.word	0x58575655
-    8914:	22215a59 	.word	0x22215a59
+    8914:	40215a59 	.word	0x40215a59
     8918:	5e252423 	.word	0x5e252423
     891c:	29282a26 	.word	0x29282a26
     8920:	0908000a 	.word	0x0908000a
@@ -8226,7 +8226,7 @@ Disassembly of section .text:
    14d0c:	e3a05000 	mov	r5, #0
 
 00014d10 <loopContinue$>:
-   14d10:	eb00002a 	bl	14dc0 <KeyboardUpdate>
+   14d10:	eb00000c 	bl	14d48 <keyboardInit>
    14d14:	eb000056 	bl	14e74 <KeyboardGetChar>
    14d18:	e3300000 	teq	r0, #0
    14d1c:	0afffffb 	beq	14d10 <loopContinue$>
@@ -8257,7 +8257,7 @@ Disassembly of section .text:
    14d70:	e3a00000 	mov	r0, #0
    14d74:	ebffcf66 	bl	8b14 <KeyboardGetAddress>
    14d78:	e3300000 	teq	r0, #0
-   14d7c:	18bd8030 	popne	{r4, r5, pc}
+   14d7c:	08bd8030 	popeq	{r4, r5, pc}
    14d80:	e5840000 	str	r0, [r4]
 
 00014d84 <haveKeyboards$>:
@@ -8271,7 +8271,7 @@ Disassembly of section .text:
    14d98:	e0811085 	add	r1, r1, r5, lsl #1
    14d9c:	e1c100b0 	strh	r0, [r1]
    14da0:	e2855001 	add	r5, r5, #1
-   14da4:	e3150006 	tst	r5, #6
+   14da4:	e3550006 	cmp	r5, #6
    14da8:	bafffff6 	blt	14d88 <loadKeys$>
    14dac:	e5940000 	ldr	r0, [r4]
    14db0:	ebffd1ba 	bl	94a0 <KeyboardPoll>
