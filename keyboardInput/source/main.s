@@ -1,5 +1,3 @@
-
-
 .section .init
 .globl _start
 _start:
@@ -17,6 +15,9 @@ test:
 	.byte 't'
 	.byte 'a'
 	.byte 'n'
+
+charToPrint:
+	.byte 0
 
 
 .section .text
@@ -45,6 +46,7 @@ main:
 
 	noError$:
 
+	bl UsbInitialise
 	@ mov r0,#9
 	@ bl FindTag
 	@ ldr r1,[r0]
@@ -57,11 +59,10 @@ main:
 	@ 	loop$:
 	@ 	b loop$
 
-	bl UsbInitialise
 	mov r4, #0
 	mov r5, #0
+
 loopContinue$:
-	@ bl KeyboardUpdate
 	bl keyboardInit
 
 	bl KeyboardGetChar
@@ -69,10 +70,14 @@ loopContinue$:
 	teq r0, #0
 	beq loopContinue$
 
-	mov r1, r4
-	mov r2, r5
+	ldr r6, =charToPrint
+	strb r0, [r6]
+	mov r0, r6
+	mov r1, #1
+	mov r2, r4
+	mov r3, r5
 
-	bl drawCharacter
+	bl printString
 
 	add r4,r0
 
@@ -83,23 +88,3 @@ loopContinue$:
 	moveq r5,#0
 
 	b loopContinue$
-
-
-/*
-	ldr r0, =test
-	mov r1, #3
-	mov r2, #0
-	mov r3, #0
-
-	bl printString
-
-	loop$:
-		b loop$
-
-/*
-ldr r0, =#1023
-mov r1, #0
-bl drawPixel
-loop$:
-	b loop$	
-*/

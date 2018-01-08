@@ -136,7 +136,7 @@ KeyboardGetChar:
 	kbd .req r4
 	key .req r6
 
-	mov r4,r1	
+	mov r4,r1
 	mov r5,#0
 
 	keyLoop$:

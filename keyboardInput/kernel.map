@@ -85,8 +85,8 @@ LOAD ./libcsud.a
  .data          0x0000000000008040      0x810 build/drawing.o
  .data          0x0000000000008850       0x24 build/tag.o
  .data          0x0000000000008874        0x0 build/gpio.o
- .data          0x0000000000008874        0x7 build/main.o
- *fill*         0x000000000000887b        0x5 
+ .data          0x0000000000008874        0x8 build/main.o
+ *fill*         0x000000000000887c        0x4 
  .data          0x0000000000008880       0xe0 build/keyboard.o
  .data          0x0000000000008960        0x0 ./libcsud.a(device.keyboard.c.o)
  .data          0x0000000000008960        0x4 ./libcsud.a(platform.c.o)
@@ -272,7 +272,7 @@ LOAD ./libcsud.a
  .ARM.attributes
                 0x00000000000148b0       0x32 ./libcsud.a(platform.broadcom2835.c.o)
 
-.text           0x00000000000148e4      0x620
+.text           0x00000000000148e4      0x5b0
  *.c.o(.text)
  *(.text)
  .text          0x00000000000148e4       0x70 build/mailbox.o
@@ -298,12 +298,11 @@ LOAD ./libcsud.a
                 0x0000000000014c4c                GetGpioAddress
                 0x0000000000014c54                SetGpioFunction
                 0x0000000000014c8c                SetGpio
- .text          0x0000000000014ccc       0x7c build/main.o
- .text          0x0000000000014d48      0x1bc build/keyboard.o
-                0x0000000000014d48                keyboardInit
-                0x0000000000014dc0                KeyboardUpdate
-                0x0000000000014e44                KeyWasDown
-                0x0000000000014e74                KeyboardGetChar
+ .text          0x0000000000014ccc       0x90 build/main.o
+ .text          0x0000000000014d5c      0x138 build/keyboard.o
+                0x0000000000014d5c                keyboardInit
+                0x0000000000014dd4                KeyWasDown
+                0x0000000000014e04                KeyboardGetChar
 
 /DISCARD/
  *(*)

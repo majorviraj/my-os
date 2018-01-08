@@ -405,7 +405,11 @@ Disassembly of section .data:
 
 00008874 <test>:
     8874:	09726956 	.word	0x09726956
-    8878:	006e6174 	.word	0x006e6174
+    8878:	6174      	.short	0x6174
+    887a:	6e          	.byte	0x6e
+
+0000887b <charToPrint>:
+    887b:	00          	.byte	0x00
     887c:	00000000 	.word	0x00000000
 
 00008880 <keyboardAddress>:
@@ -8226,160 +8230,122 @@ Disassembly of section .text:
    14d0c:	e3a05000 	mov	r5, #0
 
 00014d10 <loopContinue$>:
-   14d10:	eb00000c 	bl	14d48 <keyboardInit>
-   14d14:	eb000056 	bl	14e74 <KeyboardGetChar>
+   14d10:	eb000011 	bl	14d5c <keyboardInit>
+   14d14:	eb00003a 	bl	14e04 <KeyboardGetChar>
    14d18:	e3300000 	teq	r0, #0
    14d1c:	0afffffb 	beq	14d10 <loopContinue$>
-   14d20:	e1a01004 	mov	r1, r4
-   14d24:	e1a02005 	mov	r2, r5
-   14d28:	ebffff6c 	bl	14ae0 <drawCharacter>
-   14d2c:	e0844000 	add	r4, r4, r0
-   14d30:	e3340b01 	teq	r4, #1024	; 0x400
-   14d34:	00855001 	addeq	r5, r5, r1
-   14d38:	03a04000 	moveq	r4, #0
-   14d3c:	03350c03 	teqeq	r5, #768	; 0x300
-   14d40:	03a05000 	moveq	r5, #0
-   14d44:	eafffff1 	b	14d10 <loopContinue$>
+   14d20:	e59f6030 	ldr	r6, [pc, #48]	; 14d58 <loopContinue$+0x48>
+   14d24:	e5c60000 	strb	r0, [r6]
+   14d28:	e1a00006 	mov	r0, r6
+   14d2c:	e3a01001 	mov	r1, #1
+   14d30:	e1a02004 	mov	r2, r4
+   14d34:	e1a03005 	mov	r3, r5
+   14d38:	ebffff85 	bl	14b54 <printString>
+   14d3c:	e0844000 	add	r4, r4, r0
+   14d40:	e3340b01 	teq	r4, #1024	; 0x400
+   14d44:	00855001 	addeq	r5, r5, r1
+   14d48:	03a04000 	moveq	r4, #0
+   14d4c:	03350c03 	teqeq	r5, #768	; 0x300
+   14d50:	03a05000 	moveq	r5, #0
+   14d54:	eaffffed 	b	14d10 <loopContinue$>
+   14d58:	0000887b 	.word	0x0000887b
 
-00014d48 <keyboardInit>:
-   14d48:	e92d4030 	push	{r4, r5, lr}
-   14d4c:	e59f41a0 	ldr	r4, [pc, #416]	; 14ef4 <keyboardGetCharReturn$+0x4>
-   14d50:	e5940000 	ldr	r0, [r4]
-   14d54:	e3300000 	teq	r0, #0
-   14d58:	1a000009 	bne	14d84 <haveKeyboards$>
+00014d5c <keyboardInit>:
+   14d5c:	e92d4030 	push	{r4, r5, lr}
+   14d60:	e59f411c 	ldr	r4, [pc, #284]	; 14e84 <keyboardGetCharReturn$+0x4>
+   14d64:	e5940000 	ldr	r0, [r4]
+   14d68:	e3300000 	teq	r0, #0
+   14d6c:	1a000009 	bne	14d98 <haveKeyboards$>
 
-00014d5c <noKeyboardFound$>:
-   14d5c:	ebffebe6 	bl	fcfc <UsbCheckForChange>
-   14d60:	ebffd130 	bl	9228 <KeyboardCount>
-   14d64:	e3300000 	teq	r0, #0
-   14d68:	05840000 	streq	r0, [r4]
-   14d6c:	08bd8030 	popeq	{r4, r5, pc}
-   14d70:	e3a00000 	mov	r0, #0
-   14d74:	ebffcf66 	bl	8b14 <KeyboardGetAddress>
+00014d70 <noKeyboardFound$>:
+   14d70:	ebffebe1 	bl	fcfc <UsbCheckForChange>
+   14d74:	ebffd12b 	bl	9228 <KeyboardCount>
    14d78:	e3300000 	teq	r0, #0
-   14d7c:	08bd8030 	popeq	{r4, r5, pc}
-   14d80:	e5840000 	str	r0, [r4]
+   14d7c:	05840000 	streq	r0, [r4]
+   14d80:	08bd8030 	popeq	{r4, r5, pc}
+   14d84:	e3a00000 	mov	r0, #0
+   14d88:	ebffcf61 	bl	8b14 <KeyboardGetAddress>
+   14d8c:	e3300000 	teq	r0, #0
+   14d90:	08bd8030 	popeq	{r4, r5, pc}
+   14d94:	e5840000 	str	r0, [r4]
 
-00014d84 <haveKeyboards$>:
-   14d84:	e3a05000 	mov	r5, #0
+00014d98 <haveKeyboards$>:
+   14d98:	e3a05000 	mov	r5, #0
 
-00014d88 <loadKeys$>:
-   14d88:	e5940000 	ldr	r0, [r4]
-   14d8c:	e1a01005 	mov	r1, r5
-   14d90:	ebffd2ed 	bl	994c <KeyboardGetKeyDown>
-   14d94:	e59f115c 	ldr	r1, [pc, #348]	; 14ef8 <keyboardGetCharReturn$+0x8>
-   14d98:	e0811085 	add	r1, r1, r5, lsl #1
-   14d9c:	e1c100b0 	strh	r0, [r1]
-   14da0:	e2855001 	add	r5, r5, #1
-   14da4:	e3550006 	cmp	r5, #6
-   14da8:	bafffff6 	blt	14d88 <loadKeys$>
-   14dac:	e5940000 	ldr	r0, [r4]
-   14db0:	ebffd1ba 	bl	94a0 <KeyboardPoll>
-   14db4:	e3300000 	teq	r0, #0
-   14db8:	1affffe7 	bne	14d5c <noKeyboardFound$>
-   14dbc:	e8bd8030 	pop	{r4, r5, pc}
+00014d9c <loadKeys$>:
+   14d9c:	e5940000 	ldr	r0, [r4]
+   14da0:	e1a01005 	mov	r1, r5
+   14da4:	ebffd2e8 	bl	994c <KeyboardGetKeyDown>
+   14da8:	e59f10d8 	ldr	r1, [pc, #216]	; 14e88 <keyboardGetCharReturn$+0x8>
+   14dac:	e0811085 	add	r1, r1, r5, lsl #1
+   14db0:	e1c100b0 	strh	r0, [r1]
+   14db4:	e2855001 	add	r5, r5, #1
+   14db8:	e3550006 	cmp	r5, #6
+   14dbc:	bafffff6 	blt	14d9c <loadKeys$>
+   14dc0:	e5940000 	ldr	r0, [r4]
+   14dc4:	ebffd1b5 	bl	94a0 <KeyboardPoll>
+   14dc8:	e3300000 	teq	r0, #0
+   14dcc:	1affffe7 	bne	14d70 <noKeyboardFound$>
+   14dd0:	e8bd8030 	pop	{r4, r5, pc}
 
-00014dc0 <KeyboardUpdate>:
-   14dc0:	e92d4030 	push	{r4, r5, lr}
-   14dc4:	e59f0128 	ldr	r0, [pc, #296]	; 14ef4 <keyboardGetCharReturn$+0x4>
-   14dc8:	e5904000 	ldr	r4, [r0]
-   14dcc:	e3340000 	teq	r4, #0
-   14dd0:	1a00000c 	bne	14e08 <haveKeyboard$>
+00014dd4 <KeyWasDown>:
+   14dd4:	e59f10ac 	ldr	r1, [pc, #172]	; 14e88 <keyboardGetCharReturn$+0x8>
+   14dd8:	e3a02000 	mov	r2, #0
 
-00014dd4 <getKeyboard$>:
-   14dd4:	ebffebc8 	bl	fcfc <UsbCheckForChange>
-   14dd8:	ebffd112 	bl	9228 <KeyboardCount>
-   14ddc:	e3300000 	teq	r0, #0
-   14de0:	059f110c 	ldreq	r1, [pc, #268]	; 14ef4 <keyboardGetCharReturn$+0x4>
-   14de4:	05810000 	streq	r0, [r1]
-   14de8:	0a000014 	beq	14e40 <return$>
-   14dec:	e3a00000 	mov	r0, #0
-   14df0:	ebffcf47 	bl	8b14 <KeyboardGetAddress>
-   14df4:	e59f10f8 	ldr	r1, [pc, #248]	; 14ef4 <keyboardGetCharReturn$+0x4>
-   14df8:	e5810000 	str	r0, [r1]
-   14dfc:	e3300000 	teq	r0, #0
-   14e00:	0a00000e 	beq	14e40 <return$>
-   14e04:	e1a04000 	mov	r4, r0
+00014ddc <keySearch$>:
+   14ddc:	e1d130b0 	ldrh	r3, [r1]
+   14de0:	e1330000 	teq	r3, r0
+   14de4:	03a00001 	moveq	r0, #1
+   14de8:	01a0f00e 	moveq	pc, lr
+   14dec:	e2811002 	add	r1, r1, #2
+   14df0:	e2822001 	add	r2, r2, #1
+   14df4:	e3520006 	cmp	r2, #6
+   14df8:	bafffff7 	blt	14ddc <keySearch$>
+   14dfc:	e3a00000 	mov	r0, #0
+   14e00:	e1a0f00e 	mov	pc, lr
 
-00014e08 <haveKeyboard$>:
-   14e08:	e3a05000 	mov	r5, #0
+00014e04 <KeyboardGetChar>:
+   14e04:	e59f0078 	ldr	r0, [pc, #120]	; 14e84 <keyboardGetCharReturn$+0x4>
+   14e08:	e5901000 	ldr	r1, [r0]
+   14e0c:	e3310000 	teq	r1, #0
+   14e10:	03a00000 	moveq	r0, #0
+   14e14:	01a0f00e 	moveq	pc, lr
+   14e18:	e92d4070 	push	{r4, r5, r6, lr}
+   14e1c:	e1a04001 	mov	r4, r1
+   14e20:	e3a05000 	mov	r5, #0
 
-00014e0c <saveKeys$>:
-   14e0c:	e1a00004 	mov	r0, r4
-   14e10:	e1a01005 	mov	r1, r5
-   14e14:	ebffd2cc 	bl	994c <KeyboardGetKeyDown>
-   14e18:	e59f10d8 	ldr	r1, [pc, #216]	; 14ef8 <keyboardGetCharReturn$+0x8>
-   14e1c:	e0811085 	add	r1, r1, r5, lsl #1
-   14e20:	e1c100b0 	strh	r0, [r1]
-   14e24:	e2855001 	add	r5, r5, #1
-   14e28:	e3550006 	cmp	r5, #6
-   14e2c:	bafffff6 	blt	14e0c <saveKeys$>
-   14e30:	e1a00004 	mov	r0, r4
-   14e34:	ebffd199 	bl	94a0 <KeyboardPoll>
-   14e38:	e3300000 	teq	r0, #0
-   14e3c:	1affffe4 	bne	14dd4 <getKeyboard$>
+00014e24 <keyLoop$>:
+   14e24:	e1a00004 	mov	r0, r4
+   14e28:	e1a01005 	mov	r1, r5
+   14e2c:	ebffd2c6 	bl	994c <KeyboardGetKeyDown>
+   14e30:	e3300000 	teq	r0, #0
+   14e34:	0a000010 	beq	14e7c <keyLoopBreak$>
+   14e38:	e1a06000 	mov	r6, r0
+   14e3c:	ebffffe4 	bl	14dd4 <KeyWasDown>
+   14e40:	e3300000 	teq	r0, #0
+   14e44:	1a000009 	bne	14e70 <keyLoopContinue$>
+   14e48:	e3560068 	cmp	r6, #104	; 0x68
+   14e4c:	aa000007 	bge	14e70 <keyLoopContinue$>
+   14e50:	e1a00004 	mov	r0, r4
+   14e54:	ebffd262 	bl	97e4 <KeyboardGetModifiers>
+   14e58:	e3100022 	tst	r0, #34	; 0x22
+   14e5c:	059f0028 	ldreq	r0, [pc, #40]	; 14e8c <keyboardGetCharReturn$+0xc>
+   14e60:	159f0028 	ldrne	r0, [pc, #40]	; 14e90 <keyboardGetCharReturn$+0x10>
+   14e64:	e7d00006 	ldrb	r0, [r0, r6]
+   14e68:	e3300000 	teq	r0, #0
+   14e6c:	1a000003 	bne	14e80 <keyboardGetCharReturn$>
 
-00014e40 <return$>:
-   14e40:	e8bd8030 	pop	{r4, r5, pc}
+00014e70 <keyLoopContinue$>:
+   14e70:	e2855001 	add	r5, r5, #1
+   14e74:	e3550006 	cmp	r5, #6
+   14e78:	baffffe9 	blt	14e24 <keyLoop$>
 
-00014e44 <KeyWasDown>:
-   14e44:	e59f10ac 	ldr	r1, [pc, #172]	; 14ef8 <keyboardGetCharReturn$+0x8>
-   14e48:	e3a02000 	mov	r2, #0
+00014e7c <keyLoopBreak$>:
+   14e7c:	e3a00000 	mov	r0, #0
 
-00014e4c <keySearch$>:
-   14e4c:	e1d130b0 	ldrh	r3, [r1]
-   14e50:	e1330000 	teq	r3, r0
-   14e54:	03a00001 	moveq	r0, #1
-   14e58:	01a0f00e 	moveq	pc, lr
-   14e5c:	e2811002 	add	r1, r1, #2
-   14e60:	e2822001 	add	r2, r2, #1
-   14e64:	e3520006 	cmp	r2, #6
-   14e68:	bafffff7 	blt	14e4c <keySearch$>
-   14e6c:	e3a00000 	mov	r0, #0
-   14e70:	e1a0f00e 	mov	pc, lr
-
-00014e74 <KeyboardGetChar>:
-   14e74:	e59f0078 	ldr	r0, [pc, #120]	; 14ef4 <keyboardGetCharReturn$+0x4>
-   14e78:	e5901000 	ldr	r1, [r0]
-   14e7c:	e3310000 	teq	r1, #0
-   14e80:	03a00000 	moveq	r0, #0
-   14e84:	01a0f00e 	moveq	pc, lr
-   14e88:	e92d4070 	push	{r4, r5, r6, lr}
-   14e8c:	e1a04001 	mov	r4, r1
-   14e90:	e3a05000 	mov	r5, #0
-
-00014e94 <keyLoop$>:
-   14e94:	e1a00004 	mov	r0, r4
-   14e98:	e1a01005 	mov	r1, r5
-   14e9c:	ebffd2aa 	bl	994c <KeyboardGetKeyDown>
-   14ea0:	e3300000 	teq	r0, #0
-   14ea4:	0a000010 	beq	14eec <keyLoopBreak$>
-   14ea8:	e1a06000 	mov	r6, r0
-   14eac:	ebffffe4 	bl	14e44 <KeyWasDown>
-   14eb0:	e3300000 	teq	r0, #0
-   14eb4:	1a000009 	bne	14ee0 <keyLoopContinue$>
-   14eb8:	e3560068 	cmp	r6, #104	; 0x68
-   14ebc:	aa000007 	bge	14ee0 <keyLoopContinue$>
-   14ec0:	e1a00004 	mov	r0, r4
-   14ec4:	ebffd246 	bl	97e4 <KeyboardGetModifiers>
-   14ec8:	e3100022 	tst	r0, #34	; 0x22
-   14ecc:	059f0028 	ldreq	r0, [pc, #40]	; 14efc <keyboardGetCharReturn$+0xc>
-   14ed0:	159f0028 	ldrne	r0, [pc, #40]	; 14f00 <keyboardGetCharReturn$+0x10>
-   14ed4:	e7d00006 	ldrb	r0, [r0, r6]
-   14ed8:	e3300000 	teq	r0, #0
-   14edc:	1a000003 	bne	14ef0 <keyboardGetCharReturn$>
-
-00014ee0 <keyLoopContinue$>:
-   14ee0:	e2855001 	add	r5, r5, #1
-   14ee4:	e3550006 	cmp	r5, #6
-   14ee8:	baffffe9 	blt	14e94 <keyLoop$>
-
-00014eec <keyLoopBreak$>:
-   14eec:	e3a00000 	mov	r0, #0
-
-00014ef0 <keyboardGetCharReturn$>:
-   14ef0:	e8bd8070 	pop	{r4, r5, r6, pc}
-   14ef4:	00008880 	.word	0x00008880
-   14ef8:	00008884 	.word	0x00008884
-   14efc:	00008890 	.word	0x00008890
-   14f00:	000088f8 	.word	0x000088f8
+00014e80 <keyboardGetCharReturn$>:
+   14e80:	e8bd8070 	pop	{r4, r5, r6, pc}
+   14e84:	00008880 	.word	0x00008880
+   14e88:	00008884 	.word	0x00008884
+   14e8c:	00008890 	.word	0x00008890
+   14e90:	000088f8 	.word	0x000088f8
