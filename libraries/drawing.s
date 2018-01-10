@@ -383,7 +383,6 @@ drawRectangle:
     savedY0 .req r8
     mov x0,r0
     mov y0,r1
-    mov savedY0,r1   
     mov x1,r2
     mov y1,r3
 
@@ -395,6 +394,9 @@ drawRectangle:
     movlt r9, y1
     movlt y1, y0
     movlt y0, r9
+    
+    mov savedY0,y0   
+
     mov r0, x0
     mov r1, y0
     iterateX$:
