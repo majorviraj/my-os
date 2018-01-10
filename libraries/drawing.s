@@ -403,7 +403,7 @@ drawRectangle:
             add r1, #1
             cmp r1, y1
             ble iterateY$ 
-        mov y0,savedY0
+        mov r1,savedY0
         add r0, #1
         cmp r0, x1
         ble iterateX$
@@ -448,6 +448,10 @@ drawFilledCircle:
         mov r1, y
         neg r2, r0
         neg r3, r1
+        add r0, cx
+        add r1, cy
+        add r2, cx
+        add r3, cy
         bl drawLine
 
         mov r0, x
@@ -455,6 +459,10 @@ drawFilledCircle:
         mov r1, y
         neg r0,r0
         neg r3, r1
+        add r0, cx
+        add r1, cy
+        add r2, cx
+        add r3, cy
         bl drawLine
 
         cmp error, #0

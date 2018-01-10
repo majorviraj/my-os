@@ -32,36 +32,23 @@ main:
 
 	noError$:
 
-	ldr r4, =#0
+
+	ldr r0, =#100
+	ldr r1, =#250
+	ldr r2, =#150
+	ldr r3, =#200
+	bl drawRectangle
 
 loop1$:
 	ldr r0, =#512
 	ldr r1, =#384
-	mov r2, r4
+	ldr r2, =#100
 
-	bl drawCircle
+	bl drawFilledCircle
 
-	add r0, r1, #29952
+	ldr r0,=0xFFFF
 	bl setForeColour
 
 	ldr r0, =#10000
 	bl delayMicro
-
-	add r4, #1
-	teq r4, #400
-	bne loop1$
-
-		b noError$
-
-	@ ldr r0, =#1000000
-	@ bl delayMicro	
-
-
-	@ ldr r0, =#107
-	@ mov r1, #5
-	@ mov r2, #5
-
-	@ bl drawCharacter
-
-	@ ldr r0, =#1000000
-	@ bl delayMicro
+	b loop1$
