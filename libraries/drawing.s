@@ -411,7 +411,7 @@ drawRectangle:
         add x0, #1
         cmp x0, x1
         ble iterateX$
-    pop {r4,r5,r6,r7,r8,r9,lr}
+    pop {r4,r5,r6,r7,r8,r9,pc}
     .unreq x0
     .unreq y0
     .unreq x1
