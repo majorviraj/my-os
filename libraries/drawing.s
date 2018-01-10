@@ -372,3 +372,143 @@ drawCircle:
     .unreq error
 
 
+.globl drawRectangle
+drawRectangle:
+
+    push {r4,r5,r6,r7,r8,r9,lr}
+    x0 .req r4
+    y0 .req r5
+    x1 .req r6
+    y1 .req r7
+    savedY0 .req r8
+    mov x0,r0
+    mov y0,r1
+    mov x1,r2
+    mov y1,r3
+
+    cmp x1, x0
+    movlt r9, x1
+    movlt x1, x0
+    movlt x0, r9
+    cmp y1, y0
+    movlt r9, y1
+    movlt y1, y0
+    movlt y0, r9
+    
+    mov savedY0,y0   
+
+    mov r0, x0
+    mov r1, y0
+    iterateX$:
+        iterateY$:
+            mov r0,x0
+            mov r1,y0
+            bl drawPixel
+            add y0, #1
+            cmp y0, y1
+            ble iterateY$ 
+        mov y0,savedY0
+        add x0, #1
+        cmp x0, x1
+        ble iterateX$
+    pop {r4,r5,r6,r7,r8,r9,pc}
+    .unreq x0
+    .unreq y0
+    .unreq x1
+    .unreq y1
+    .unreq savedY0
+
+.globl drawFilledCircle
+drawFilledCircle:
+    
+    push {r4,r5,r6,r7,r8,r9,lr}
+
+    cx .req r4
+    cy .req r5
+    radius .req r6
+
+    cmp r0, #0
+    cmpge r1, #0
+    cmpge r2, #0
+    poplt {r4,r5,r6,r7,r8,r9,pc}
+
+    mov cx, r0
+    mov cy, r1
+    mov radius, r2
+
+    x .req r7
+    y .req r8
+    error .req r9
+
+    mov error, #1
+    sub error, radius
+    mov x, radius
+    sub x, #1
+    mov y, #0
+
+    filledCircleDrawLoop$:
+
+        /*set pixels 8 times*************************************/
+        @line from x,y to -x,y
+        mov r0, x
+        mov r1, y
+        neg r2, r0
+        mov r3, y
+        add r0, cx
+        add r1, cy
+        add r2, cx
+        add r3, cy
+        bl drawLine
+
+        @line from y,x to -y,x
+        mov r0, y
+        mov r1, x
+        neg r2, y
+        mov r3, x
+        add r0, cx
+        add r1, cy
+        add r2, cx
+        add r3, cy
+        bl drawLine
+
+        @line from x,-y to -x,-y
+        mov r0, x
+        neg r1, y
+        neg r2, x
+        neg r3, y
+        add r0, cx
+        add r1, cy
+        add r2, cx
+        add r3, cy
+        bl drawLine
+
+        @line from y,-x to -y,-x
+        mov r0, y
+        neg r1, x
+        neg r2, y
+        neg r3, x
+        add r0, cx
+        add r1, cy
+        add r2, cx
+        add r3, cy
+        bl drawLine
+
+        cmp error, #0
+        add error, y, lsl #1
+        add error, #1
+
+        subge error, x, lsl #1
+        subge x, #1
+
+        add y, #1
+        cmp y, x
+        popgt {r4,r5,r6,r7,r8,r9,pc}
+
+        b filledCircleDrawLoop$ 
+
+    .unreq cx
+    .unreq cy
+    .unreq radius
+    .unreq x
+    .unreq y
+    .unreq error
