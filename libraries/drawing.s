@@ -388,24 +388,26 @@ drawRectangle:
     mov y1,r3
 
     cmp x1, x0
-    movlt r8, x1
+    movlt r9, x1
     movlt x1, x0
     movlt x0, r8
     cmp y1, y0
-    movlt r8, y1
+    movlt r9, y1
     movlt y1, y0
     movlt y0, r8
     mov r0, x0
     mov r1, y0
     iterateX$:
         iterateY$:
+            mov r0,x0
+            mov r1,y0
             bl drawPixel
-            add r1, #1
-            cmp r1, y1
+            add y0, #1
+            cmp y0, y1
             ble iterateY$ 
-        mov r1,savedY0
-        add r0, #1
-        cmp r0, x1
+        mov y0,savedY0
+        add x0, #1
+        cmp x0, x1
         ble iterateX$
     pop {r4,r5,r6,r7,r8,r9,lr}
     .unreq x0
@@ -444,6 +446,7 @@ drawFilledCircle:
     circleDrawLoop$:
 
         /*set pixels 8 times*************************************/
+        @line from x,y to -x,-y
         mov r0, x
         mov r1, y
         neg r2, r0
@@ -454,6 +457,7 @@ drawFilledCircle:
         add r3, cy
         bl drawLine
 
+        @line from y,x to -y,-x
         mov r0, x
         mov r2,r0
         mov r1, y
