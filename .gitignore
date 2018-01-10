@@ -4,4 +4,5 @@
 *.img
 *.o
 *.sh
-
+*.list
+*.nn
