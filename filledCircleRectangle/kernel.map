@@ -276,7 +276,7 @@ LOAD ../libraries//libcsud.a
  .ARM.attributes
                 0x00000000000148a8       0x32 ../libraries//libcsud.a(platform.broadcom2835.c.o)
 
-.text           0x00000000000148dc      0x7b4
+.text           0x00000000000148dc      0x804
  *.c.o(.text)
  *(.text)
  .text          0x00000000000148dc       0x70 build/mailbox.o
@@ -289,7 +289,7 @@ LOAD ../libraries//libcsud.a
                 0x00000000000149b8                GetTimerBase
                 0x00000000000149c0                GetTimeStamp
                 0x00000000000149d0                delayMicro
- .text          0x00000000000149f8      0x3fc build/drawing.o
+ .text          0x00000000000149f8      0x448 build/drawing.o
                 0x00000000000149f8                setGraphicsAddress
                 0x0000000000014a04                setForeColour
                 0x0000000000014a18                drawPixel
@@ -298,18 +298,18 @@ LOAD ../libraries//libcsud.a
                 0x0000000000014b4c                printString
                 0x0000000000014bc4                drawCircle
                 0x0000000000014cdc                drawRectangle
-                0x0000000000014d40                drawFilledCircle
- .text          0x0000000000014df4       0x70 build/tag.o
-                0x0000000000014df4                FindTag
- .text          0x0000000000014e64       0x80 build/gpio.o
-                0x0000000000014e64                GetGpioAddress
-                0x0000000000014e6c                SetGpioFunction
-                0x0000000000014ea4                SetGpio
- .text          0x0000000000014ee4      0x138 build/keyboard.o
-                0x0000000000014ee4                keyboardInit
-                0x0000000000014f5c                KeyWasDown
-                0x0000000000014f8c                KeyboardGetChar
- .text          0x000000000001501c       0x74 build/main.o
+                0x0000000000014d48                drawFilledCircle
+ .text          0x0000000000014e40       0x70 build/tag.o
+                0x0000000000014e40                FindTag
+ .text          0x0000000000014eb0       0x80 build/gpio.o
+                0x0000000000014eb0                GetGpioAddress
+                0x0000000000014eb8                SetGpioFunction
+                0x0000000000014ef0                SetGpio
+ .text          0x0000000000014f30      0x138 build/keyboard.o
+                0x0000000000014f30                keyboardInit
+                0x0000000000014fa8                KeyWasDown
+                0x0000000000014fd8                KeyboardGetChar
+ .text          0x0000000000015068       0x78 build/main.o
 
 /DISCARD/
  *(*)

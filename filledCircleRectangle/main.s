@@ -33,10 +33,10 @@ main:
 	noError$:
 
 
-	ldr r0, =#100
-	ldr r1, =#250
-	ldr r2, =#150
-	ldr r3, =#200
+	ldr r0, =#0
+	ldr r1, =#0
+	ldr r2, =#200
+	ldr r3, =#300
 	bl drawRectangle
 
 loop1$:

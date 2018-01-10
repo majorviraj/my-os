@@ -5,7 +5,7 @@ build/output.elf:     file format elf32-littlearm
 Disassembly of section .init:
 
 00008000 <_start>:
-    8000:	ea003405 	b	1501c <main>
+    8000:	ea003418 	b	15068 <main>
 
 Disassembly of section .data:
 
@@ -7982,19 +7982,19 @@ Disassembly of section .text:
    149f4:	20003000 	.word	0x20003000
 
 000149f8 <setGraphicsAddress>:
-   149f8:	e59f13e4 	ldr	r1, [pc, #996]	; 14de4 <circleDrawLoop$+0x70>
+   149f8:	e59f1430 	ldr	r1, [pc, #1072]	; 14e30 <filledCircleDrawLoop$+0xb4>
    149fc:	e5810000 	str	r0, [r1]
    14a00:	e1a0f00e 	mov	pc, lr
 
 00014a04 <setForeColour>:
    14a04:	e3500801 	cmp	r0, #65536	; 0x10000
    14a08:	21a0f00e 	movcs	pc, lr
-   14a0c:	e59f13d4 	ldr	r1, [pc, #980]	; 14de8 <circleDrawLoop$+0x74>
+   14a0c:	e59f1420 	ldr	r1, [pc, #1056]	; 14e34 <filledCircleDrawLoop$+0xb8>
    14a10:	e1c100b0 	strh	r0, [r1]
    14a14:	e1a0f00e 	mov	pc, lr
 
 00014a18 <drawPixel>:
-   14a18:	e59f23c4 	ldr	r2, [pc, #964]	; 14de4 <circleDrawLoop$+0x70>
+   14a18:	e59f2410 	ldr	r2, [pc, #1040]	; 14e30 <filledCircleDrawLoop$+0xb4>
    14a1c:	e5922000 	ldr	r2, [r2]
    14a20:	e592300c 	ldr	r3, [r2, #12]
    14a24:	e1510003 	cmp	r1, r3
@@ -8003,11 +8003,11 @@ Disassembly of section .text:
    14a30:	e1500003 	cmp	r0, r3
    14a34:	21a0f00e 	movcs	pc, lr
    14a38:	e0220391 	mla	r2, r1, r3, r0
-   14a3c:	e59f33a8 	ldr	r3, [pc, #936]	; 14dec <circleDrawLoop$+0x78>
+   14a3c:	e59f33f4 	ldr	r3, [pc, #1012]	; 14e38 <filledCircleDrawLoop$+0xbc>
    14a40:	e5933020 	ldr	r3, [r3, #32]
    14a44:	e0833082 	add	r3, r3, r2, lsl #1
    14a48:	e1a02003 	mov	r2, r3
-   14a4c:	e59f0394 	ldr	r0, [pc, #916]	; 14de8 <circleDrawLoop$+0x74>
+   14a4c:	e59f03e0 	ldr	r0, [pc, #992]	; 14e34 <filledCircleDrawLoop$+0xb8>
    14a50:	e1d000b0 	ldrh	r0, [r0]
    14a54:	e1c200b0 	strh	r0, [r2]
    14a58:	e1a0f00e 	mov	pc, lr
@@ -8056,7 +8056,7 @@ Disassembly of section .text:
    14aec:	e1a04000 	mov	r4, r0
    14af0:	e1a05001 	mov	r5, r1
    14af4:	e1a06002 	mov	r6, r2
-   14af8:	e59f72f0 	ldr	r7, [pc, #752]	; 14df0 <circleDrawLoop$+0x7c>
+   14af8:	e59f733c 	ldr	r7, [pc, #828]	; 14e3c <filledCircleDrawLoop$+0xc0>
    14afc:	e0877204 	add	r7, r7, r4, lsl #4
 
 00014b00 <printChar$>:
@@ -8196,287 +8196,307 @@ Disassembly of section .text:
    14cdc:	e92d43f0 	push	{r4, r5, r6, r7, r8, r9, lr}
    14ce0:	e1a04000 	mov	r4, r0
    14ce4:	e1a05001 	mov	r5, r1
-   14ce8:	e1a08001 	mov	r8, r1
-   14cec:	e1a06002 	mov	r6, r2
-   14cf0:	e1a07003 	mov	r7, r3
-   14cf4:	e1560004 	cmp	r6, r4
-   14cf8:	b1a08006 	movlt	r8, r6
-   14cfc:	b1a06004 	movlt	r6, r4
-   14d00:	b1a04008 	movlt	r4, r8
-   14d04:	e1570005 	cmp	r7, r5
-   14d08:	b1a08007 	movlt	r8, r7
-   14d0c:	b1a07005 	movlt	r7, r5
-   14d10:	b1a05008 	movlt	r5, r8
+   14ce8:	e1a06002 	mov	r6, r2
+   14cec:	e1a07003 	mov	r7, r3
+   14cf0:	e1560004 	cmp	r6, r4
+   14cf4:	b1a09006 	movlt	r9, r6
+   14cf8:	b1a06004 	movlt	r6, r4
+   14cfc:	b1a04009 	movlt	r4, r9
+   14d00:	e1570005 	cmp	r7, r5
+   14d04:	b1a09007 	movlt	r9, r7
+   14d08:	b1a07005 	movlt	r7, r5
+   14d0c:	b1a05009 	movlt	r5, r9
+   14d10:	e1a08005 	mov	r8, r5
    14d14:	e1a00004 	mov	r0, r4
    14d18:	e1a01005 	mov	r1, r5
 
 00014d1c <iterateX$>:
-   14d1c:	ebffff3d 	bl	14a18 <drawPixel>
-   14d20:	e2811001 	add	r1, r1, #1
-   14d24:	e1510007 	cmp	r1, r7
-   14d28:	dafffffb 	ble	14d1c <iterateX$>
-   14d2c:	e1a01008 	mov	r1, r8
-   14d30:	e2800001 	add	r0, r0, #1
-   14d34:	e1500006 	cmp	r0, r6
-   14d38:	dafffff7 	ble	14d1c <iterateX$>
-   14d3c:	e8bd43f0 	pop	{r4, r5, r6, r7, r8, r9, lr}
+   14d1c:	e1a00004 	mov	r0, r4
+   14d20:	e1a01005 	mov	r1, r5
+   14d24:	ebffff3b 	bl	14a18 <drawPixel>
+   14d28:	e2855001 	add	r5, r5, #1
+   14d2c:	e1550007 	cmp	r5, r7
+   14d30:	dafffff9 	ble	14d1c <iterateX$>
+   14d34:	e1a05008 	mov	r5, r8
+   14d38:	e2844001 	add	r4, r4, #1
+   14d3c:	e1540006 	cmp	r4, r6
+   14d40:	dafffff5 	ble	14d1c <iterateX$>
+   14d44:	e8bd83f0 	pop	{r4, r5, r6, r7, r8, r9, pc}
 
-00014d40 <drawFilledCircle>:
-   14d40:	e92d43f0 	push	{r4, r5, r6, r7, r8, r9, lr}
-   14d44:	e3500000 	cmp	r0, #0
-   14d48:	a3510000 	cmpge	r1, #0
-   14d4c:	a3520000 	cmpge	r2, #0
-   14d50:	b8bd83f0 	poplt	{r4, r5, r6, r7, r8, r9, pc}
-   14d54:	e1a04000 	mov	r4, r0
-   14d58:	e1a05001 	mov	r5, r1
-   14d5c:	e1a06002 	mov	r6, r2
-   14d60:	e3a09001 	mov	r9, #1
-   14d64:	e0499006 	sub	r9, r9, r6
-   14d68:	e1a07006 	mov	r7, r6
-   14d6c:	e2477001 	sub	r7, r7, #1
-   14d70:	e3a08000 	mov	r8, #0
+00014d48 <drawFilledCircle>:
+   14d48:	e92d43f0 	push	{r4, r5, r6, r7, r8, r9, lr}
+   14d4c:	e3500000 	cmp	r0, #0
+   14d50:	a3510000 	cmpge	r1, #0
+   14d54:	a3520000 	cmpge	r2, #0
+   14d58:	b8bd83f0 	poplt	{r4, r5, r6, r7, r8, r9, pc}
+   14d5c:	e1a04000 	mov	r4, r0
+   14d60:	e1a05001 	mov	r5, r1
+   14d64:	e1a06002 	mov	r6, r2
+   14d68:	e3a09001 	mov	r9, #1
+   14d6c:	e0499006 	sub	r9, r9, r6
+   14d70:	e1a07006 	mov	r7, r6
+   14d74:	e2477001 	sub	r7, r7, #1
+   14d78:	e3a08000 	mov	r8, #0
 
-00014d74 <circleDrawLoop$>:
-   14d74:	e1a00007 	mov	r0, r7
-   14d78:	e1a01008 	mov	r1, r8
-   14d7c:	e2602000 	rsb	r2, r0, #0
-   14d80:	e2613000 	rsb	r3, r1, #0
-   14d84:	e0800004 	add	r0, r0, r4
-   14d88:	e0811005 	add	r1, r1, r5
-   14d8c:	e0822004 	add	r2, r2, r4
-   14d90:	e0833005 	add	r3, r3, r5
-   14d94:	ebffff30 	bl	14a5c <drawLine>
-   14d98:	e1a00007 	mov	r0, r7
-   14d9c:	e1a02000 	mov	r2, r0
-   14da0:	e1a01008 	mov	r1, r8
-   14da4:	e2600000 	rsb	r0, r0, #0
-   14da8:	e2613000 	rsb	r3, r1, #0
-   14dac:	e0800004 	add	r0, r0, r4
-   14db0:	e0811005 	add	r1, r1, r5
-   14db4:	e0822004 	add	r2, r2, r4
-   14db8:	e0833005 	add	r3, r3, r5
-   14dbc:	ebffff26 	bl	14a5c <drawLine>
-   14dc0:	e3590000 	cmp	r9, #0
-   14dc4:	e0899088 	add	r9, r9, r8, lsl #1
-   14dc8:	e2899001 	add	r9, r9, #1
-   14dcc:	a0499087 	subge	r9, r9, r7, lsl #1
-   14dd0:	a2477001 	subge	r7, r7, #1
-   14dd4:	e2888001 	add	r8, r8, #1
-   14dd8:	e1580007 	cmp	r8, r7
-   14ddc:	c8bd83f0 	popgt	{r4, r5, r6, r7, r8, r9, pc}
-   14de0:	eaffffe3 	b	14d74 <circleDrawLoop$>
-   14de4:	00008044 	.word	0x00008044
-   14de8:	00008040 	.word	0x00008040
-   14dec:	00008010 	.word	0x00008010
-   14df0:	00008050 	.word	0x00008050
+00014d7c <filledCircleDrawLoop$>:
+   14d7c:	e1a00007 	mov	r0, r7
+   14d80:	e1a01008 	mov	r1, r8
+   14d84:	e2602000 	rsb	r2, r0, #0
+   14d88:	e1a03008 	mov	r3, r8
+   14d8c:	e0800004 	add	r0, r0, r4
+   14d90:	e0811005 	add	r1, r1, r5
+   14d94:	e0822004 	add	r2, r2, r4
+   14d98:	e0833005 	add	r3, r3, r5
+   14d9c:	ebffff2e 	bl	14a5c <drawLine>
+   14da0:	e1a00008 	mov	r0, r8
+   14da4:	e1a01007 	mov	r1, r7
+   14da8:	e2682000 	rsb	r2, r8, #0
+   14dac:	e1a03007 	mov	r3, r7
+   14db0:	e0800004 	add	r0, r0, r4
+   14db4:	e0811005 	add	r1, r1, r5
+   14db8:	e0822004 	add	r2, r2, r4
+   14dbc:	e0833005 	add	r3, r3, r5
+   14dc0:	ebffff25 	bl	14a5c <drawLine>
+   14dc4:	e1a00007 	mov	r0, r7
+   14dc8:	e2681000 	rsb	r1, r8, #0
+   14dcc:	e2672000 	rsb	r2, r7, #0
+   14dd0:	e2683000 	rsb	r3, r8, #0
+   14dd4:	e0800004 	add	r0, r0, r4
+   14dd8:	e0811005 	add	r1, r1, r5
+   14ddc:	e0822004 	add	r2, r2, r4
+   14de0:	e0833005 	add	r3, r3, r5
+   14de4:	ebffff1c 	bl	14a5c <drawLine>
+   14de8:	e1a00008 	mov	r0, r8
+   14dec:	e2671000 	rsb	r1, r7, #0
+   14df0:	e2682000 	rsb	r2, r8, #0
+   14df4:	e2673000 	rsb	r3, r7, #0
+   14df8:	e0800004 	add	r0, r0, r4
+   14dfc:	e0811005 	add	r1, r1, r5
+   14e00:	e0822004 	add	r2, r2, r4
+   14e04:	e0833005 	add	r3, r3, r5
+   14e08:	ebffff13 	bl	14a5c <drawLine>
+   14e0c:	e3590000 	cmp	r9, #0
+   14e10:	e0899088 	add	r9, r9, r8, lsl #1
+   14e14:	e2899001 	add	r9, r9, #1
+   14e18:	a0499087 	subge	r9, r9, r7, lsl #1
+   14e1c:	a2477001 	subge	r7, r7, #1
+   14e20:	e2888001 	add	r8, r8, #1
+   14e24:	e1580007 	cmp	r8, r7
+   14e28:	c8bd83f0 	popgt	{r4, r5, r6, r7, r8, r9, pc}
+   14e2c:	eaffffd2 	b	14d7c <filledCircleDrawLoop$>
+   14e30:	00008044 	.word	0x00008044
+   14e34:	00008040 	.word	0x00008040
+   14e38:	00008010 	.word	0x00008010
+   14e3c:	00008050 	.word	0x00008050
 
-00014df4 <FindTag>:
-   14df4:	e2400001 	sub	r0, r0, #1
-   14df8:	e3500008 	cmp	r0, #8
-   14dfc:	83a00000 	movhi	r0, #0
-   14e00:	81a0f00e 	movhi	pc, lr
-   14e04:	e59f1054 	ldr	r1, [pc, #84]	; 14e60 <tagLoop$+0x2c>
+00014e40 <FindTag>:
+   14e40:	e2400001 	sub	r0, r0, #1
+   14e44:	e3500008 	cmp	r0, #8
+   14e48:	83a00000 	movhi	r0, #0
+   14e4c:	81a0f00e 	movhi	pc, lr
+   14e50:	e59f1054 	ldr	r1, [pc, #84]	; 14eac <tagLoop$+0x2c>
 
-00014e08 <tagReturn$>:
-   14e08:	e0812100 	add	r2, r1, r0, lsl #2
-   14e0c:	e5922000 	ldr	r2, [r2]
-   14e10:	e3320000 	teq	r2, #0
-   14e14:	11a00002 	movne	r0, r2
-   14e18:	11a0f00e 	movne	pc, lr
-   14e1c:	e5912000 	ldr	r2, [r1]
-   14e20:	e3320000 	teq	r2, #0
-   14e24:	13a00000 	movne	r0, #0
-   14e28:	11a0f00e 	movne	pc, lr
-   14e2c:	e3a02c01 	mov	r2, #256	; 0x100
-   14e30:	e52d4004 	push	{r4}		; (str r4, [sp, #-4]!)
+00014e54 <tagReturn$>:
+   14e54:	e0812100 	add	r2, r1, r0, lsl #2
+   14e58:	e5922000 	ldr	r2, [r2]
+   14e5c:	e3320000 	teq	r2, #0
+   14e60:	11a00002 	movne	r0, r2
+   14e64:	11a0f00e 	movne	pc, lr
+   14e68:	e5912000 	ldr	r2, [r1]
+   14e6c:	e3320000 	teq	r2, #0
+   14e70:	13a00000 	movne	r0, #0
+   14e74:	11a0f00e 	movne	pc, lr
+   14e78:	e3a02c01 	mov	r2, #256	; 0x100
+   14e7c:	e52d4004 	push	{r4}		; (str r4, [sp, #-4]!)
 
-00014e34 <tagLoop$>:
-   14e34:	e1d230b4 	ldrh	r3, [r2, #4]
-   14e38:	e2533001 	subs	r3, r3, #1
-   14e3c:	b49d4004 	poplt	{r4}		; (ldrlt r4, [sp], #4)
-   14e40:	bafffff0 	blt	14e08 <tagReturn$>
-   14e44:	e0813103 	add	r3, r1, r3, lsl #2
-   14e48:	e5934000 	ldr	r4, [r3]
-   14e4c:	e3340000 	teq	r4, #0
-   14e50:	05832000 	streq	r2, [r3]
-   14e54:	e5923000 	ldr	r3, [r2]
-   14e58:	e0822103 	add	r2, r2, r3, lsl #2
-   14e5c:	eafffff4 	b	14e34 <tagLoop$>
-   14e60:	00008850 	.word	0x00008850
+00014e80 <tagLoop$>:
+   14e80:	e1d230b4 	ldrh	r3, [r2, #4]
+   14e84:	e2533001 	subs	r3, r3, #1
+   14e88:	b49d4004 	poplt	{r4}		; (ldrlt r4, [sp], #4)
+   14e8c:	bafffff0 	blt	14e54 <tagReturn$>
+   14e90:	e0813103 	add	r3, r1, r3, lsl #2
+   14e94:	e5934000 	ldr	r4, [r3]
+   14e98:	e3340000 	teq	r4, #0
+   14e9c:	05832000 	streq	r2, [r3]
+   14ea0:	e5923000 	ldr	r3, [r2]
+   14ea4:	e0822103 	add	r2, r2, r3, lsl #2
+   14ea8:	eafffff4 	b	14e80 <tagLoop$>
+   14eac:	00008850 	.word	0x00008850
 
-00014e64 <GetGpioAddress>:
-   14e64:	e59f0074 	ldr	r0, [pc, #116]	; 14ee0 <SetGpio+0x3c>
-   14e68:	e1a0f00e 	mov	pc, lr
+00014eb0 <GetGpioAddress>:
+   14eb0:	e59f0074 	ldr	r0, [pc, #116]	; 14f2c <SetGpio+0x3c>
+   14eb4:	e1a0f00e 	mov	pc, lr
 
-00014e6c <SetGpioFunction>:
-   14e6c:	e3500035 	cmp	r0, #53	; 0x35
-   14e70:	93510007 	cmpls	r1, #7
-   14e74:	81a0f00e 	movhi	pc, lr
-   14e78:	e52de004 	push	{lr}		; (str lr, [sp, #-4]!)
-   14e7c:	e1a02000 	mov	r2, r0
-   14e80:	ebfffff7 	bl	14e64 <GetGpioAddress>
+00014eb8 <SetGpioFunction>:
+   14eb8:	e3500035 	cmp	r0, #53	; 0x35
+   14ebc:	93510007 	cmpls	r1, #7
+   14ec0:	81a0f00e 	movhi	pc, lr
+   14ec4:	e52de004 	push	{lr}		; (str lr, [sp, #-4]!)
+   14ec8:	e1a02000 	mov	r2, r0
+   14ecc:	ebfffff7 	bl	14eb0 <GetGpioAddress>
 
-00014e84 <functionLoop$>:
-   14e84:	e3520009 	cmp	r2, #9
-   14e88:	8242200a 	subhi	r2, r2, #10
-   14e8c:	82800004 	addhi	r0, r0, #4
-   14e90:	8afffffb 	bhi	14e84 <functionLoop$>
-   14e94:	e0822082 	add	r2, r2, r2, lsl #1
-   14e98:	e1a01211 	lsl	r1, r1, r2
-   14e9c:	e5801000 	str	r1, [r0]
-   14ea0:	e49df004 	pop	{pc}		; (ldr pc, [sp], #4)
+00014ed0 <functionLoop$>:
+   14ed0:	e3520009 	cmp	r2, #9
+   14ed4:	8242200a 	subhi	r2, r2, #10
+   14ed8:	82800004 	addhi	r0, r0, #4
+   14edc:	8afffffb 	bhi	14ed0 <functionLoop$>
+   14ee0:	e0822082 	add	r2, r2, r2, lsl #1
+   14ee4:	e1a01211 	lsl	r1, r1, r2
+   14ee8:	e5801000 	str	r1, [r0]
+   14eec:	e49df004 	pop	{pc}		; (ldr pc, [sp], #4)
 
-00014ea4 <SetGpio>:
-   14ea4:	e3500035 	cmp	r0, #53	; 0x35
-   14ea8:	81a0f00e 	movhi	pc, lr
-   14eac:	e52de004 	push	{lr}		; (str lr, [sp, #-4]!)
-   14eb0:	e1a02000 	mov	r2, r0
-   14eb4:	ebffffea 	bl	14e64 <GetGpioAddress>
-   14eb8:	e1a032a2 	lsr	r3, r2, #5
-   14ebc:	e1a03103 	lsl	r3, r3, #2
-   14ec0:	e0800003 	add	r0, r0, r3
-   14ec4:	e202201f 	and	r2, r2, #31
-   14ec8:	e3a03001 	mov	r3, #1
-   14ecc:	e1a03213 	lsl	r3, r3, r2
-   14ed0:	e3310000 	teq	r1, #0
-   14ed4:	05803028 	streq	r3, [r0, #40]	; 0x28
-   14ed8:	1580301c 	strne	r3, [r0, #28]
-   14edc:	e49df004 	pop	{pc}		; (ldr pc, [sp], #4)
-   14ee0:	20200000 	.word	0x20200000
+00014ef0 <SetGpio>:
+   14ef0:	e3500035 	cmp	r0, #53	; 0x35
+   14ef4:	81a0f00e 	movhi	pc, lr
+   14ef8:	e52de004 	push	{lr}		; (str lr, [sp, #-4]!)
+   14efc:	e1a02000 	mov	r2, r0
+   14f00:	ebffffea 	bl	14eb0 <GetGpioAddress>
+   14f04:	e1a032a2 	lsr	r3, r2, #5
+   14f08:	e1a03103 	lsl	r3, r3, #2
+   14f0c:	e0800003 	add	r0, r0, r3
+   14f10:	e202201f 	and	r2, r2, #31
+   14f14:	e3a03001 	mov	r3, #1
+   14f18:	e1a03213 	lsl	r3, r3, r2
+   14f1c:	e3310000 	teq	r1, #0
+   14f20:	05803028 	streq	r3, [r0, #40]	; 0x28
+   14f24:	1580301c 	strne	r3, [r0, #28]
+   14f28:	e49df004 	pop	{pc}		; (ldr pc, [sp], #4)
+   14f2c:	20200000 	.word	0x20200000
 
-00014ee4 <keyboardInit>:
-   14ee4:	e92d4030 	push	{r4, r5, lr}
-   14ee8:	e59f411c 	ldr	r4, [pc, #284]	; 1500c <keyboardGetCharReturn$+0x4>
-   14eec:	e5940000 	ldr	r0, [r4]
-   14ef0:	e3300000 	teq	r0, #0
-   14ef4:	1a000009 	bne	14f20 <haveKeyboards$>
+00014f30 <keyboardInit>:
+   14f30:	e92d4030 	push	{r4, r5, lr}
+   14f34:	e59f411c 	ldr	r4, [pc, #284]	; 15058 <keyboardGetCharReturn$+0x4>
+   14f38:	e5940000 	ldr	r0, [r4]
+   14f3c:	e3300000 	teq	r0, #0
+   14f40:	1a000009 	bne	14f6c <haveKeyboards$>
 
-00014ef8 <noKeyboardFound$>:
-   14ef8:	ebffeb7d 	bl	fcf4 <UsbCheckForChange>
-   14efc:	ebffd0c7 	bl	9220 <KeyboardCount>
-   14f00:	e3300000 	teq	r0, #0
-   14f04:	05840000 	streq	r0, [r4]
-   14f08:	08bd8030 	popeq	{r4, r5, pc}
-   14f0c:	e3a00000 	mov	r0, #0
-   14f10:	ebffcefd 	bl	8b0c <KeyboardGetAddress>
-   14f14:	e3300000 	teq	r0, #0
-   14f18:	08bd8030 	popeq	{r4, r5, pc}
-   14f1c:	e5840000 	str	r0, [r4]
+00014f44 <noKeyboardFound$>:
+   14f44:	ebffeb6a 	bl	fcf4 <UsbCheckForChange>
+   14f48:	ebffd0b4 	bl	9220 <KeyboardCount>
+   14f4c:	e3300000 	teq	r0, #0
+   14f50:	05840000 	streq	r0, [r4]
+   14f54:	08bd8030 	popeq	{r4, r5, pc}
+   14f58:	e3a00000 	mov	r0, #0
+   14f5c:	ebffceea 	bl	8b0c <KeyboardGetAddress>
+   14f60:	e3300000 	teq	r0, #0
+   14f64:	08bd8030 	popeq	{r4, r5, pc}
+   14f68:	e5840000 	str	r0, [r4]
 
-00014f20 <haveKeyboards$>:
-   14f20:	e3a05000 	mov	r5, #0
+00014f6c <haveKeyboards$>:
+   14f6c:	e3a05000 	mov	r5, #0
 
-00014f24 <loadKeys$>:
-   14f24:	e5940000 	ldr	r0, [r4]
-   14f28:	e1a01005 	mov	r1, r5
-   14f2c:	ebffd284 	bl	9944 <KeyboardGetKeyDown>
-   14f30:	e59f10d8 	ldr	r1, [pc, #216]	; 15010 <keyboardGetCharReturn$+0x8>
-   14f34:	e0811085 	add	r1, r1, r5, lsl #1
-   14f38:	e1c100b0 	strh	r0, [r1]
-   14f3c:	e2855001 	add	r5, r5, #1
-   14f40:	e3550006 	cmp	r5, #6
-   14f44:	bafffff6 	blt	14f24 <loadKeys$>
-   14f48:	e5940000 	ldr	r0, [r4]
-   14f4c:	ebffd151 	bl	9498 <KeyboardPoll>
-   14f50:	e3300000 	teq	r0, #0
-   14f54:	1affffe7 	bne	14ef8 <noKeyboardFound$>
-   14f58:	e8bd8030 	pop	{r4, r5, pc}
+00014f70 <loadKeys$>:
+   14f70:	e5940000 	ldr	r0, [r4]
+   14f74:	e1a01005 	mov	r1, r5
+   14f78:	ebffd271 	bl	9944 <KeyboardGetKeyDown>
+   14f7c:	e59f10d8 	ldr	r1, [pc, #216]	; 1505c <keyboardGetCharReturn$+0x8>
+   14f80:	e0811085 	add	r1, r1, r5, lsl #1
+   14f84:	e1c100b0 	strh	r0, [r1]
+   14f88:	e2855001 	add	r5, r5, #1
+   14f8c:	e3550006 	cmp	r5, #6
+   14f90:	bafffff6 	blt	14f70 <loadKeys$>
+   14f94:	e5940000 	ldr	r0, [r4]
+   14f98:	ebffd13e 	bl	9498 <KeyboardPoll>
+   14f9c:	e3300000 	teq	r0, #0
+   14fa0:	1affffe7 	bne	14f44 <noKeyboardFound$>
+   14fa4:	e8bd8030 	pop	{r4, r5, pc}
 
-00014f5c <KeyWasDown>:
-   14f5c:	e59f10ac 	ldr	r1, [pc, #172]	; 15010 <keyboardGetCharReturn$+0x8>
-   14f60:	e3a02000 	mov	r2, #0
+00014fa8 <KeyWasDown>:
+   14fa8:	e59f10ac 	ldr	r1, [pc, #172]	; 1505c <keyboardGetCharReturn$+0x8>
+   14fac:	e3a02000 	mov	r2, #0
 
-00014f64 <keySearch$>:
-   14f64:	e1d130b0 	ldrh	r3, [r1]
-   14f68:	e1330000 	teq	r3, r0
-   14f6c:	03a00001 	moveq	r0, #1
-   14f70:	01a0f00e 	moveq	pc, lr
-   14f74:	e2811002 	add	r1, r1, #2
-   14f78:	e2822001 	add	r2, r2, #1
-   14f7c:	e3520006 	cmp	r2, #6
-   14f80:	bafffff7 	blt	14f64 <keySearch$>
-   14f84:	e3a00000 	mov	r0, #0
-   14f88:	e1a0f00e 	mov	pc, lr
+00014fb0 <keySearch$>:
+   14fb0:	e1d130b0 	ldrh	r3, [r1]
+   14fb4:	e1330000 	teq	r3, r0
+   14fb8:	03a00001 	moveq	r0, #1
+   14fbc:	01a0f00e 	moveq	pc, lr
+   14fc0:	e2811002 	add	r1, r1, #2
+   14fc4:	e2822001 	add	r2, r2, #1
+   14fc8:	e3520006 	cmp	r2, #6
+   14fcc:	bafffff7 	blt	14fb0 <keySearch$>
+   14fd0:	e3a00000 	mov	r0, #0
+   14fd4:	e1a0f00e 	mov	pc, lr
 
-00014f8c <KeyboardGetChar>:
-   14f8c:	e59f0078 	ldr	r0, [pc, #120]	; 1500c <keyboardGetCharReturn$+0x4>
-   14f90:	e5901000 	ldr	r1, [r0]
-   14f94:	e3310000 	teq	r1, #0
-   14f98:	03a00000 	moveq	r0, #0
-   14f9c:	01a0f00e 	moveq	pc, lr
-   14fa0:	e92d4070 	push	{r4, r5, r6, lr}
-   14fa4:	e1a04001 	mov	r4, r1
-   14fa8:	e3a05000 	mov	r5, #0
+00014fd8 <KeyboardGetChar>:
+   14fd8:	e59f0078 	ldr	r0, [pc, #120]	; 15058 <keyboardGetCharReturn$+0x4>
+   14fdc:	e5901000 	ldr	r1, [r0]
+   14fe0:	e3310000 	teq	r1, #0
+   14fe4:	03a00000 	moveq	r0, #0
+   14fe8:	01a0f00e 	moveq	pc, lr
+   14fec:	e92d4070 	push	{r4, r5, r6, lr}
+   14ff0:	e1a04001 	mov	r4, r1
+   14ff4:	e3a05000 	mov	r5, #0
 
-00014fac <keyLoop$>:
-   14fac:	e1a00004 	mov	r0, r4
-   14fb0:	e1a01005 	mov	r1, r5
-   14fb4:	ebffd262 	bl	9944 <KeyboardGetKeyDown>
-   14fb8:	e3300000 	teq	r0, #0
-   14fbc:	0a000010 	beq	15004 <keyLoopBreak$>
-   14fc0:	e1a06000 	mov	r6, r0
-   14fc4:	ebffffe4 	bl	14f5c <KeyWasDown>
-   14fc8:	e3300000 	teq	r0, #0
-   14fcc:	1a000009 	bne	14ff8 <keyLoopContinue$>
-   14fd0:	e3560068 	cmp	r6, #104	; 0x68
-   14fd4:	aa000007 	bge	14ff8 <keyLoopContinue$>
-   14fd8:	e1a00004 	mov	r0, r4
-   14fdc:	ebffd1fe 	bl	97dc <KeyboardGetModifiers>
-   14fe0:	e3100022 	tst	r0, #34	; 0x22
-   14fe4:	059f0028 	ldreq	r0, [pc, #40]	; 15014 <keyboardGetCharReturn$+0xc>
-   14fe8:	159f0028 	ldrne	r0, [pc, #40]	; 15018 <keyboardGetCharReturn$+0x10>
-   14fec:	e7d00006 	ldrb	r0, [r0, r6]
-   14ff0:	e3300000 	teq	r0, #0
-   14ff4:	1a000003 	bne	15008 <keyboardGetCharReturn$>
+00014ff8 <keyLoop$>:
+   14ff8:	e1a00004 	mov	r0, r4
+   14ffc:	e1a01005 	mov	r1, r5
+   15000:	ebffd24f 	bl	9944 <KeyboardGetKeyDown>
+   15004:	e3300000 	teq	r0, #0
+   15008:	0a000010 	beq	15050 <keyLoopBreak$>
+   1500c:	e1a06000 	mov	r6, r0
+   15010:	ebffffe4 	bl	14fa8 <KeyWasDown>
+   15014:	e3300000 	teq	r0, #0
+   15018:	1a000009 	bne	15044 <keyLoopContinue$>
+   1501c:	e3560068 	cmp	r6, #104	; 0x68
+   15020:	aa000007 	bge	15044 <keyLoopContinue$>
+   15024:	e1a00004 	mov	r0, r4
+   15028:	ebffd1eb 	bl	97dc <KeyboardGetModifiers>
+   1502c:	e3100022 	tst	r0, #34	; 0x22
+   15030:	059f0028 	ldreq	r0, [pc, #40]	; 15060 <keyboardGetCharReturn$+0xc>
+   15034:	159f0028 	ldrne	r0, [pc, #40]	; 15064 <keyboardGetCharReturn$+0x10>
+   15038:	e7d00006 	ldrb	r0, [r0, r6]
+   1503c:	e3300000 	teq	r0, #0
+   15040:	1a000003 	bne	15054 <keyboardGetCharReturn$>
 
-00014ff8 <keyLoopContinue$>:
-   14ff8:	e2855001 	add	r5, r5, #1
-   14ffc:	e3550006 	cmp	r5, #6
-   15000:	baffffe9 	blt	14fac <keyLoop$>
+00015044 <keyLoopContinue$>:
+   15044:	e2855001 	add	r5, r5, #1
+   15048:	e3550006 	cmp	r5, #6
+   1504c:	baffffe9 	blt	14ff8 <keyLoop$>
 
-00015004 <keyLoopBreak$>:
-   15004:	e3a00000 	mov	r0, #0
+00015050 <keyLoopBreak$>:
+   15050:	e3a00000 	mov	r0, #0
 
-00015008 <keyboardGetCharReturn$>:
-   15008:	e8bd8070 	pop	{r4, r5, r6, pc}
-   1500c:	00008878 	.word	0x00008878
-   15010:	0000887c 	.word	0x0000887c
-   15014:	00008888 	.word	0x00008888
-   15018:	000088f0 	.word	0x000088f0
+00015054 <keyboardGetCharReturn$>:
+   15054:	e8bd8070 	pop	{r4, r5, r6, pc}
+   15058:	00008878 	.word	0x00008878
+   1505c:	0000887c 	.word	0x0000887c
+   15060:	00008888 	.word	0x00008888
+   15064:	000088f0 	.word	0x000088f0
 
-0001501c <main>:
-   1501c:	e3a0d902 	mov	sp, #32768	; 0x8000
-   15020:	e3a00b01 	mov	r0, #1024	; 0x400
-   15024:	e3a01c03 	mov	r1, #768	; 0x300
-   15028:	e3a02010 	mov	r2, #16
-   1502c:	e3300000 	teq	r0, #0
-   15030:	1a000006 	bne	15050 <noError$>
-   15034:	e3a0002f 	mov	r0, #47	; 0x2f
-   15038:	e3a01001 	mov	r1, #1
-   1503c:	ebffff8a 	bl	14e6c <SetGpioFunction>
-   15040:	e3a0002f 	mov	r0, #47	; 0x2f
-   15044:	e3a01000 	mov	r1, #0
-   15048:	ebffff95 	bl	14ea4 <SetGpio>
+00015068 <main>:
+   15068:	e3a0d902 	mov	sp, #32768	; 0x8000
+   1506c:	e3a00b01 	mov	r0, #1024	; 0x400
+   15070:	e3a01c03 	mov	r1, #768	; 0x300
+   15074:	e3a02010 	mov	r2, #16
+   15078:	ebfffe33 	bl	1494c <frameBufferInit>
+   1507c:	e3300000 	teq	r0, #0
+   15080:	1a000006 	bne	150a0 <noError$>
+   15084:	e3a0002f 	mov	r0, #47	; 0x2f
+   15088:	e3a01001 	mov	r1, #1
+   1508c:	ebffff89 	bl	14eb8 <SetGpioFunction>
+   15090:	e3a0002f 	mov	r0, #47	; 0x2f
+   15094:	e3a01000 	mov	r1, #0
+   15098:	ebffff94 	bl	14ef0 <SetGpio>
 
-0001504c <error$>:
-   1504c:	eafffffe 	b	1504c <error$>
+0001509c <error$>:
+   1509c:	eafffffe 	b	1509c <error$>
 
-00015050 <noError$>:
-   15050:	e3a00064 	mov	r0, #100	; 0x64
-   15054:	e3a010fa 	mov	r1, #250	; 0xfa
-   15058:	e3a02096 	mov	r2, #150	; 0x96
-   1505c:	e3a030c8 	mov	r3, #200	; 0xc8
-   15060:	ebffff1d 	bl	14cdc <drawRectangle>
+000150a0 <noError$>:
+   150a0:	e3a00000 	mov	r0, #0
+   150a4:	e3a01000 	mov	r1, #0
+   150a8:	e3a020c8 	mov	r2, #200	; 0xc8
+   150ac:	e3a03f4b 	mov	r3, #300	; 0x12c
+   150b0:	ebffff09 	bl	14cdc <drawRectangle>
 
-00015064 <loop1$>:
-   15064:	e3a00c02 	mov	r0, #512	; 0x200
-   15068:	e3a01d06 	mov	r1, #384	; 0x180
-   1506c:	e3a02064 	mov	r2, #100	; 0x64
-   15070:	ebffff32 	bl	14d40 <drawFilledCircle>
-   15074:	e59f000c 	ldr	r0, [pc, #12]	; 15088 <loop1$+0x24>
-   15078:	ebfffe61 	bl	14a04 <setForeColour>
-   1507c:	e59f0008 	ldr	r0, [pc, #8]	; 1508c <loop1$+0x28>
-   15080:	ebfffe52 	bl	149d0 <delayMicro>
-   15084:	eafffff6 	b	15064 <loop1$>
-   15088:	0000ffff 	.word	0x0000ffff
-   1508c:	00002710 	.word	0x00002710
+000150b4 <loop1$>:
+   150b4:	e3a00c02 	mov	r0, #512	; 0x200
+   150b8:	e3a01d06 	mov	r1, #384	; 0x180
+   150bc:	e3a02064 	mov	r2, #100	; 0x64
+   150c0:	ebffff20 	bl	14d48 <drawFilledCircle>
+   150c4:	e59f000c 	ldr	r0, [pc, #12]	; 150d8 <loop1$+0x24>
+   150c8:	ebfffe4d 	bl	14a04 <setForeColour>
+   150cc:	e59f0008 	ldr	r0, [pc, #8]	; 150dc <loop1$+0x28>
+   150d0:	ebfffe3e 	bl	149d0 <delayMicro>
+   150d4:	eafffff6 	b	150b4 <loop1$>
+   150d8:	0000ffff 	.word	0x0000ffff
+   150dc:	00002710 	.word	0x00002710
