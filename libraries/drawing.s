@@ -417,6 +417,7 @@ drawRectangle:
     .unreq x1
     .unreq y1
     .unreq savedY0
+
 .globl drawFilledCircle
 drawFilledCircle:
     
@@ -445,14 +446,14 @@ drawFilledCircle:
     sub x, #1
     mov y, #0
 
-    circleDrawLoop$:
+    filledCircleDrawLoop$:
 
         /*set pixels 8 times*************************************/
         @line from x,y to -x,y
         mov r0, x
         mov r1, y
         neg r2, r0
-        mov r3, r1
+        mov r3, y
         add r0, cx
         add r1, cy
         add r2, cx
@@ -460,11 +461,32 @@ drawFilledCircle:
         bl drawLine
 
         @line from y,x to -y,x
+        mov r0, y
+        mov r1, x
+        neg r2, y
+        mov r3, x
+        add r0, cx
+        add r1, cy
+        add r2, cx
+        add r3, cy
+        bl drawLine
+
+        @line from x,-y to -x,-y
         mov r0, x
-        mov r2,r0
-        mov r1, y
-        neg r0,r0
-        neg r3, r1
+        neg r1, y
+        neg r2, x
+        neg r3, y
+        add r0, cx
+        add r1, cy
+        add r2, cx
+        add r3, cy
+        bl drawLine
+
+        @line from y,-x to -y,-x
+        mov r0, y
+        neg r1, x
+        neg r2, y
+        neg r3, x
         add r0, cx
         add r1, cy
         add r2, cx
@@ -482,7 +504,7 @@ drawFilledCircle:
         cmp y, x
         popgt {r4,r5,r6,r7,r8,r9,pc}
 
-        b circleDrawLoop$ 
+        b filledCircleDrawLoop$ 
 
     .unreq cx
     .unreq cy
