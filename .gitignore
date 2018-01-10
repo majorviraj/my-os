@@ -1,1 +1,7 @@
-.directory
+/build
+*.directory
+/.vscode
+*.img
+*.o
+*.sh
+

@@ -7,7 +7,7 @@ foreColour:
 .align 2
 
 graphicsAddress:
-    .int 0x00001c0c
+    .int 0
 
 .align 4
 font:
@@ -194,7 +194,7 @@ drawCharacter:
     mov r0, #8
     mov r1, #16
 
-    pop {r4,r5,r6,r7,r8,pc}
+    pop {r4,r5,r6,r7,r8,lr}
 
     .unreq x
     .unreq y
@@ -225,7 +225,7 @@ printString:
     bl drawCharacter
 
     charWidth .req r0
-    charHeight .req r1
+    charHeight .req r1 
 
     charPrintLoop$:
         ldrb char, [string]
@@ -241,8 +241,8 @@ printString:
         beq charPrintLoop$
 
         cmp x, #1024
-        addge y, charHeight
-        movge x, orignalX
+        addeq y, charHeight
+        moveq x, orignalX
 
         mov r0, char
         mov r1, x
@@ -263,5 +263,112 @@ printString:
     .unreq orignalX
     .unreq charWidth
     .unreq charHeight
+
+.globl drawCircle
+drawCircle:
+    
+    push {r4,r5,r6,r7,r8,r9,lr}
+
+    cx .req r4
+    cy .req r5
+    radius .req r6
+
+    cmp r0, #0
+    cmpge r1, #0
+    cmpge r2, #0
+    poplt {r4,r5,r6,r7,r8,r9,pc}
+
+    mov cx, r0
+    mov cy, r1
+    mov radius, r2
+
+    x .req r7
+    y .req r8
+    error .req r9
+
+    mov error, #1
+    sub error, radius
+    mov x, radius
+    sub x, #1
+    mov y, #0
+
+    drawloop$:
+
+        /*set pixels 8 times*************************************/
+        mov r0, x
+        mov r1, y
+        add r0, cx
+        add r1, cy
+        bl drawPixel
+
+        mov r0, y
+        mov r1, x
+        add r0, cx
+        add r1, cy
+        bl drawPixel
+        
+        mov r0, y
+        mov r1, x
+        neg r0, r0
+        add r0, cx
+        add r1, cy
+        bl drawPixel
+        
+        mov r0, x
+        mov r1, y
+        neg r0, r0
+        add r0, cx
+        add r1, cy
+        bl drawPixel
+        
+        mov r0, x
+        mov r1, y
+        neg r0, r0
+        neg r1, r1
+        add r0, cx
+        add r1, cy
+        bl drawPixel
+        
+        mov r0, y
+        mov r1, x
+        neg r0, r0
+        neg r1, r1
+        add r0, cx
+        add r1, cy
+        bl drawPixel
+        
+        mov r0, y
+        mov r1, x
+        neg r1, r1
+        add r0, cx
+        add r1, cy
+        bl drawPixel
+        
+        mov r0, x
+        mov r1, y
+        neg r1, r1
+        add r0, cx
+        add r1, cy
+        bl drawPixel
+
+        cmp error, #0
+        add error, y, lsl #1
+        add error, #1
+
+        subge error, x, lsl #1
+        subge x, #1
+
+        add y, #1
+        cmp y, x
+        popgt {r4,r5,r6,r7,r8,r9,pc}
+
+        b drawloop$ 
+
+    .unreq cx
+    .unreq cy
+    .unreq radius
+    .unreq x
+    .unreq y
+    .unreq error
 
 

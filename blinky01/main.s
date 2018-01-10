@@ -1,6 +1,11 @@
 .section .init
 .globl _start
 _start:
+
+	b main
+.section .text
+main:
+
 	ldr r0,=0x20200000
 	
 	mov r1, #1

@@ -13,7 +13,7 @@ ARMGNU ?= arm-none-eabi
 BUILD = build/
 
 # The directory in which source files are stored.
-SOURCE = source/
+SOURCE = ../libraries/
 
 # The name of the output file to generate.
 TARGET = kernel.img
@@ -49,12 +49,15 @@ $(TARGET) : $(BUILD)output.elf
 	$(ARMGNU)-objcopy $(BUILD)output.elf -O binary $(TARGET) 
 
 # Rule to make the elf file.
-$(BUILD)output.elf : $(OBJECTS) $(LINKER)
-	$(ARMGNU)-ld --no-undefined $(OBJECTS) -L. $(patsubst %,-l %,$(LIBRARIES)) -Map $(MAP) -o $(BUILD)output.elf -T $(LINKER)
+$(BUILD)output.elf : $(OBJECTS) $(LINKER) $(BUILD)main.o
+	$(ARMGNU)-ld --no-undefined $(OBJECTS) $(BUILD)main.o -L $(SOURCE) $(patsubst %,-l % , $(LIBRARIES)) -Map $(MAP) -o $(BUILD)output.elf -T $(LINKER)
 
 # Rule to make the object files.
 $(BUILD)%.o: $(SOURCE)%.s $(BUILD)
 	$(ARMGNU)-as -I $(SOURCE) $< -o $@
+
+$(BUILD)main.o: main.s
+	$(ARMGNU)-as -I $(SOURCE) main.s -o build/main.o 
 
 $(BUILD):
 	mkdir $@

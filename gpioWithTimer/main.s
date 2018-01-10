@@ -28,7 +28,7 @@ bl SetGpio
 
 /*delay block */
 ldr r0,=2000000
-bl Micros
+bl delayMicro
 
 pinNum .req r0
 pinVal .req r1
@@ -40,6 +40,6 @@ bl SetGpio
 
 /*delay block */
 ldr r0,=8000000
-bl Micros
+bl delayMicro
 
 b main
