@@ -38,19 +38,19 @@ Disassembly of section .text:
     8078:	9afffff9 	bls	8064 <main+0x64>
     807c:	e580c020 	str	ip, [r0, #32]
     8080:	eaffffe8 	b	8028 <main+0x28>
-    8084:	00018090 	muleq	r1, r0, r0
-    8088:	00018094 	muleq	r1, r4, r0
+    8084:	00008090 	muleq	r0, r0, r0
+    8088:	00008094 	muleq	r0, r4, r0
     808c:	0007a11f 	andeq	sl, r7, pc, lsl r1
 
 Disassembly of section .data:
 
-00018090 <__data_start>:
-   18090:	20200000 	eorcs	r0, r0, r0
+00008090 <__data_start>:
+    8090:	20200000 	eorcs	r0, r0, r0
 
 Disassembly of section .bss:
 
-00018094 <__bss_start>:
-   18094:	00000000 	andeq	r0, r0, r0
+00008094 <__bss_start>:
+    8094:	00000000 	andeq	r0, r0, r0
 
 Disassembly of section .comment:
 
@@ -102,7 +102,7 @@ Disassembly of section .debug_info:
   44:	03010000 	movweq	r0, #4096	; 0x1000
   48:	00000052 	andeq	r0, r0, r2, asr r0
   4c:	80900305 	addshi	r0, r0, r5, lsl #6
-  50:	04050001 	streq	r0, [r5], #-1
+  50:	04050000 	streq	r0, [r5], #-0
   54:	00000058 	andeq	r0, r0, r8, asr r0
   58:	00005d06 	andeq	r5, r0, r6, lsl #26
   5c:	07040700 	streq	r0, [r4, -r0, lsl #14]
@@ -110,7 +110,7 @@ Disassembly of section .debug_info:
   64:	6d697408 	cfstrdvs	mvd7, [r9, #-32]!	; 0xffffffe0
   68:	58050100 	stmdapl	r5, {r8}
   6c:	05000000 	streq	r0, [r0, #-0]
-  70:	01809403 	orreq	r9, r0, r3, lsl #8
+  70:	00809403 	addeq	r9, r0, r3, lsl #8
 	...
 
 Disassembly of section .debug_abbrev:
@@ -261,7 +261,7 @@ Disassembly of section .ARM.attributes:
    c:	00000028 	andeq	r0, r0, r8, lsr #32
   10:	4b5a3605 	blmi	168d82c <_stack+0x160d82c>
   14:	08070600 	stmdaeq	r7, {r9, sl}
-  18:	0a010901 	beq	42424 <__bss_end__+0x2a38c>
+  18:	0a010901 	beq	42424 <__bss_end__+0x3a38c>
   1c:	14041202 	strne	r1, [r4], #-514	; 0xfffffdfe
   20:	17011501 	strne	r1, [r1, -r1, lsl #10]
   24:	19011803 	stmdbne	r1, {r0, r1, fp, ip}
