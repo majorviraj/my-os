@@ -6,10 +6,10 @@
 
 [11/01, 21:44] majorviraj: In main loop -
 *check P1 & P2 keys and update paddle1Y & 2Y- make function to check keyboard inputs
--update ballX & ballY according to speedX & speedY
--compare ballY, paddle1Y & 2Y only when ballX = paddle1X or paddle2X and accordingly update p1Score or p2Score, Inc speed and reset ballX,ballY to center and speedX, speedY to random number(refer bakinPi)
--check ballX & ballY and update speedX, speedY
--update ballX & ballY according to speedX & speedY if ballX and ballY are within limits
+*update ballX & ballY according to speedX & speedY
+*check ballX & ballY and update speedX, speedY
+*compare ballY, paddle1Y & 2Y only when ballX = paddle1X or paddle2X and accordingly update p1Score or p2Score, Inc speed and reset ballX,ballY to center and speedX, speedY to random number(refer bakinPi)
+*Render all necessary graphics
 */
 
 .section .data
@@ -34,6 +34,13 @@ paddle1Y:
 .align 2
 paddle2Y:
 	.hword 0
+.align 2
+paddle1Length:
+	.hword 0
+.align 2
+paddle2Length:
+	.hword 0
+
 p1Score:
 	.byte 0
 p2Score:
@@ -48,6 +55,14 @@ main:
 	mov sp, #0x8000			@Initialise the stack at 0x8000
 							@as the rpi bootloader is setup in such a way		
 	
+	
+	@Add splashscreen and initialisation code and loading etc here
+
+
+
+
+
+gameLoop$:
 	mov r0, #1
 	bl checkInputs			@Takes r0 as inpute, r0=1 is P1 and r0=2 is P2
 							@Return in to r0, up arraw and into r1, down arrow state
@@ -67,13 +82,13 @@ main:
 	ldreq r3,[r2]
 	subeq r3, #1
 	streq r3, [r2]
-	@check if paddle1Y exceeds max possible value
+	@check if paddle1Y exceeds min possible value
 	cmp r3, SUBSTITUTE Y COORDINATE MIN
 	movls r4, SUBSTITUTE Y COORDINATE MIN
 	strls r4, [r2]
 
 
-	@Update paddle12 according to inputs
+	@Update paddle2Y according to inputs
 	mov r0, #2
 	bl checkInputs
 
@@ -92,17 +107,151 @@ main:
 	ldreq r3,[r2]
 	subeq r3, #1
 	streq r3,[r2]
-	@check if paddle2Y exceeds max possible value
+	@check if paddle2Y exceeds min possible value
 	cmp r3, SUBSTITUTE Y COORDINATE MIN
 	movls r4, SUBSTITUTE Y COORDINATE MIN
 	strls r4, [r2]
 
 
+	@Update coordinates of ball by speedX and speedY
+	ldr r2,=ballX
+	ldr r4, [r2]
+	ldr r3,=speedX
+	ldr r3, [r3]
+	add r5, r4, r3
+	str r5, [r2]
 
+	ldr r2,=ballY
+	ldr r4, [r2]
+	ldr r3,=speedY
+	ldr r3, [r3]
+	add r5, r4, r3
+	str r5, [r2]
+
+	@Limit ballX and ballY within limits here
+
+
+
+
+
+	@Change speedY according to ballY
+	ldr r2,=ballY
+	ldr r3, [r2]
+	ldr r4,=speedY
+	ldr r5, [r4]
+	cmp r3, SUBSTITUTE MAX Y VALUE HERE
+	cmple r3, SUBSTITUTE MIN Y VALUE HERE 
+	bge skipChangingYSpeed$
+	neg r5
+	str r5, [r4]
+	skipChangingYSpeed$:
+	
+	@Change speedX according to ballY, paddle1Y & paddle2Y only if ballX = paddle1X or paddle2X
+	ldr r3,=ballX
+	ldr r4,=ballY
+	ldr r5,=speedX
+	ldr r6,=speedY
+	ldr r7,=paddle1Y
+	ldr r8,=paddle2Y
+	ldr r9,=radiusOfBall
+	ldr r9, [r9]
+	ldr r10,=paddle1Length
+	ldr r10, [r10]
+	ldr r11,=paddle2Length
+	ldr r11, [r11]
+	
+	@Check if ballX is away from paddl1X and paddle2X
+	ldr r0, [r3]
+	sub r1, r0, r9	@done to evaluate leftmost ball coordinate
+ 	ldr r2,= SUBSTITUTE PADDLE 1 RIGHTMOST X coordinate
+	cmp r1, r2
+	addne r1, r0, r9
+	ldrne r2,= SUBSTITUTE PADDLE 2 LEFTMOST x coordinates
+	cmpne r1, r2
+	bne ballNotNearPaddles$ 
 	
 
-/*
+		@Check if ballX is near paddle1X
+		ldr r0, [r3]
+		sub r1, r0, r9 @done to evaluate leftmost ball coordinate
+		ldr r2,= SUBSTITUTE PADDLE 1 RIGHTMOST X coordinate
+		teq r1, r2	
+		bne checkForPaddle2$
+		ldr r0, [r4]	@ball is at paddle1, do whatever necessary below
+		ldr r1, [r7]
+		add r2, r1, r10
+		cmp r0, r1
+		cmpge r0, r2
+		ldrle r2, [r5]	@negate speedX as ball as hit paddle
+		negle r2
+		strle r2, [r5]
+		ble checkForPaddle2$
+		ldr r1,= p2Score
+		ldr r2, [r1]
+		add r2, #1
+		str r2, [r1]
+		@reset ballX ballY to center
+		ldr r2,= Substitute center coordinate here to reset ball to center
+		str r2, [r3]
+		str r2, [r4]
 
+
+	@check if ballX is near paddle2X
+	checkForPaddle2$:
+		ldr r0, [r3]	@load ballX
+		add r1, r0, r9 @done to evaluate rightmost ball coordinate
+		ldr r2,= SUBSTITUTE PADDLE 1 LEFTMOST X coordinate
+		teq r1, r2	
+		bne ballNotNearPaddles$
+		ldr r0, [r4]	@load ballY @ball is at paddle2, do whatever necessary below
+		ldr r1, [r8]
+		add r2, r1, r11
+		cmp r0, r1
+		cmpge r0, r2
+		ldrle r2, [r5] @negate speedX as ball as hit paddle
+		negle r2
+		strle r2, [r5]
+		ble ballNotNearPaddles$
+		ldr r1,= p1Score
+		ldr r2, [r1]
+		add r2, #1
+		str r2, [r1]
+		@reset ballX ballY to center
+		ldr r2,= Substitute center coordinate here to reset ball to center
+		str r2, [r3]
+		str r2, [r4]
+
+
+	ballNotNearPaddles$:
+
+	@Render all the graphics, paddles, ball and p1Score,p2Score
+	
+	@Draw left paddle1 here
+	ldr r0,= ENTER PADDLE1 leftmost X here
+	ldr r1,= paddle1Y
+	ldr r1, [r1]
+	ldr r4,=paddle1Length
+	ldr r4, [r4]
+	ldr r2,= ENTER PADDLE 1 rightmost x here
+	add r3, r1, r4
+	bl drawRectangle
+
+	@Draw right paddle2 here
+	ldr r0,= ENTER PADDLE2 leftmost X here
+	ldr r1,= paddle2Y
+	ldr r1, [r1]
+	ldr r4,=paddle2Length
+	ldr r4, [r4]
+	ldr r2,= ENTER PADDLE 2 rightmost x here
+	add r3, r1, r4
+	bl drawRectangle
+
+	@draw circle
+
+	b gameLoop$
+
+
+/*
 .globl renderFilledCircleToMemory
 renderFilledCircleToMemory:
 push {r4,r5,r6,r7,r8,r9,lr}
