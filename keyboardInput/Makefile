@@ -36,7 +36,7 @@ OBJECTS := $(patsubst $(SOURCE)%.s,$(BUILD)%.o,$(wildcard $(SOURCE)*.s))
 
 # Rule to make everything.
 all: $(TARGET) $(LIST)
-
+	@echo $(OBJECTS)
 # Rule to remake everything. Does not include clean.
 rebuild: all
 

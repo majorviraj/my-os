@@ -5,25 +5,27 @@ LIST = kernel.list
 SYMBOLS = kernel.nm
 TARGET = kernel.img
 UPLOADSCRIPT = ./run.sh
-CFLAGS = -O2 -mfpu=vfp -mfloat-abi=hard -march=armv6zk -mtune=arm1176jzf-s -nostartfiles -g -Wl,-T,linkerScript.ld
-OBJECTS := $(wildcard $(SOURCE)*.c)
+CFLAGS = -O0 -mfpu=vfp -mfloat-abi=hard -march=armv6zk -mtune=arm1176jzf-s -nostartfiles -g -Wl,-T,linkerScript.ld
+OBJECTS := $(wildcard $(SOURCE)*.c) $(wildcard $(SOURCE)*.s)
 
 all: $(TARGET) $(LIST)
 	
-$(TARGET) : $(BUILD)output.elf;
+$(TARGET) : $(BUILD)output.elf
 	$(ARMGNU)-objcopy $(BUILD)output.elf -O binary $(TARGET)
 
 $(LIST) : $(BUILD)output.elf
 	$(ARMGNU)-objdump -D $(BUILD)output.elf > $(LIST)
 	$(ARMGNU)-nm $(BUILD)output.elf > $(SYMBOLS)
 
-$(BUILD)output.elf :$(OBJECTS) $(BUILD);
-	$(ARMGNU)-gcc $(CFLAGS) $< -o $@ 
+#$(BUILD)output.elf : $(OBJECTS)
 
-$(BUILD) :;
+$(BUILD)output.elf: $(OBJECTS) $(BUILD)
+	$(ARMGNU)-gcc $(CFLAGS) $(OBJECTS) -o $(BUILD)output.elf
+
+$(BUILD) :
 	mkdir $@
 
-.PHONY: debug clean program
+.PHONY: debug clean program all
 
 program:
 	$(UPLOADSCRIPT)

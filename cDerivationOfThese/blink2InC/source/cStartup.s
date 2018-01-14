@@ -18,7 +18,7 @@ _bss_clear:
 clearBSS$:
 
     str r1, [r0]
-    add r1, #1
+    add r0, #1
     cmp r0, r2
     ble clearBSS$
 

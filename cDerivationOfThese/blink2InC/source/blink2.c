@@ -3,7 +3,7 @@
 volatile unsigned int* gpio = (unsigned int*)GPIO_BASE;
 
 volatile unsigned int tim;
-int main() {
+void kernel_main() {
     // gpio = (unsigned int*) GPIO_BASE;
 
     gpio[LED_GPFSEL] |= (1 << LED_GPIO_BIT);
