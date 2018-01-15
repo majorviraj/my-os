@@ -80,6 +80,8 @@ main:
 
 	bl UsbInitialise
 
+
+
 gameLoop$:
 	mov r0, #1
 	bl checkInputs			@Takes r0 as input, r0=1 is P1 and r0=2 is P2
@@ -269,7 +271,6 @@ gameLoop$:
 
 	b gameLoop$
 
-
 .globl checkInputs
 checkInputs:
 
@@ -289,6 +290,9 @@ player1loop$:
 	bl keyboardInit
 
 	ldr r0,=keyboardAddress
+	teq r0,#0
+	popeq {r4,r5,r6,pc}
+
 	ldr r1,[r0]
 	teq r1,#0
 	beq player1loop$
@@ -297,9 +301,7 @@ player1loop$:
 	mov r5,#0
 
 	keyLoop$:
-		teq r0,#0
-		beq player1loop$
-
+		
 		ldr r0, =keyboardOldDown
 		ldrh r0, [r0]
 
@@ -323,6 +325,9 @@ player2loop$:
 	bl keyboardInit
 
 	ldr r0,=keyboardAddress
+	teq r0,#0
+	beq player1loop$
+
 	ldr r1,[r0]
 	teq r1,#0
 	beq player1loop$
@@ -331,9 +336,6 @@ player2loop$:
 	mov r5,#0
 
 	keyLoop2$:
-		teq r0,#0
-		beq player1loop$
-
 		ldr r0, =keyboardOldDown
 		ldrh r0, [r0]
 
