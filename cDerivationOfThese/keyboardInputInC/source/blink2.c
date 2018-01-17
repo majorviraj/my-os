@@ -1,12 +1,17 @@
-#include "includes/rpiGpio.h"
+#include <includes/rpiGpio.h>
 
 volatile unsigned int* gpio = (unsigned int*)GPIO_BASE;
 
 volatile unsigned int tim;
+
+extern void keyboardInit(void);
+
 void kernel_main() {
     // gpio = (unsigned int*) GPIO_BASE;
 
     gpio[LED_GPFSEL] |= (1 << LED_GPIO_BIT);
+
+    keyboardInit();
 
     while(1) {
 
@@ -18,4 +23,5 @@ void kernel_main() {
         
         gpio[LED_GPSET] = (1 << LED_GPIO_BIT);
     }
+
 }
