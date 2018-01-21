@@ -1,0 +1,7 @@
+build/
+.vscode
+kernel.img
+kernel.nm
+kernel.list
+.directory
+run.sh
