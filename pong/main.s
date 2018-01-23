@@ -123,46 +123,14 @@ main:
 
 gameLoop$:
 
-	@Erase previous ball and paddle traces!
-	ldr r0,= 0xFFFF
-	bl setForeColour
-
-	@Draw left paddle1 here
-	ldr r0,= paddle1LeftmostX
+	ldr r0, =ballX
 	ldrh r0, [r0]
-	ldr r1,= paddle1Y
+
+	ldr r1, =ballY
 	ldrh r1, [r1]
-	ldr r4,=paddle1Length
-	ldrh r4, [r4]
-	ldr r2,= paddle1RightmostX
-	ldrh r2, [r2]
-	add r3, r1, r4
-	bl drawRectangle
+	push {r1, r0}
 
-	@Draw right paddle2 here
-	ldr r0,= paddle2LeftmostX
-	ldrh r0, [r0]
-	ldr r1,= paddle2Y
-	ldrh r1, [r1]
-	ldr r4,=paddle2Length
-	ldrh r4, [r4]
-	ldr r2,= paddle2RightmostX
-	ldrh r2, [r2]
-	add r3, r1, r4
-	bl drawRectangle
-
-	@draw circle
-	ldr r0,=ballX
-	ldrh r0, [r0]
-	ldr r1,=ballY
-	ldrh r1, [r1]
-	ldr r2,=radiusOfBall
-	ldrh r2, [r2]
-	bl drawFilledCircle
-
-
-
-
+	
 	
 	
 	mov r0, #1
@@ -378,8 +346,42 @@ skipChangingYSpeed$:
 	
 	ballNotNearPaddles$:
 
+	@Erase previous ball and paddle traces!
+	ldr r0,= 0xFFFF
+	bl setForeColour
 
-		@Render all the graphics, paddles, ball and p1Score,p2Score
+	@Draw left paddle1 here
+	ldr r0,= paddle1LeftmostX
+	ldrh r0, [r0]
+	ldr r1,= paddle1Y
+	ldrh r1, [r1]
+	ldr r4,=paddle1Length
+	ldrh r4, [r4]
+	ldr r2,= paddle1RightmostX
+	ldrh r2, [r2]
+	add r3, r1, r4
+	bl drawRectangle
+
+	@Draw right paddle2 here
+	ldr r0,= paddle2LeftmostX
+	ldrh r0, [r0]
+	ldr r1,= paddle2Y
+	ldrh r1, [r1]
+	ldr r4,=paddle2Length
+	ldrh r4, [r4]
+	ldr r2,= paddle2RightmostX
+	ldrh r2, [r2]
+	add r3, r1, r4
+	bl drawRectangle
+
+	@draw circle
+	pop {r1, r0}
+	ldr r2,=radiusOfBall
+	ldrh r2, [r2]
+	bl drawFilledCircle
+
+	
+	@Render all the graphics, paddles, ball and p1Score,p2Score
 
 	ldr r0,=#0
 	bl setForeColour
@@ -420,6 +422,8 @@ skipChangingYSpeed$:
 	@ldr r0, = #10000
 	@bl delayMicro
 	b gameLoop$
+
+
 
 /*
 .globl renderFilledCircleToMemory
