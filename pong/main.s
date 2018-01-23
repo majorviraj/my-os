@@ -423,7 +423,89 @@ skipChangingYSpeed$:
 	@bl delayMicro
 	b gameLoop$
 
+.globl checkInputs
+checkInputs:
 
+	cmp r0, #3
+	movge pc, lr
+
+	push {r4,r5,r6,lr}
+
+	teq r0, #1
+	beq player1loop$
+
+	teq r0, #2
+	beq player2loop$
+
+player1loop$:
+
+	bl keyboardInit
+
+	ldr r0,=keyboardAddress
+	teq r0,#0
+	popeq {r4,r5,r6,pc}
+
+	ldr r1,[r0]
+	teq r1,#0
+	beq player1loop$
+
+	mov r4,r1
+	mov r5,#0
+
+	keyLoop$:
+		
+		ldr r0, =keyboardOldDown
+		ldrh r0, [r0]
+
+		teq r0, #0x1a
+		moveq r0, #0
+		moveq r1, #0
+		popeq {r4,r5,r6,pc}
+
+		teq r0, #0x16
+		moveq r0, #1
+		moveq r0, #1
+		popeq {r4,r5,r6,pc}
+
+		add r5,#1
+		cmp r5,#6
+		blt keyLoop$
+
+		pop {r4,r5,r6,pc}
+
+player2loop$:
+	bl keyboardInit
+
+	ldr r0,=keyboardAddress
+	teq r0,#0
+	beq player1loop$
+
+	ldr r1,[r0]
+	teq r1,#0
+	beq player1loop$
+
+	mov r4,r1
+	mov r5,#0
+
+	keyLoop2$:
+		ldr r0, =keyboardOldDown
+		ldrh r0, [r0]
+
+		teq r0, #0x52
+		moveq r0, #0
+		moveq r1, #0
+		popeq {r4,r5,r6,pc}
+
+		teq r0, #0x51
+		moveq r0, #1
+		moveq r0, #1
+		popeq {r4,r5,r6,pc}
+
+		add r5,#1
+		cmp r5,#6
+		blt keyLoop2$
+
+		pop {r4,r5,r6,pc}
 
 /*
 .globl renderFilledCircleToMemory
