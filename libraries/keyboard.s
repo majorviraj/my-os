@@ -47,7 +47,7 @@ KeysShift:
 
 .section .text
 
-.global keyboardInit
+.globl keyboardInit
 keyboardInit:
     
     push {r4,r5,lr}
