@@ -22,10 +22,10 @@ ballY:
 	.hword 512
 .align 1
 speedX:
-	.hword 15
+	.hword 10
 .align 1
 speedY:
-	.hword 15
+	.hword 10
 .align 1
 paddle1Y:
 	.hword 300
@@ -40,7 +40,7 @@ paddle2Length:
 	.hword 80
 .align 1
 radiusOfBall:
-	.hword 14
+	.hword 10
 .align 1
 MaxYValue:
 	.hword 700
@@ -49,27 +49,29 @@ MinYValue:
 	.hword 100
 .align 1
 paddle1RightmostX:
-	.hword 180
+	.hword 30
 .align 1
 paddle1LeftmostX:
-	.hword 150
+	.hword 0
 .align 1
 paddle2RightmostX:
-	.hword 1000
+	.hword 1023
 .align 1
 paddle2LeftmostX:
-	.hword 970
+	.hword 993
 .align 1
 oldParameters:
 	.hword 0 @+0 oldBallX
 	.hword 0 @+2 oldBallY
 	.hword 0 @+4 oldPaddle1Y
 	.hword 0 @+6 oldPaddle2Y
-
+	.hword 0 @+8 oldP1Score
+	.hword 0 @+10 oldP2Score
+.align 1
 p1Score:
-	.byte 0
+	.hword 0
 p2Score:
-	.byte 0
+	.hword 0
 
 .section .init
 .globl _start
@@ -107,15 +109,6 @@ main:
 
 	bl UsbInitialise
 
-	ldr r0,= 0xFFFF
-	bl setForeColour
-
-	ldr r0,=#35285
-	bl setForeColour
-	bl FullScreenToForeColour
-
-	ldr r0, = #5000000
-	bl delayMicro
 
 	ldr r0,=0xFFFF
 	bl setForeColour
@@ -154,6 +147,7 @@ main:
 
 gameLoop$:
 	
+	bl keyboardInit
 	@copy ballX ballY, paddle1Y, paddle2Y into old parameters array
 	ldr r0, =oldParameters
 	ldr r1, =ballX
@@ -168,6 +162,12 @@ gameLoop$:
 	ldr r1, =paddle2Y
 	ldrh r1, [r1]
 	strh r1, [r0, #6]
+	ldr r1, =p1Score
+	ldrh r1, [r1]
+	strh r1, [r0, #8]
+	ldr r1, =p2Score
+	ldrh r1, [r1]
+	strh r1, [r0, #10]
 	
 	
 	mov r0, #1
@@ -178,7 +178,7 @@ gameLoop$:
 	cmp r0, #1	@check if P1 up array is pressed
 	ldreq r2,=paddle1Y
 	ldreqh r3,[r2]
-	addeq r3, #18
+	addeq r3, #25
 	streqh r3, [r2]
 	@check if paddle1Y exceeds max possible value
 	ldr r5, =MaxYValue
@@ -197,7 +197,7 @@ gameLoop$:
 	cmp r1, #0	@check if P1 down array is pressed
 	ldreq r2,=paddle1Y
 	ldreqh r3,[r2]
-	subeq r3, #18
+	subeq r3, #25
 	streqh r3, [r2]
 	@check if paddle1Y exceeds min possible value
 	ldr r5, =MinYValue
@@ -213,7 +213,7 @@ gameLoop$:
 	cmp r0, #1	@check if P2 up array is pressed
 	ldreq r2,=paddle2Y
 	ldreqh r3,[r2]
-	addeq r3, #18
+	addeq r3, #25
 	streqh r3, [r2]
 	@check if paddle2Y exceeds max possible value
 	ldr r5, =MaxYValue
@@ -233,7 +233,7 @@ gameLoop$:
 	cmp r1, #0	@check if P2 down array is pressed
 	ldreq r2,=paddle2Y
 	ldreqh r3,[r2]
-	subeq r3, #18
+	subeq r3, #25
 	streqh r3,[r2]
 	@check if paddle2Y exceeds min possible value
 	ldr r5, =MinYValue
@@ -355,11 +355,11 @@ skipChangingYSpeed$:
 
 		ballNotOnPaddle1$:
 		ldr r1,= p2Score
-		ldrb r2, [r1]
+		ldrh r2, [r1]
 		add r2, #1
-		strb r2, [r1]
+		strh r2, [r1]
 		@reset ballX ballY to center
-		ldr r0, = #2000000
+		ldr r0, = #500000
 		bl delayMicro
 		ldr r1,= #512 @Needs to be changed, hardcoded currently
 		ldr r2,= #400 @Needs to be changed, hardcoded currently
@@ -387,11 +387,11 @@ skipChangingYSpeed$:
 		
 		ballNotOnPaddle2$:
 			ldr r1,= p1Score
-			ldrb r2, [r1]
+			ldrh r2, [r1]
 			add r2, #1
-			strb r2, [r1]
+			strh r2, [r1]
 			@reset ballX ballY to center
-			ldr r0, = #2000000
+			ldr r0, = #500000
 			bl delayMicro
 			ldr r1,= #512 @Needs to be changed, hardcoded currently
 			ldr r2,= #400 @Needs to be changed, hardcoded currently
@@ -444,9 +444,25 @@ skipChangingYSpeed$:
 	ldrh r2, [r2]
 	bl drawFilledCircle
 
+
+	ldr r0,= p1Score
+	ldrh r0, [r0]
+	add r0, r0, #0x30
+	ldr r1, =#10
+	ldr r2, =#15
+	bl drawCharacter
+
+
+	ldr r0,= p2Score
+	ldrh r0, [r0]
+	add r0, r0, #0x30
+	ldr r1, =#1003
+	mov r2, #15
+	bl drawCharacter
 	
 
 	@Erase previous ball and paddle traces!
+	
 	ldr r0,= 0xFFFF
 	bl setForeColour
 
@@ -455,6 +471,10 @@ skipChangingYSpeed$:
 	ldrh r0, [r0]
 	ldr r1,= oldParameters
 	ldrh r1, [r1, #4]
+	ldr r5, =paddle1Y
+	ldrh r5, [r5]
+	teq r1, r5
+	beq skipErasingPaddle1$
 	ldr r4,=paddle1Length
 	ldrh r4, [r4]
 	ldr r2,= paddle1RightmostX
@@ -462,11 +482,16 @@ skipChangingYSpeed$:
 	add r3, r1, r4
 	bl drawRectangle
 
+	skipErasingPaddle1$:
 	@Draw right paddle2 here
 	ldr r0,= paddle2LeftmostX
 	ldrh r0, [r0]
 	ldr r1,= oldParameters
 	ldrh r1, [r1, #6]
+	ldr r5, =paddle2Y
+	ldrh r5, [r5]
+	teq r1, r5
+	beq skipErasingPaddle2$
 	ldr r4,=paddle2Length
 	ldrh r4, [r4]
 	ldr r2,= paddle2RightmostX
@@ -474,16 +499,57 @@ skipChangingYSpeed$:
 	add r3, r1, r4
 	bl drawRectangle
 
+	skipErasingPaddle2$:
 	@draw circle
 	ldr r0,=oldParameters
 	ldrh r0, [r0]
 	ldr r1,=oldParameters
 	ldrh r1, [r1, #2]
-	ldr r2,=radiusOfBall
-	ldrh r2, [r2]
-	bl drawFilledCircle
+	ldr r5, =ballX
+	ldrh r5, [r5]
+	ldr r6, =ballY
+	ldrh r6, [r6]
+	teq r0, r5
+	bne dontSkipErasingBall$
+	teq r1, r6
+	beq skipErasingBall$
+	
+	dontSkipErasingBall$:
+	
+		ldr r2,=radiusOfBall
+		ldrh r2, [r2]
+		bl drawFilledCircle
 
+	
+	skipErasingBall$:
+	
+	@erase scores
+	ldr r0,= p1Score
+	ldrh r0, [r0]
+	ldr r3, =oldParameters
+	ldrh r3, [r3, #8]
+	teq r0, r3
+	beq skipErasingP1Score$
+	add r0, r0, #0x30
+	ldr r1,= #10
+	ldr r2,= #15
+	bl drawCharacter
 
+	skipErasingP1Score$:
+	
+	ldr r0,= p2Score
+	ldrh r0, [r0]
+	ldr r3, =oldParameters
+	ldrh r3, [r3, #10]
+	teq r0, r3
+	beq skipErasingP2Score$
+	add r0, r0, #0x30
+	ldr r1,=#1003
+	ldr r2, =#15
+	bl drawCharacter
+	
+	skipErasingP2Score$:
+	
 
 	b gameLoop$
 
@@ -503,22 +569,19 @@ checkInputs:
 
 player1loop$:
 
-	bl keyboardInit
-
 	ldr r0,=keyboardAddress
-	teq r0,#0
+	teq r0, #0
 	popeq {r4,r5,r6,pc}
 
-	ldr r1,[r0]
-	teq r1,#0
-	beq player1loop$
+	ldr r1, [r0]
 
 	mov r4,r1
-	mov r5,#0
+	mov r5, #0
 
 	keyLoop$:
 		
-		ldr r0, =keyboardOldDown
+		ldr r0, = keyboardOldDown
+		add r0, r0, r5
 		ldrh r0, [r0]
 
 		teq r0, #0x1a
@@ -532,7 +595,7 @@ player1loop$:
 		popeq {r4,r5,r6,pc}
 
 		add r5,#1
-		cmp r5,#6
+		cmp r5,#3
 		blt keyLoop$
 
 		mov r0, #2
@@ -540,7 +603,6 @@ player1loop$:
 		pop {r4,r5,r6,pc}
 
 player2loop$:
-	bl keyboardInit
 
 	ldr r0,=keyboardAddress
 	teq r0,#0
@@ -555,6 +617,7 @@ player2loop$:
 
 	keyLoop2$:
 		ldr r0, =keyboardOldDown
+		add r0, r0, r5
 		ldrh r0, [r0]
 
 		teq r0, #0x52
@@ -568,7 +631,7 @@ player2loop$:
 		popeq {r4,r5,r6,pc}
 
 		add r5,#1
-		cmp r5,#6
+		cmp r5,#3
 		blt keyLoop2$
 
 		mov r0, #2

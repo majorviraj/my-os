@@ -194,7 +194,7 @@ drawCharacter:
     mov r0, #8
     mov r1, #16
 
-    pop {r4,r5,r6,r7,r8,lr}
+    pop {r4,r5,r6,r7,r8,pc}
 
     .unreq x
     .unreq y
