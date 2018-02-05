@@ -3,7 +3,7 @@ extern void UsbInitialise();
 extern void keyboardInit();
 extern char KeyboardGetChar();
 extern int drawCharacter(int, int, int);
-
+unsigned int hh;
 void frameBufferSetup(int width, int height, int bitDepth){
     int error = frameBufferInit(width, height, bitDepth);
 
