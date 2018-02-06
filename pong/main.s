@@ -524,11 +524,11 @@ skipChangingYSpeed$:
 	skipErasingBall$:
 	
 	@erase scores
-	ldr r0,= p1Score
-	ldrh r0, [r0]
-	ldr r3, =oldParameters
-	ldrh r3, [r3, #8]
-	teq r0, r3
+	ldr r5,= p1Score
+	ldrh r5, [r5]
+	ldr r0, =oldParameters
+	ldrh r0, [r0, #8]
+	teq r0, r5
 	beq skipErasingP1Score$
 	add r0, r0, #0x30
 	ldr r1,= #10
@@ -537,11 +537,11 @@ skipChangingYSpeed$:
 
 	skipErasingP1Score$:
 	
-	ldr r0,= p2Score
-	ldrh r0, [r0]
-	ldr r3, =oldParameters
-	ldrh r3, [r3, #10]
-	teq r0, r3
+	ldr r5,= p2Score
+	ldrh r5, [r5]
+	ldr r0, =oldParameters
+	ldrh r0, [r0, #10]
+	teq r0, r5
 	beq skipErasingP2Score$
 	add r0, r0, #0x30
 	ldr r1,=#1003
