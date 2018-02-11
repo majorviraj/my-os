@@ -1,7 +1,9 @@
 .section .data
+.globl keyboardAddress
 keyboardAddress:
     .int 0
 
+.globl keyboardOldDown
 keyboardOldDown:
     .rept 6
     .hword 0
@@ -45,7 +47,7 @@ KeysShift:
 
 .section .text
 
-.global keyboardInit
+.globl keyboardInit
 keyboardInit:
     
     push {r4,r5,lr}

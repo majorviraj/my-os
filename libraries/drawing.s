@@ -194,7 +194,7 @@ drawCharacter:
     mov r0, #8
     mov r1, #16
 
-    pop {r4,r5,r6,r7,r8,lr}
+    pop {r4,r5,r6,r7,r8,pc}
 
     .unreq x
     .unreq y
@@ -512,3 +512,34 @@ drawFilledCircle:
     .unreq x
     .unreq y
     .unreq error
+
+.globl FullScreenToForeColour
+FullScreenToForeColour:
+	fbAddr .req r4
+	
+	ldr fbAddr,= graphicsAddress
+	ldr fbAddr, [fbAddr]
+	ldr fbAddr, [fbAddr,#32]
+	
+	colour .req r0
+	ldr colour,= foreColour
+	ldr colour, [colour]
+	y .req r1
+	mov y, #768
+	drawRow2$:
+		x .req r2
+		mov x,#1024
+		drawPixel2$:
+			strh colour,[fbAddr]
+			add fbAddr,#2
+			sub x,#1
+			teq x,#0
+			bne drawPixel2$
+
+		sub y,#1
+		teq y,#0
+		bne drawRow2$
+	mov pc,lr
+	.unreq fbAddr
+	.unreq y
+	.unreq x
