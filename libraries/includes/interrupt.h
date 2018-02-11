@@ -1,12 +1,13 @@
 #ifndef __RPIGPIO_H__
 #define __RPIGPIO_H__
 
+#include <rpiGpio.h>
 #define INTERRUPT_CONTROLLER (PERIPHERAL_BASE + 0xB200)
 
 typedef struct interruptControllerStruct {
-    volatile unsigned int IRQbasicPending
-    volatile unsigned int IRQpending1;
-    volatile unsigned int IRQpending2;
+    volatile unsigned int IRQbasicPending;
+    volatile unsigned int IRQGPUpending1;
+    volatile unsigned int IRQGPUpending2;
     volatile unsigned int FIQcontrol;
     volatile unsigned int enableIRQ1;
     volatile unsigned int enableIRQ2;
@@ -17,3 +18,5 @@ typedef struct interruptControllerStruct {
 };
 
 static interruptControllerStruct* IRQController = (interruptControllerStruct*) INTERRUPT_CONTROLLER;
+
+#endif
