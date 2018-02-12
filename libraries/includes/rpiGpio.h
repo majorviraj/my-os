@@ -3,7 +3,7 @@
 #ifndef __RPIGPIO_H__
 #define __RPIGPIO_H__
 
-#define GPIO_BASE 0x20200000UL
+#define PERIPHERAL_BASE 0x20200000UL
 
 #define LED_GPFSEL      GPIO_GPFSEL4
 #define LED_GPFBIT      21
