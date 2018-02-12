@@ -1,8 +1,4 @@
-extern int frameBufferInit(int, int, int);
-extern void UsbInitialise();
-extern void keyboardInit();
-extern char KeyboardGetChar();
-extern int drawCharacter(int, int, int);
+#include <assemblyFunctions.h>
 
 void frameBufferSetup(int width, int height, int bitDepth){
     int error = frameBufferInit(width, height, bitDepth);
@@ -17,6 +13,9 @@ void frameBufferSetup(int width, int height, int bitDepth){
 }
 
 void kernel_main() {
+
+    _enable_interrupts();
+
     char character = 0;
     int x, y = 0;
 
@@ -43,3 +42,4 @@ void kernel_main() {
 
     }
 }
+
