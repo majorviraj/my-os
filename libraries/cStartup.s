@@ -9,7 +9,7 @@ _start:
     b prefetchAbort
     b _reset_
     b _reset_
-    b interruptReq
+    b interruptRequest
     b fastInterrupt
 
     b _inf_loop

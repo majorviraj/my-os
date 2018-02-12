@@ -2,12 +2,13 @@ ARMGNU ?= arm-none-eabi
 BUILD = build/
 SOURCE = source/
 LIBRARIES = ../../libraries/
+INCLUDES = ../../libraries/includes/
 LIST = kernel.list
 SYMBOLS = kernel.nm
 TARGET = kernel.img
 UPLOADSCRIPT = ./run.sh
 CFLAGS = -O2 -mfpu=vfp -mfloat-abi=softfp -march=armv6zk -mtune=arm1176jzf-s -nostartfiles -g -Wl,-T,linkerScript.ld,--no-wchar-size-warning
-OBJECTS := $(wildcard $(SOURCE)*.c) $(wildcard $(SOURCE)*.s) $(wildcard $(LIBRARIES)*.s) $(wildcard $(LIBRARIES)*.a)
+OBJECTS := $(wildcard $(SOURCE)*.c) $(wildcard $(SOURCE)*.s) $(wildcard $(LIBRARIES)*.s) $(wildcard $(LIBRARIES)*.a) 
 
 all: $(TARGET) $(LIST)
 
@@ -19,7 +20,7 @@ $(LIST) : $(BUILD)output.elf
 	$(ARMGNU)-nm $(BUILD)output.elf > $(SYMBOLS)
 
 $(BUILD)output.elf: $(OBJECTS) $(BUILD)
-	$(ARMGNU)-gcc $(CFLAGS) -I$(LIBRARIES) $(OBJECTS) -o $(BUILD)output.elf
+	$(ARMGNU)-gcc $(CFLAGS) -I $(INCLUDES) $(OBJECTS) -o $(BUILD)output.elf
 
 $(BUILD) :
 	mkdir $@
