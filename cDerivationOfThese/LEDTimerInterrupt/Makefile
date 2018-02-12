@@ -2,6 +2,7 @@ ARMGNU ?= arm-none-eabi
 BUILD = build/
 SOURCE = source/
 LIBRARIES = ../../libraries/
+C_LIBRARIES = ../../libraries/includes
 LIST = kernel.list
 SYMBOLS = kernel.nm
 TARGET = kernel.img
@@ -19,7 +20,7 @@ $(LIST) : $(BUILD)output.elf
 	$(ARMGNU)-nm $(BUILD)output.elf > $(SYMBOLS)
 
 $(BUILD)output.elf: $(OBJECTS) $(BUILD)
-	$(ARMGNU)-gcc $(CFLAGS) -I$(LIBRARIES) $(OBJECTS) -o $(BUILD)output.elf
+	$(ARMGNU)-gcc $(CFLAGS) -I$(C_LIBRARIES) $(OBJECTS) -o $(BUILD)output.elf
 
 $(BUILD) :
 	mkdir $@

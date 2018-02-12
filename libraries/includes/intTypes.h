@@ -1,3 +1,2 @@
-typedef struct uint32_t {
-    unsigned int uint32_t;
-};
+typedef unsigned int uint32_t;
+typedef int int32_t;

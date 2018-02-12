@@ -16,6 +16,8 @@ void kernel_main() {
 
     _enable_interrupts();
 
+	
+
     char character = 0;
     int x, y = 0;
 
@@ -24,8 +26,6 @@ void kernel_main() {
     while(1){
         
         do {
-        
-
             character = KeyboardGetChar();
         }while( character == 0);
 

@@ -1,5 +1,5 @@
-#ifndef __TIMER_H_
-#define __TIMER_H_
+#ifndef _TIMER_H_
+#define _TIMER_H_
 
 #include <interrupt.h>
 
@@ -60,5 +60,12 @@ typedef struct armTimerStruct {
     // The value of the free running counter (this is a up counter)
     volatile unsigned int freeRuning;
 };
+
+typedef enum counterLength {Bit16, Bit23};
+void timerInit(	unsigned int,
+				enum counterLength,
+				unsigned int);
+
+void reload(unsigned int);
 
 #endif
