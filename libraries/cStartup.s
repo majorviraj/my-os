@@ -24,15 +24,6 @@ _reset_:
 
     b _bss_clear
 
-fastInterrupt:
-
-interruptReq:
-
-undefinedInstruction:
-
-softwareInterrupt:
-
-prefetchAbort:
 
 .globl _bss_clear
 _bss_clear:

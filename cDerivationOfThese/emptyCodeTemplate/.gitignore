@@ -1,5 +1,5 @@
 build/
-.vscode/
+.vscode
 kernel.img
 kernel.nm
 kernel.list
