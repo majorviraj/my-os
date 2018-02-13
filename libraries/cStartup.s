@@ -3,14 +3,24 @@
 .global _start
 _start:
 
-    b _reset_
-    b undefinedInstruction
-    b softwareInterrupt
-    b prefetchAbort
-    b _reset_
-    b _reset_
-    b interruptRequest
-    b fastInterrupt
+	ldr pc, _reset_h
+	ldr pc, _undefined_instruction_vector_h
+	ldr pc, _software_interrupt_vector_h
+	ldr pc, _prefetch_abort_vector_h
+	ldr pc, _data_abort_vector_h
+	ldr pc, _unused_handler_h
+	ldr pc, _interrupt_vector_h
+	ldr pc, _fast_interrupt_vector_h
+
+    _reset_h:                           .word   _reset_
+    _undefined_instruction_vector_h:    .word   undefinedInstruction
+    _software_interrupt_vector_h:       .word   softwareInterrupt
+    _prefetch_abort_vector_h:           .word   prefetchAbort
+    _data_abort_vector_h:               .word   _reset_
+    _unused_handler_h:                  .word   _reset_
+    _interrupt_vector_h:                .word   interruptRequest
+    _fast_interrupt_vector_h:           .word   fastInterrupt
+
 
     b _inf_loop
 
@@ -18,6 +28,8 @@ _reset_:
     mov r0, #0x8000
     mov r1, #0x0000
     ldmia r0!, {r2,r3,r4,r5,r6,r7,r8,r9}
+    stmia r1!, {r2,r3,r4,r5,r6,r7,r8,r9}
+	ldmia r0!, {r2,r3,r4,r5,r6,r7,r8,r9}
     stmia r1!, {r2,r3,r4,r5,r6,r7,r8,r9}
     
     mov sp, #0x8000

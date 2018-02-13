@@ -68,4 +68,5 @@ void timerInit(	unsigned int,
 
 void reload(unsigned int);
 
+static armTimerStruct* ARMrpiTimer = (armTimerStruct*) ARM_TIMER_BASE_ADDRESS;
 #endif
