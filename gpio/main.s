@@ -18,7 +18,7 @@ functionLoop$:
 	addhi r0,#4
 	bhi functionLoop$
 	add r2, r2, lsl #1
-	lsl r1,r2
+	lsl r1, r2
 	str r1,[r0]
 	pop {pc}
 
