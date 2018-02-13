@@ -4,7 +4,7 @@
 #define __RPIGPIO_H__
 
 #define PERIPHERAL_BASE 0x20200000UL
-
+ 
 #define LED_GPFSEL      GPIO_GPFSEL4
 #define LED_GPFBIT      21
 #define LED_GPSET       GPIO_GPSET1
@@ -52,5 +52,7 @@
 #define GPIO_GPPUD      37
 #define GPIO_GPPUDCLK0  38
 #define GPIO_GPPUDCLK1  39
+
+volatile unsigned int* gpio = (unsigned int*)PERIPHERAL_BASE;
 
 #endif

@@ -1,6 +1,6 @@
-#include <timer.h>
-#include <interrupt.h>
-#include <intTypes.h>
+#include "timer.h"
+#include "interrupt.h"
+#include "intTypes.h"
 
 static armTimerStruct* ARMrpiTimer = (armTimerStruct*) ARM_TIMER_BASE_ADDRESS;
 

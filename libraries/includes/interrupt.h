@@ -29,21 +29,10 @@ typedef struct {
 
 static interruptControllerStruct* IRQController = (interruptControllerStruct*) INTERRUPT_CONTROLLER;
 
-void __attribute__((interrupt("IRQ"))) interruptRequest() {
-
-}
-
-void __attribute__((interrupt("FIQ"))) fastInterrupt() {
-    
-}
-void __attribute__((interrupt("UNDEF"))) undefinedInstruction() {
-    
-}
-void __attribute__((interrupt("SWI"))) softwareInterrupt() {
-    
-}
-void __attribute__((interrupt("ABORT"))) prefetchAbort() {
-    
-}
+void __attribute__((interrupt("IRQ"))) interruptRequest() ;
+void __attribute__((interrupt("FIQ"))) fastInterrupt() ;
+void __attribute__((interrupt("UNDEF"))) undefinedInstruction() ;
+void __attribute__((interrupt("SWI"))) softwareInterrupt() ;
+void __attribute__((interrupt("ABORT"))) prefetchAbort() ;
 
 #endif
