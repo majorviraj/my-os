@@ -1,7 +1,7 @@
 #ifndef __INTERRUPT_H_
 #define __INTERRUPT_H_
 
-#include "rpiGpio.h"
+#include <rpiGpio.h>
 
 #define INTERRUPT_CONTROLLER (PERIPHERAL_BASE + 0xB200)
 

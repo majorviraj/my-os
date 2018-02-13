@@ -53,6 +53,5 @@
 #define GPIO_GPPUDCLK0  38
 #define GPIO_GPPUDCLK1  39
 
-volatile unsigned int* gpio = (unsigned int*)PERIPHERAL_BASE;
 
 #endif
