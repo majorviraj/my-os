@@ -1,4 +1,7 @@
 #include <assemblyFunctions.h>
+#include <rpiGpio.h>
+#include <interrupt.h>
+#include <timer.h>
 
 void frameBufferSetup(int width, int height, int bitDepth){
     int error = frameBufferInit(width, height, bitDepth);
@@ -15,31 +18,16 @@ void frameBufferSetup(int width, int height, int bitDepth){
 void kernel_main() {
 
     _enable_interrupts();
-
-	
-
-    char character = 0;
-    int x, y = 0;
-
-    frameBufferSetup(1024, 768, 16);
     
-    while(1){
-        
-        do {
-            character = KeyboardGetChar();
-        }while( character == 0);
+	timerInit(0xFF, Bit16, TIMER_CONTROL_PRESCALLAR_16);
 
-        x += drawCharacter(character, x, y);
+	volatile unsigned int* gpio = (unsigned int*)PERIPHERAL_BASE;
 
-        if (x > 1023) {
-            x = 0;
-            y++;
-        }
+	gpio[LED_GPFSEL] |= (1 << LED_GPIO_BIT);
+	
+	while(1){
 
-        if (y > 767) {
-            y = 0;
-        }
+	}
 
-    }
 }
 

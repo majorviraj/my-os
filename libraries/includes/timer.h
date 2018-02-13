@@ -3,7 +3,7 @@
 
 #include <interrupt.h>
 
-#define ARM_TIMER_BASE_ADDRESS (0x20200000UL + B400)
+#define ARM_TIMER_BASE_ADDRESS (0x20200000 + 0xB400)
 
 #define TIMER_CONTROL_23BITS        		(1 << 1)
 #define TIMER_CONTROL_16BITS				(0 << 1)
@@ -22,7 +22,7 @@
 #define TIMER_CONTROL_FREERUNNING_DISABLE 	(0 << 9)
  
 
-typedef struct armTimerStruct {
+typedef struct {
     // Value to be counted from (!!this is a down counter!!) 
     volatile unsigned int load;
     
@@ -59,11 +59,11 @@ typedef struct armTimerStruct {
     
     // The value of the free running counter (this is a up counter)
     volatile unsigned int freeRuning;
-};
+} armTimerStruct;
 
 typedef enum counterLength {Bit16, Bit23};
 void timerInit(	unsigned int,
-				enum counterLength,
+				enum counterLength,		
 				unsigned int);
 
 void reload(unsigned int);

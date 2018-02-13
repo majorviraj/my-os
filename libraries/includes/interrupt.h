@@ -14,7 +14,7 @@
 #define RPI_BASIC_ACCESS_ERROR_1_IRQ    (1 << 6)
 #define RPI_BASIC_ACCESS_ERROR_0_IRQ    (1 << 7)
 
-typedef struct interruptControllerStruct {
+typedef struct {
     volatile unsigned int IRQBasicPending;
     volatile unsigned int IRQGPUpending1;
     volatile unsigned int IRQGPUpending2;
@@ -25,7 +25,7 @@ typedef struct interruptControllerStruct {
     volatile unsigned int disableIRQ1;
     volatile unsigned int disableIRQ2;
     volatile unsigned int disableBasicIRQs;
-};
+} interruptControllerStruct ;
 
 static interruptControllerStruct* IRQController = (interruptControllerStruct*) INTERRUPT_CONTROLLER;
 

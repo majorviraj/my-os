@@ -4,7 +4,7 @@
 
 static armTimerStruct* ARMrpiTimer = (armTimerStruct*) ARM_TIMER_BASE_ADDRESS;
 
-void timerInit(	unsigned int load,
+void timerInit( unsigned int load,
 				enum counterLength bitDepth,
 				unsigned int preScallar) {
     
