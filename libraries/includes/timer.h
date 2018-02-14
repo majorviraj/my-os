@@ -31,8 +31,8 @@ typedef struct {
 
     /* The control register for the timer
         0: Reserved
-        1: 1 - 16 bit
-           0 - 23 bit
+        1: 0 - 16 bit
+           1 - 23 bit
       2-3: PreScallar
         5: Timer Interrupt
         7: Timer enable
@@ -53,7 +53,7 @@ typedef struct {
     // this value is filled in load when timer reaches 0
     volatile unsigned int reload;
 
-    // This can be used to divide the clock further
+    // This can be used to divide the freerunning clock further
     // timer_clock = apb_clock/(pre_divider+1)
     volatile unsigned int preDivide;
     
@@ -69,4 +69,5 @@ void timerInit(	unsigned int,
 void reload(unsigned int);
 
 static armTimerStruct* ARMrpiTimer = (armTimerStruct*) ARM_TIMER_BASE_ADDRESS;
+
 #endif

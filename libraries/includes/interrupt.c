@@ -9,7 +9,7 @@ void __attribute__((interrupt("IRQ"))) interruptRequest() {
     	//Call timer interrupt handler
 
 		ARMrpiTimer -> IRQClear = 1;
-    	gpioToggle();
+    	// gpioToggle();
     // }
 
 }

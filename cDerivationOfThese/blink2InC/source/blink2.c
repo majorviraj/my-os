@@ -1,6 +1,6 @@
-#include "includes/rpiGpio.h"
+#include <includes/rpiGpio.h>
 
-volatile unsigned int* gpio = (unsigned int*)GPIO_BASE;
+volatile unsigned int* gpio = (unsigned int*)PERIPHERAL_BASE;
 
 volatile unsigned int tim;
 void kernel_main() {

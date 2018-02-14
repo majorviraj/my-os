@@ -1,6 +1,7 @@
 #include <assemblyFunctions.h>
 #include <rpiGpio.h>
 #include <interrupt.h>
+#include <intTypes.h>
 #include <timer.h>
  
 /* 
@@ -18,21 +19,36 @@ void frameBufferSetup(int width, int height, int bitDepth){
 */
 
 void kernel_main() {
-    setLEDasOutput();
-    int reachedZero=0;
-    int toggledOnce=0;
-    timerInit(0x400, Bit23, TIMER_CONTROL_PRESCALLAR_1);
-    
-    if (ARMrpiTimer->count < 10 && toggledOnce == 0 ) {
-        gpioToggle();
-        toggledOnce = 1;
-    }
-    if(ARMrpiTimer->count >= 10 && toggledOnce==1) {
-        toggledOnce = 0;
-    } 
+    // setLEDasOutput();
+	setLEDasOutput();
 
- }
+	volatile int toggledOnce =1;
 
+	ARMrpiTimer -> load = 100000;
+	ARMrpiTimer -> control = (unsigned int)0x8A;
+	volatile unsigned int count = 500000;
+	// volatile unsigned int tim = 0;
+// while(1){
+// 	for (tim = 0; tim < 500000; tim++);
+
+//     	gpioToggle();
+
+//     for (tim = 0; tim < 500000; tim++);
+        
+// 		gpioToggle();
+
+// }
+    while(1){
+			if (ARMrpiTimer -> count < 1000 && toggledOnce == 0 ) {
+				gpioToggle();
+				toggledOnce = 1;
+			}
+			if(ARMrpiTimer ->count >= 1000 && toggledOnce==1) {
+				toggledOnce = 0;
+			}
+	}
+
+}
 
 // void kernel_main() {
 
