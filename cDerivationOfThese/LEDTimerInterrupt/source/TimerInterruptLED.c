@@ -18,19 +18,21 @@ void frameBufferSetup(int width, int height, int bitDepth){
 */
 
 void kernel_main() {
+    setLEDasOutput();
+    int reachedZero=0;
+    int toggledOnce=0;
+    timerInit(0x400, Bit23, TIMER_CONTROL_PRESCALLAR_1);
+    
+    if (ARMrpiTimer->count < 10 && toggledOnce == 0 ) {
+        gpioToggle();
+        toggledOnce = 1;
+    }
+    if(ARMrpiTimer->count >= 10 && toggled==1) {
+        toggledOnce = 0;
+    } 
 
-    _enable_interrupts();
-        
-    setLEDasOutput() ;
-	timerInit(0xFF, Bit16, TIMER_CONTROL_PRESCALLAR_16);
-	
-	IRQController->enableBasicIRQs |= RPI_BASIC_ARM_TIMER_IRQ;
+ }
 
-	while(1){
-
-	}
-
-}
 
 // void kernel_main() {
 
