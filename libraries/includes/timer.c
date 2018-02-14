@@ -3,7 +3,7 @@
 #include <intTypes.h>
 
 void timerInit( unsigned int load,
-				enum counterLength bitDepth,
+				counterDepth bitDepth,
 				unsigned int preScallar) {
     
 	IRQController -> enableBasicIRQs |= (unsigned int)RPI_BASIC_ARM_TIMER_IRQ;

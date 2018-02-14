@@ -27,7 +27,7 @@ void kernel_main() {
         gpioToggle();
         toggledOnce = 1;
     }
-    if(ARMrpiTimer->count >= 10 && toggled==1) {
+    if(ARMrpiTimer->count >= 10 && toggledOnce==1) {
         toggledOnce = 0;
     } 
 

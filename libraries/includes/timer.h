@@ -61,7 +61,7 @@ typedef struct {
     volatile unsigned int freeRuning;
 } armTimerStruct;
 
-enum counterLength {Bit16=0, Bit23=1};
+typedef enum counterLength {Bit16=0, Bit23=1} counterDepth;
 void timerInit(	unsigned int,
 				enum counterLength,		
 				unsigned int);
