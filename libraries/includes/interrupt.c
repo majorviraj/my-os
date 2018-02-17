@@ -5,12 +5,12 @@ void __attribute__((interrupt("IRQ"))) interruptRequest() {
     
     //Enable timer IRQ
     
-    // if (IRQController->IRQBasicPending & RPI_BASIC_ARM_TIMER_IRQ) {
+    if (IRQController->IRQBasicPending & RPI_BASIC_ARM_TIMER_IRQ) {
     	//Call timer interrupt handler
 
-		ARMrpiTimer -> IRQClear = 1;
-    	// gpioToggle();
-    // }
+			ARMrpiTimer -> IRQClear = 1;
+    		gpioToggle();
+    }
 
 }
 

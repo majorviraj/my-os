@@ -1,6 +1,6 @@
 #include <rpiGpio.h>
 
-volatile unsigned int* gpio = (unsigned int*)PERIPHERAL_BASE;
+volatile unsigned int* gpio = (unsigned int*)GPIO_BASE;
 unsigned int stateOfLed=0;
 
 void gpioToggle() {
