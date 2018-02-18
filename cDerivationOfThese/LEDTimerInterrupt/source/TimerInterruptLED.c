@@ -2,8 +2,10 @@
 #include <rpiGpio.h>
 #include <interrupt.h>
 #include <timer.h>
+#include <stdOutput.h>
+#include <intTypes.h>
  
-/* 
+ 
 void frameBufferSetup(int width, int height, int bitDepth){
     int error = frameBufferInit(width, height, bitDepth);
 
@@ -15,21 +17,34 @@ void frameBufferSetup(int width, int height, int bitDepth){
         // error handler
     }
 }
-*/
+
 
 void kernel_main() {
-    setLEDasOutput();
-    int reachedZero=0;
-    int toggledOnce=0;
-    timerInit(0x400, Bit23, TIMER_CONTROL_PRESCALLAR_1);
-    
-    if (ARMrpiTimer->count < 10 && toggledOnce == 0 ) {
-        gpioToggle();
-        toggledOnce = 1;
+    frameBufferSetup(1366, 768, 16);
+    setStartPosition(100,100);
+    setCursor(1);
+    putChar('x');
+    printf("Hello world \t");
+    while(1){
+        //printf("Hello world \t");
+        // for(uint32_t i=0;i<10;i++) {
+        //     printf("test %i", i);       
+        // }
     }
-    if(ARMrpiTimer->count >= 10 && toggledOnce==1) {
-        toggledOnce = 0;
-    } 
+    
+
+    // setLEDasOutput();
+    // int reachedZero=0;
+    // int toggledOnce=0;
+    // timerInit(0x400, Bit23, TIMER_CONTROL_PRESCALLAR_1);
+    
+    // if (ARMrpiTimer->count < 10 && toggledOnce == 0 ) {
+    //     gpioToggle();
+    //     toggledOnce = 1;
+    // }
+    // if(ARMrpiTimer->count >= 10 && toggledOnce==1) {
+    //     toggledOnce = 0;
+    // } 
 
  }
 
