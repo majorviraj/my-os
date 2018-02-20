@@ -59,4 +59,6 @@ void gpioToggle();
 
 void setLEDasOutput();
 
+unsigned int returnGpio();
+
 #endif
