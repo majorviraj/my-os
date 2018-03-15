@@ -38,13 +38,14 @@ sudo make install
 ```
 5. Connect the BusPirate to Rpi as follows
 
-| BusPirate     | Rpi           |
-| ------------- |-------------:|
-| MISO      | right-aligned |
-| MOSI      | centered      |
-| CS |       |
-|CLK|	|
-|Aux|	|
+|BusPirate| Rpi |
+| ----- | -----:|
+| MISO	| TDO(18)|
+| MOSI	| TDI(7)|
+| CS	| TMS(13)|
+| CLK	| TCK(22)|
+| Aux	| TRST(15)|
+| VPU	| 3v3(1)|
 
 6. Then use the openocd.cfg file
 ```
