@@ -30,8 +30,8 @@ $(BUILD) :
 program:
 	$(UPLOADSCRIPT)
 
-debug:
-	gdbgui --gdb $(ARMGNU)-gdb 'build/output.elf'
+jtag:
+	openocd -f openocd.cfg
 
 clean:
 	-rm -rf $(BUILD)

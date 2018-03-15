@@ -25,7 +25,8 @@ void kernel_main() {
 	setLEDasOutput();
 	while(1) {
 		
-		for (volatile unsigned int tim = 0; tim < 500000; tim++);
+		// for (volatile unsigned int tim = 0; tim < 500000; tim++);
+		delayMicro(1000*1000);
 		gpioToggle();
 	}
 
