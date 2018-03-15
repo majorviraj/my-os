@@ -15,7 +15,7 @@ void kernel_main() {
         gpio[LED_GPCLR] = (1 << LED_GPIO_BIT);
 
         for (tim = 0; tim < 500000; tim++);
-        
+
         gpio[LED_GPSET] = (1 << LED_GPIO_BIT);
     }
 }

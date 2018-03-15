@@ -18,3 +18,7 @@ void gpioToggle() {
 void setLEDasOutput() {
 	gpio[LED_GPFSEL] |= (1 << LED_GPIO_BIT);
 }
+
+unsigned int returnGpio() {
+	return gpio;
+}
