@@ -17,3 +17,11 @@ void emmcAllRegisters() {
 	volatile static emmcControllerBasicStruct1 allRegs;
 	allRegs =  *emmcControllerBasicStruct1_t;
 }
+
+uint32_t emmcSendCommand(uint32_t commandIndex, uint32_t arg1) {
+	commandIndex = commandIndex << 24;
+	emmcControllerBasicStruct1_t -> arg1 = arg1;
+	emmcControllerBasicStruct1_t -> cmdtm = commandIndex;
+
+	return emmcControllerBasicStruct1_t -> responce0;
+}
