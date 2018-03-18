@@ -2,6 +2,8 @@
 #define _TIMER_H_
 
 #include <interrupt.h>
+#include <assemblyFunctions.h>
+#define delay(timeMs) delayMicro(timeMs*1000);
 
 #define ARM_TIMER_BASE_ADDRESS (0x20000000 + 0xB400)
 

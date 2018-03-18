@@ -1,5 +1,6 @@
 #include <rpiGpio.h>
-
+#include <intTypes.h>
+#include <timer.h>
 volatile unsigned int* gpio = (unsigned int*)GPIO_BASE;
 unsigned int stateOfLed=0;
 
@@ -19,6 +20,15 @@ void setLEDasOutput() {
 	gpio[LED_GPFSEL] |= (1 << LED_GPIO_BIT);
 }
 
-unsigned int returnGpio() {
+unsigned int* returnGpio() {
 	return gpio;
+}
+
+void gpioBlink(uint16_t time,uint16_t number) {
+
+	for (uint16_t i=0; i<number; i++) {
+		gpioToggle();
+		delay(time);
+	}
+	gpio[LED_GPCLR] = (1 << LED_GPIO_BIT);
 }

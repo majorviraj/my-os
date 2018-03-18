@@ -3,6 +3,7 @@
 #ifndef __RPIGPIO_H__
 #define __RPIGPIO_H__
 
+#include <intTypes.h>
 #define PERIPHERAL_BASE 0x20000000UL
 #define GPIO_BASE		(PERIPHERAL_BASE + 0x00200000UL)
  
@@ -59,6 +60,8 @@ void gpioToggle();
 
 void setLEDasOutput();
 
-unsigned int returnGpio();
+unsigned int* returnGpio();
+
+void gpioBlink(uint16_t, uint16_t);
 
 #endif

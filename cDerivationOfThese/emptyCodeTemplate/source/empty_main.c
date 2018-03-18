@@ -17,11 +17,10 @@ void frameBufferSetup(int width, int height, int bitDepth){
     }
 }
 */
-
 void kernel_main() {
 
 	while(1) {
-		
+
 	}
 
 }

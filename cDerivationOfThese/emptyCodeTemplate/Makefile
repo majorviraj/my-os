@@ -16,7 +16,7 @@ $(TARGET) : $(BUILD)output.elf
 	$(ARMGNU)-objcopy $(BUILD)output.elf -O binary $(TARGET)
 
 $(LIST) : $(BUILD)output.elf
-	$(ARMGNU)-objdump -D $(BUILD)output.elf > $(LIST)
+	$(ARMGNU)-objdump -t -D $(BUILD)output.elf > $(LIST)
 	$(ARMGNU)-nm $(BUILD)output.elf > $(SYMBOLS)
 
 $(BUILD)output.elf: $(OBJECTS) $(BUILD)

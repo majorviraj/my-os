@@ -88,4 +88,6 @@ void emmcAllRegisters();
 
 uint32_t emmcSendCommand(uint32_t, uint32_t);
 
+void emmcInit();
+
 #endif

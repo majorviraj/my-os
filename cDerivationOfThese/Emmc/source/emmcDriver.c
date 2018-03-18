@@ -4,6 +4,7 @@
 #include <intTypes.h>
 #include <timer.h>
 #include <emmc.h>
+#include <jtag.h>
  
 /* 
 void frameBufferSetup(int width, int height, int bitDepth){
@@ -22,7 +23,7 @@ void frameBufferSetup(int width, int height, int bitDepth){
 void kernel_main() {
 
 	jtagInit();
-	delayMicro(10000*1000);
+	// gpioBlink(50, 100);
 	setLEDasOutput();
 	
 	_enable_interrupts();
@@ -33,22 +34,8 @@ void kernel_main() {
 	// emmcControllerBasicStruct1_t -> cmdtm = 0x112A0010;
 	// emmcControllerBasicStruct1_t -> arg1 = 0x8000;
 
-	uint32_t resp = emmcSendCommand(8, 0x000001AA);
-
+	emmcInit();
 	delayMicro(2000);
-
-	if (resp == 0x01) {
-		while (1) {
-			delayMicro(1000*1000);
-			gpioToggle();
-		}
-	}
-	else {
-		while(1) {
-			delayMicro(4000*1000);
-			gpioToggle();
-		}
-	}
 
 	// emmcGetStatus();
 	// emmcAllRegisters();
