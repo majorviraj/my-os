@@ -1,0 +1,15 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"files.associations": {
+			"rpigpio.h": "c",
+			"timer.h": "c",
+			"assemblyfunctions.h": "c",
+			"emmc.h": "c"
+		}
+	}
+}

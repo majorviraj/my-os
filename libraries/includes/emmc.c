@@ -5,6 +5,9 @@
 
 #define A_COMMAND_ID 0x80000000
 #define ACMD(x) A_COMMAND_ID | x
+
+#define SD_1_8V_SUPPORT (1 << 30)
+#define SDHC_SUPPORT (1 << 24)
 volatile uint32_t* emmcControllerBasicForceInterrupt = (uint32_t*) (EMMC_CONTROLLER + 64);
 volatile uint32_t* spiInterruptSupport = (uint32_t*) (EMMC_CONTROLLER + 0xF0);
 volatile uint32_t* slotInterruptAndVersion = (uint32_t*) (EMMC_CONTROLLER + 0xFC);
@@ -34,8 +37,8 @@ uint32_t emmcSendCommand(uint32_t commandIndex, uint32_t arg1) {
 	commandIndex = commandIndex << 24;
 	emmcControllerBasicStruct1_t -> arg1 = arg1;
 	if (commandIsACommand) {
-		uint32_t resp = emmcSendCommand(55, 0);
 		commandIsACommand = 0;
+		uint32_t resp = emmcSendCommand(55, 0);
 	}
 	commandIndex |= 0x000A0000; // 0x002A0010 for data commands
 	emmcControllerBasicStruct1_t -> cmdtm = commandIndex;
@@ -93,9 +96,18 @@ void emmcInit() {
 	do {
 		responce = emmcControllerBasicStruct1_t -> responce0;
 	} while((responce & 0x1FF) == 0x1AA);
-
+	
+	gpioBlink(500, 5);
 	// Send command ACMD41
 	responce = emmcSendCommand(ACMD(41), 0);
 
+	delay(500);
+	responce = emmcSendCommand(ACMD(41), 0x00FF8000 | SD_1_8V_SUPPORT| SDHC_SUPPORT);
+
+	do {
+		responce = emmcControllerBasicStruct1_t -> responce0;
+	} while(((responce >> 31) & 0x1) == 1);
+
+	gpioBlink(50, 10);
 
 }
