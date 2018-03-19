@@ -3,7 +3,9 @@
 #ifndef __RPIGPIO_H__
 #define __RPIGPIO_H__
 
-#define PERIPHERAL_BASE 0x20200000UL
+#include <intTypes.h>
+#define PERIPHERAL_BASE 0x20000000UL
+#define GPIO_BASE		(PERIPHERAL_BASE + 0x00200000UL)
  
 #define LED_GPFSEL      GPIO_GPFSEL4
 #define LED_GPFBIT      21
@@ -53,8 +55,13 @@
 #define GPIO_GPPUDCLK0  38
 #define GPIO_GPPUDCLK1  39
 
+
 void gpioToggle();
 
 void setLEDasOutput();
+
+unsigned int* returnGpio();
+
+void gpioBlink(uint16_t, uint16_t);
 
 #endif

@@ -5,3 +5,4 @@ kernel.nm
 kernel.list
 .directory
 run.sh
+*.kdev4

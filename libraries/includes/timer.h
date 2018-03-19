@@ -2,8 +2,10 @@
 #define _TIMER_H_
 
 #include <interrupt.h>
+#include <assemblyFunctions.h>
+#define delay(timeMs) delayMicro(timeMs*1000);
 
-#define ARM_TIMER_BASE_ADDRESS (0x20200000 + 0xB400)
+#define ARM_TIMER_BASE_ADDRESS (0x20000000 + 0xB400)
 
 #define TIMER_CONTROL_23BITS        		(1 << 1)
 #define TIMER_CONTROL_16BITS				(0 << 1)
@@ -20,6 +22,10 @@
 
 #define TIMER_CONTROL_FREERUNNING_ENABLE 	(1 << 9)
 #define TIMER_CONTROL_FREERUNNING_DISABLE 	(0 << 9)
+
+#define LOAD_VALUE_10S_1_PRESCALLAR			0x9505F9UL
+#define LOAD_VALUE_1S_1_PRESCALLAR			0x09505FUL
+#define LOAD_VALUE_1S_16_PRESCALLAR 		0xEE6B28
  
 
 typedef struct {
@@ -31,8 +37,8 @@ typedef struct {
 
     /* The control register for the timer
         0: Reserved
-        1: 1 - 16 bit
-           0 - 23 bit
+        1: 0 - 16 bit
+           1 - 23 bit
       2-3: PreScallar
         5: Timer Interrupt
         7: Timer enable
@@ -53,7 +59,7 @@ typedef struct {
     // this value is filled in load when timer reaches 0
     volatile unsigned int reload;
 
-    // This can be used to divide the clock further
+    // This can be used to divide the freerunning clock further
     // timer_clock = apb_clock/(pre_divider+1)
     volatile unsigned int preDivide;
     
@@ -69,4 +75,5 @@ void timerInit(	unsigned int,
 void reload(unsigned int);
 
 static armTimerStruct* ARMrpiTimer = (armTimerStruct*) ARM_TIMER_BASE_ADDRESS;
+
 #endif
