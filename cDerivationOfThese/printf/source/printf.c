@@ -15,7 +15,7 @@ void frameBufferSetup(int width, int height, int bitDepth){
 
     else {
         // error handler
-        gpioBlink(2, 5);
+        gpioBlink(200, 10);
     }
 }
 

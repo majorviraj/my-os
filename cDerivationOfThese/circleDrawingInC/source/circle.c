@@ -1,3 +1,4 @@
+#include <interrupt.h>
 extern int frameBufferInit(int, int, int);
 extern void UsbInitialise();
 extern void keyboardInit();
