@@ -85,6 +85,9 @@ volatile uint32_t* slotInterruptAndVersion;
 
 struct emmcDevice {
 	uint32_t cardOCR;
+	uint32_t cardSupports18v;
+	uint32_t cardIsSDHC;
+	uint32_t cardRCA;
 
 };
 void emmcGetStatus();
