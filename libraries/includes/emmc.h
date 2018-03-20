@@ -82,6 +82,11 @@ static emmcControllerBasicStruct2* emmcControllerBasicStruct2_t = (emmcControlle
 volatile uint32_t* spiInterruptSupport;
 volatile uint32_t* slotInterruptAndVersion;
 
+
+struct emmcDevice {
+	uint32_t cardOCR;
+
+};
 void emmcGetStatus();
 
 void emmcAllRegisters();

@@ -29,7 +29,7 @@ void emmcAllRegisters() {
 uint32_t emmcSendCommand(uint32_t commandIndex, uint32_t arg1) {
 	
 	uint8_t commandIsACommand = 0;
-	if (commandIndex & A_COMMAND_ID == A_COMMAND_ID) {
+	if ((uint32_t)(commandIndex & A_COMMAND_ID) == A_COMMAND_ID) {
 		commandIsACommand = 1;
 		commandIndex &= 0xFFFF;
 	}
@@ -96,17 +96,23 @@ void emmcInit() {
 	do {
 		responce = emmcControllerBasicStruct1_t -> responce0;
 	} while((responce & 0x1FF) == 0x1AA);
-	
+
 	gpioBlink(500, 5);
+	
 	// Send command ACMD41
 	responce = emmcSendCommand(ACMD(41), 0);
 
 	delay(500);
 	responce = emmcSendCommand(ACMD(41), 0x00FF8000 | SD_1_8V_SUPPORT| SDHC_SUPPORT);
 
+	gpioBlink(500, 5);
 	do {
 		responce = emmcControllerBasicStruct1_t -> responce0;
 	} while(((responce >> 31) & 0x1) == 1);
+
+	responce = emmcControllerBasicStruct1_t -> responce0;
+
+	
 
 	gpioBlink(50, 10);
 

@@ -187,6 +187,7 @@ int sd_card_init(struct block_device **dev)
 	    }
 
 	    sd_issue_command(ret, ACMD(41), 0x00ff8000 | v2_flags, 500000);
+		***************************************************************************************
 	    if(FAIL(ret))
 	    {
 	        printf("SD: error issuing ACMD41\n");
