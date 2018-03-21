@@ -7,7 +7,8 @@ extern int frameBufferInit(int, int, int);
 extern void UsbInitialise();
 extern void keyboardInit();
 extern char KeyboardGetChar();
-extern int drawCharacter(int, int, int);
+extern int drawCharacter(int, int, int);	// char, x, y
+extern void drawCircle(int, int, int);
 extern void _enable_interrupts();
 
 // Functions defined in systemTimer.s

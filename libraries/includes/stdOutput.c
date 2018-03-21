@@ -20,9 +20,9 @@ void setCursor(unsigned int cursorPos) {
 //1366*78 -> 1358*62
 
 void putChar(char character, uint32_t *cursor) {
-	drawCharacter(character, startX + (*cursor*8)%1358, 
-					(uint32_t)(16*((*cursor*8)/1358)) + startY);
-	*cursor++;
+	drawCharacter(character, startX + ((*cursor)*8)%1016, 
+					(uint32_t)(16*(((*cursor)*8)/1016)) + startY);
+	(*cursor)++;
 }
 
 //Checks if monitor is connected and calls putChar to print to display
@@ -30,6 +30,7 @@ void putChar(char character, uint32_t *cursor) {
 void put(char character) {
 	putChar(character, &cursorPosition);
 }
+
 
 
 void putInt(int x) {
@@ -42,7 +43,7 @@ void putInt(int x) {
 		put((x%10) + 30);
 		x = (int)x/10;
 	}
-	put(x);
+	put(x + 0x30);
 
 }
 
@@ -61,7 +62,7 @@ void printf(char *string, ...) {
 	va_start(argumentsList, string);
 	char *traverseString;
 	traverseString = string;
-	uint32_t i;
+	int i;
 	char *s;
 	for (traverseString = string; *traverseString!='\0'; traverseString++) {
 		
@@ -82,7 +83,14 @@ void printf(char *string, ...) {
 					break;
 			}
 
-		} else {
+		}
+		else if (*traverseString == '\n') {
+			startX = 0;
+			startY += 16;
+			setCursor(1);
+		}
+
+		else {
 			put(*traverseString);
 		}
 

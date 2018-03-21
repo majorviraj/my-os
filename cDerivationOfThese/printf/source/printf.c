@@ -7,7 +7,7 @@
  
  
 void frameBufferSetup(int width, int height, int bitDepth){
-    int error = frameBufferInit(width, height, bitDepth);
+    uint32_t error = frameBufferInit(width, height, bitDepth);
 
     if (error == 0){
         return 0;
@@ -19,13 +19,28 @@ void frameBufferSetup(int width, int height, int bitDepth){
     }
 }
 
-
+uint32_t cuser[2] = {50,51};
+uint32_t* ptr = &cuser;
+// char x='d';
+int x=-5;
 void kernel_main() {
-    frameBufferSetup(1366, 768, 16);
-    setStartPosition(100,100);
+    frameBufferSetup(1024, 768, 16);
+    setStartPosition(0,0);
+	gpioBlink(50, 20);
     setCursor(1);
-    put('x');
-    printf("Hello world \t");
+    // put('H');
+	// put('e');
+	// setCursor(20);
+    // printf("He");
+	// putInt(x);
+	printf("Hello World\n");
+	putInt(-5);
+	printf("Hello World");
+	printf("Hello%i World", x);
+	// drawCharacter('X',100, 100);
+	// for(uint32_t i=0;i<10;i++) {
+             printf("test %i", x);
+    //     }
     while(1){
         //printf("Hello world \t");
         // for(uint32_t i=0;i<10;i++) {
@@ -39,31 +54,5 @@ void kernel_main() {
     // int toggledOnce=0;
     // timerInit(0x400, Bit23, TIMER_CONTROL_PRESCALLAR_1);
     
-    // if (ARMrpiTimer->count < 10 && toggledOnce == 0 ) {
-    //     gpioToggle();
-    //     toggledOnce = 1;
-    // }
-    // if(ARMrpiTimer->count >= 10 && toggledOnce==1) {
-    //     toggledOnce = 0;
-    // } 
-
  }
 
-
-// void kernel_main() {
-
-//     _enable_interrupts();
-        
-//     setLEDasOutput();
-
-// while(1) {
-
-// 	for (unsigned int tim = 0; tim < 500000; tim++);
-
-// 	gpioToggle();
-
-// 	timerInit(0xFF, Bit16, TIMER_CONTROL_PRESCALLAR_16);
-
-// }
-
-// }
