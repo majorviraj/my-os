@@ -23,6 +23,7 @@ uint32_t cuser[2] = {50,51};
 uint32_t* ptr = &cuser;
 // char x='d';
 int x=-5;
+char y='y';
 void kernel_main() {
     frameBufferSetup(1024, 768, 16);
     setStartPosition(0,0);
@@ -36,7 +37,7 @@ void kernel_main() {
 	printf("Hello World\n");
 	putInt(-5);
 	printf("Hello World");
-	printf("Hello%i World", x);
+	printf("Hello%c World", y);
 	// drawCharacter('X',100, 100);
 	// for(uint32_t i=0;i<10;i++) {
              printf("test %i", x);

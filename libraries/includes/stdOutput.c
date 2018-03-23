@@ -64,15 +64,16 @@ void printf(char *string, ...) {
 	traverseString = string;
 	int i;
 	char *s;
-	for (traverseString = string; *traverseString!='\0'; traverseString++) {
+	int c;
+	for (traverseString = string; (*traverseString)!='\0'; traverseString++) {
 		
 		if(*traverseString == '%') {
 			
 			traverseString++;
 			switch(*traverseString) {
 				case 'c':
-					i = va_arg(argumentsList, int);
-					put(i);
+					c = va_arg(argumentsList, char);
+					put(c);
 					break;
 				case 'i':
 					i = va_arg(argumentsList, int);
