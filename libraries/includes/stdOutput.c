@@ -38,19 +38,8 @@ void putInt(int x) {
 		put('-');
 		x *= -1;	
 	}
-	uint32_t lengthOfX = 1;
-	int orignalX = x;
-	
-	while(x/10 > 10){
-		lengthOfX *= 10;
-		x = x/10;
-	}
-	x = orignalX;
+	uint32_t lengthOfX = 1000000000;
 
-	if (lengthOfX == 100000){
-		gpioBlink(50, 20);
-	}
-	
 	while(x > 0) {
 		put((uint32_t)(x/lengthOfX) + 0x30);
 		x -= (x/lengthOfX)*lengthOfX;
@@ -58,6 +47,20 @@ void putInt(int x) {
 	}
 }
 
+void putHex(uint32_t x) {
+	putString("0x");
+	uint32_t lengthOfX = 0xF0000000;
+	uint32_t hexMsb = 0;
+	while(x > 0) {
+		hexMsb = x & lengthOfX;
+		hexMsb = hexMsb >> 28;
+		if (hexMsb > 9) {
+			hexMsb += 7;
+		}
+		put((uint32_t)hexMsb + 0x30);
+		x = x << 4;
+	}
+}
 
 void putString(char *string) {
 	int i = 0;
@@ -66,6 +69,8 @@ void putString(char *string) {
 		i++;
 	}
 }
+
+
 
 
 void printf(char *string, ...) {
@@ -93,6 +98,13 @@ void printf(char *string, ...) {
 				case 's':
 					s = va_arg(argumentsList, char *);
 					putString(s);
+					break;
+				case 'x':
+					i = va_arg(argumentsList, int);
+					putHex((uint32_t)i);
+					break;
+				default:
+					putString("Unknown symbol after percent sign \n");
 					break;
 			}
 
