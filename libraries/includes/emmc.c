@@ -48,9 +48,16 @@ uint32_t emmcSendCommand(uint32_t commandIndex, uint32_t arg1) {
 	return emmcControllerBasicStruct1_t -> responce0;
 }
 
-void emmcSendCommand(uint32_t commandIndex, uint32_t arg1, uint32_t arg2) {
+void emmcSendData(uint32_t commandIndex, uint32_t blockAddress, uint32_t* buf) {
 	commandIndex << 24;
-	emmcControllerBasicStruct1_t ->arg1 = arg1;
+	commandIndex |= 0x002A0010;
+	emmcControllerBasicStruct1_t->arg1 = blockAddress;
+	emmcControllerBasicStruct1_t->cmdtm = commandIndex;
+
+	for (uint16_t i = 0;i<64;i++) {
+		*buf = emmcControllerBasicStruct1_t->data;
+		buf++;
+	}
 
 }
 

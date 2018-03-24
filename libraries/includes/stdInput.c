@@ -1,5 +1,5 @@
 #include <stdInput.h>
-
+#include <stdOutput.h>
 
 /*Use scanf function just like stdio scanf
 *REMEMBER TO CALL USBINITIALISE BEFORE USING THIS.
@@ -60,15 +60,4 @@ void scanf(char *typeSpecifierString, char* inputBuffer) {
 
 	}
 
-
-	
-
-
-	 
-
-
-
-
-
-	return 0;
 }

@@ -38,13 +38,24 @@ void putInt(int x) {
 		put('-');
 		x *= -1;	
 	}
+	uint32_t lengthOfX = 1;
+	int orignalX = x;
 	
-	while(x/10 != 0) {
-		put((x%10) + 30);
-		x = (int)x/10;
+	while(x/10 > 10){
+		lengthOfX *= 10;
+		x = x/10;
 	}
-	put(x + 0x30);
+	x = orignalX;
 
+	if (lengthOfX == 100000){
+		gpioBlink(50, 20);
+	}
+	
+	while(x > 0) {
+		put((uint32_t)(x/lengthOfX) + 0x30);
+		x -= (x/lengthOfX)*lengthOfX;
+		lengthOfX = lengthOfX / 10;
+	}
 }
 
 
