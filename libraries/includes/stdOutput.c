@@ -83,12 +83,13 @@ void printf(char *string, ...) {
 			traverseString++;
 			switch(*traverseString) {
 				case 'c':
-					c = va_arg(argumentsList, char);
-					put(c);
+					i = va_arg(argumentsList, int);
+					put(i);
 					break;
 				case 'i':
 					i = va_arg(argumentsList, int);
 					putInt(i);
+					break;
 				case 's':
 					s = va_arg(argumentsList, char *);
 					putString(s);
