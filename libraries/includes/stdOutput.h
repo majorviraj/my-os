@@ -23,6 +23,8 @@ void put(char character);
 
 void putInt(int x);
 
+void putHex(uint32_t x);
+
 void putString(char * string);
 
 void printf(char *string, ...);

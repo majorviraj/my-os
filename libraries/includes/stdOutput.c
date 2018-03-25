@@ -32,18 +32,25 @@ void put(char character) {
 }
 
 
-
 void putInt(int x) {
 	if (x<0) {
 		put('-');
 		x *= -1;	
 	}
-	uint32_t lengthOfX = 1000000000;
+	uint32_t lengthOfX = 1;
+	uint8_t length = 1;
+	uint32_t orignalX = x;
 
-	while(x > 0) {
+	while ((x/10) > 0) {
+		lengthOfX *= 10;
+		x = x/10;
+	}
+
+	x = orignalX;
+	while(lengthOfX > 0) {
 		put((uint32_t)(x/lengthOfX) + 0x30);
 		x -= (x/lengthOfX)*lengthOfX;
-		lengthOfX = lengthOfX / 10;
+		lengthOfX = lengthOfX/10;
 	}
 }
 
@@ -51,7 +58,7 @@ void putHex(uint32_t x) {
 	putString("0x");
 	uint32_t lengthOfX = 0xF0000000;
 	uint32_t hexMsb = 0;
-	while(x > 0) {
+	for (uint8_t i=0; i<8; i++) {
 		hexMsb = x & lengthOfX;
 		hexMsb = hexMsb >> 28;
 		if (hexMsb > 9) {
@@ -69,8 +76,6 @@ void putString(char *string) {
 		i++;
 	}
 }
-
-
 
 
 void printf(char *string, ...) {
@@ -112,7 +117,16 @@ void printf(char *string, ...) {
 		else if (*traverseString == '\n') {
 			startX = 0;
 			startY += 16;
-			setCursor(1);
+			setCursor(0);
+		}
+
+		else if (*traverseString == '\t') {
+			startX += 8*4;
+			if (startX > 1024) {
+				startX = 0;
+				startY += 16;
+			}
+			setCursor(0);
 		}
 
 		else {
