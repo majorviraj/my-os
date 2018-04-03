@@ -7,6 +7,36 @@
 // In case of dought do check this first of all
 #define EMMC_CONTROLLER (PERIPHERAL_BASE + 0x300000)
 
+// Commmand flags
+#define CMD_TYPE_NORMAL  0x00000000
+#define CMD_TYPE_SUSPEND 0x00400000
+#define CMD_TYPE_RESUME  0x00800000
+#define CMD_TYPE_ABORT   0x00c00000
+#define CMD_IS_DATA      0x00200000
+#define CMD_IXCHK_EN     0x00100000
+#define CMD_CRCCHK_EN    0x00080000
+#define CMD_RSPNS_NO     0x00000000
+#define CMD_RSPNS_136    0x00010000
+#define CMD_RSPNS_48     0x00020000
+#define CMD_RSPNS_48B    0x00030000
+#define TM_MULTI_BLOCK   0x00000020
+#define TM_DAT_DIR_HC    0x00000000
+#define TM_DAT_DIR_CH    0x00000010
+#define TM_AUTO_CMD23    0x00000008
+#define TM_AUTO_CMD12    0x00000004
+#define TM_BLKCNT_EN     0x00000002
+#define TM_MULTI_DATA (CMD_IS_DATA|TM_MULTI_BLOCK|TM_BLKCNT_EN)
+
+#define A_COMMAND_ID 		0x80000000
+
+// CMDTM register values for all commands
+#define GO_IDLE_STATE (0 << 24)|CMD_RSPNS_NO
+#define SEND_IF_COMMAND (8 << 24)|CMD_RSPNS_48
+#define APP_CMD_NO_RCA (0x37 << 24)|CMD_RSPNS_NO
+#define APP_CMD (55 << 24)|CMD_RSPNS_48
+
+#define SD_OP_COND (41 << 24)|CMD_RSPNS_48|A_COMMAND_ID
+
 typedef struct {
 	// Register for the argument 2 of command
     volatile uint32_t arg2;

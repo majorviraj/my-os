@@ -9,9 +9,9 @@ void jtagInit()  {
 	delayMicro(2);
 	gpio[GPIO_GPPUDCLK0] = 0;
 
-	gpio[GPIO_GPFSEL0] &= ~(7<<12);
-	gpio[GPIO_GPFSEL0] |= (2<<12);
-
+	
+	gpio[GPIO_GPFSEL0] &= ~(7<<12);	// GPIO 4
+	gpio[GPIO_GPFSEL0] |= (2<<12);	// Alternate Function 5 TDI
     gpio[GPIO_GPFSEL2] &= ~(7<<6);	// GPIO 22
     gpio[GPIO_GPFSEL2] |= 3<<6;		// Alternate function 4 TRST
     gpio[GPIO_GPFSEL2] &= ~(7<<12); // GPIO 24

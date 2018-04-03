@@ -16,7 +16,7 @@ void frameBufferSetup(int width, int height, int bitDepth){
 
     else {
         // error handler
-        gpioBlink(200, 10);
+        // gpioBlink(200, 10);
     }
 }
 
@@ -24,11 +24,21 @@ void printEmmcDebug() {
 	printf("Respnce 0: %x", emmcControllerBasicStruct1_t->responce0);
 	printf("Status: %x", emmcControllerBasicStruct1_t->status);
 }
+void kernel_main2() {
+	// setLEDasOutput();
+
+	while(1) {	
+		gpioBlink(200, 10);
+	}
+}
+
 void kernel_main() {
 
-	jtagInit();
+	// jtagInit();
+	// setLEDasOutput();
+// gpioBlink(200, 10);
+
 	// gpioBlink(50, 100);
-	setLEDasOutput();
 	
 	_enable_interrupts();
 	// volatile int toggledOnce =1;

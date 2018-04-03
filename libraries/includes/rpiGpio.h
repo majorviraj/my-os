@@ -1,5 +1,3 @@
-
-
 #ifndef __RPIGPIO_H__
 #define __RPIGPIO_H__
 
@@ -7,11 +5,11 @@
 #define PERIPHERAL_BASE 0x20000000UL
 #define GPIO_BASE		(PERIPHERAL_BASE + 0x00200000UL)
  
-#define LED_GPFSEL      GPIO_GPFSEL4
-#define LED_GPFBIT      21
+#define LED_GPFSEL      GPIO_GPFSEL3
+#define LED_GPFBIT      3
 #define LED_GPSET       GPIO_GPSET1
 #define LED_GPCLR       GPIO_GPCLR1
-#define LED_GPIO_BIT    15
+#define LED_GPIO_BIT    3
 
 
 #define GPIO_GPFSEL0    0

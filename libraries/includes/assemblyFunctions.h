@@ -22,4 +22,7 @@ extern uint32_t GetTimerBase();
 // Halts the processor for the given amount of time
 extern void delayMicro(uint32_t);
 
+// Halts the processor for the given number of clock cycles
+extern void delayCycles(uint32_t);
+
 #endif
