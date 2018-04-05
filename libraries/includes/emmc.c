@@ -3,12 +3,14 @@
 #include <timer.h>
 #include <stdOutput.h>
 #include <rpiGpio.h>
-#define BASE_CLOCK	700000000
+#define BASE_CLOCK			700000000
 
 #define DIVIER_FOR_25MHz	0x00001000
+#define TIMEOUT_ERROR		0xdeadbeef
 
-#define SD_1_8V_SUPPORT (1 << 24)
-#define SDHC_SUPPORT (1 << 30)
+#define ACMD41_ALL			0x50ff8000
+#define SD_1_8V_SUPPORT 	(1 << 24)
+#define SDHC_SUPPORT 		(1 << 30)
 volatile uint32_t* emmcControllerBasicForceInterrupt = (uint32_t*) (EMMC_CONTROLLER + 64);
 volatile uint32_t* spiInterruptSupport = (uint32_t*) (EMMC_CONTROLLER + 0xF0);
 volatile uint32_t* slotInterruptAndVersion = (uint32_t*) (EMMC_CONTROLLER + 0xFC);
@@ -122,42 +124,73 @@ void emmcHandleInterrupts() {
 		// Command complete interrupt
 		clearInterrupt |= (1 << 0);
 	}
+	if ((interrupt & (1 << 1)) == (1 << 1)) {
+		clearInterrupt |= (1 << 1);
+	}
+	if (interrupt & 0x8000) {
+		clearInterrupt |= 0xFFFF0000;
+	}
 	emmcControllerBasicStruct1_t->interrupt = clearInterrupt;
 }
 
-uint32_t emmcSendCommand(uint32_t commandIndex, uint32_t arg1) {
+uint32_t emmcSendCommand(uint32_t commandIndex, uint32_t arg1, uint32_t count) {
 	
 	emmcHandleInterrupts();
 
-	printf("Interrupt in command %i: %x\n", commandIndex >> 24, emmcControllerBasicStruct1_t->interrupt);
 	uint8_t commandIsACommand = 0;
 	if ((uint32_t)(commandIndex & A_COMMAND_ID) == A_COMMAND_ID) {
 		commandIsACommand = 1;
 		commandIndex &= ~A_COMMAND_ID;
 	}
-
+	printf("Interrupt in command %i: %x\n", commandIndex >> 24, emmcControllerBasicStruct1_t->interrupt);
+	uint32_t orignalCount = count;
 	if (commandIsACommand) {
 		commandIsACommand = 0;
 		emmcControllerBasicStruct1_t -> arg1 = 0x00000000;
 		if (devEmmc.cardRCA == 0) {
 			emmcControllerBasicStruct1_t->cmdtm = APP_CMD_NO_RCA;
+			for (;((emmcControllerBasicStruct1_t->status & 1) == 1) && count > 0; count--);
+			if (count <= 1) {
+				printf("Timeout Error for APP_CMD_NO_RCA\n");
+				return TIMEOUT_ERROR;
+			}
+			count = orignalCount;
+			delayCycles(10000);
 		}
 		else{
+			emmcControllerBasicStruct1_t->arg1 = (uint32_t)(devEmmc.cardRCA << 16);
 			emmcControllerBasicStruct1_t->cmdtm = APP_CMD;
+			for (;((emmcControllerBasicStruct1_t->status & 1) == 1) && count > 0; count--);
+			if (count <= 1) {
+				printf("Timeout Error APP_CMD\n");
+				return TIMEOUT_ERROR;
+			}
+			count = orignalCount;
+			delayCycles(10000);
 		}
 	}
 	emmcControllerBasicStruct1_t -> arg1 = arg1;
 	emmcControllerBasicStruct1_t -> cmdtm = commandIndex;
+	for (;((emmcControllerBasicStruct1_t->status & 1) == 1) && count > 0; count--);
+		if (count <= 1) {
+			printf("Timeout Error\n");
+			return TIMEOUT_ERROR;
+		}
 
 	return emmcControllerBasicStruct1_t -> responce0;
 }
 
-void emmcSendData(uint32_t commandIndex, uint32_t blockAddress, uint32_t* buf) {
-	commandIndex = commandIndex << 24;
-	commandIndex |= 0x002A0010;
+void emmcSendData(uint32_t command, uint32_t blockAddress, uint32_t* buf) {
+
+	emmcHandleInterrupts();
+	emmcControllerBasicStruct1_t->blockSizeCount = (1 << 16) | 512;
 	emmcControllerBasicStruct1_t->arg1 = blockAddress;
-	emmcControllerBasicStruct1_t->cmdtm = commandIndex;
-	delay(5);
+	emmcControllerBasicStruct1_t->cmdtm = command;
+	// delay(5);
+	printf("Interrupt in data**************** %x", emmcControllerBasicStruct1_t->interrupt);
+	while(!(uint32_t)(emmcControllerBasicStruct1_t->interrupt & INT_READ_RDY) == INT_READ_RDY)
+
+	// delay(5);
 	for (uint16_t i = 0;i<64;i++) {
 		*buf = emmcControllerBasicStruct1_t->data;
 		buf++;
@@ -220,12 +253,12 @@ void emmcInit() {
 	emmcControllerBasicStruct1_t->interruptEnable = 0xFFFFFFFF;
 	emmcControllerBasicStruct1_t->interruptMask = 0xFFFFFFFF;
 
-	uint32_t responce = emmcSendCommand(GO_IDLE_STATE, 0);
+	uint32_t responce = emmcSendCommand(GO_IDLE_STATE, 0, 100000);
 
 	// send voltage 0x1 = 2.7 - 3.6V
 	// pattern = 0xAA
 
-	responce = emmcSendCommand(SEND_IF_COMMAND, 0x1AA);
+	responce = emmcSendCommand(SEND_IF_COMMAND, 0x1AA, 100000);
 	while(1){
 		if ((responce & 0x1FF) != 0x1AA) {
 			responce = emmcControllerBasicStruct1_t->responce0;
@@ -238,73 +271,73 @@ void emmcInit() {
 	}
 
 	// Send command ACMD41
-	responce = emmcSendCommand(SD_OP_COND, 0);
+	// responce = emmcSendCommand(SD_OP_COND, 0, 2000001);
 
-	delay(1000);
-	
-	responce = emmcSendCommand(SD_OP_COND, 0x00ff8000 |SDHC_SUPPORT);
+	// responce = emmcSendCommand(SD_OP_COND, ACMD41_ALL, 100000);
+	// printf("Responce ACMD41: %x\n", emmcControllerBasicStruct1_t->responce0);
+	// responce = emmcSendCommand(SD_OP_COND, ACMD41_ALL, 100000);
+	// printf("Responce ACMD41: %x\n", emmcControllerBasicStruct1_t->responce0);
+	// responce = emmcSendCommand(SD_OP_COND, ACMD41_ALL, 100000);
 
 	do {
-		responce = emmcControllerBasicStruct1_t -> responce0;
-	} while(((responce >> 31) & 0x1) == 1);
-	printf("Argument 1: %x", emmcControllerBasicStruct1_t->arg1);
-	printf("Responce 1: %x", emmcControllerBasicStruct1_t->responce0);
-	printf("Status for ACMD41: %x", emmcControllerBasicStruct1_t->status);
+		responce = emmcSendCommand(SD_OP_COND, ACMD41_ALL, 100000);
+		// printf("Responce ACMD41: %x\n", emmcControllerBasicStruct1_t->responce0);
+		delayCycles(10000);
+	}while((uint32_t)(emmcControllerBasicStruct1_t->responce0 & (1 << 31)) != (1 << 31));
 
 	responce = emmcControllerBasicStruct1_t -> responce0;
 
-	devEmmc.cardIsSDHC = (responce >> 8) & 0xFFFF;
+	devEmmc.cardOCR = (responce >> 8) & 0xFFFF;
 	devEmmc.cardIsSDHC = (responce >> 30) & 0x1;
 	devEmmc.cardSupports18v = (responce >> 24) & 0x1;
 
-	// Now Lets change the clock to 25Mhz
 	
-	// do {
-	// 	responce = emmcControllerBasicStruct1_t -> status;
-	// } while(responce & 0x3);
-
-	// control1 = emmcControllerBasicStruct1_t -> control1;
-	// control1 &= ~(1 << 2);
-	// emmcControllerBasicStruct1_t -> control1 = control1;
-
-	delay(2);
-
-	// // Writing the new divider
-	// control1 &= ~0xffe0;
-	// control1 |= DIVIER_FOR_25MHz;
-	// emmcControllerBasicStruct1_t -> control1 = control1;
-	// control1 |= (1 << 2);
-
-	// emmcControllerBasicStruct1_t -> control1 = control1;
-	delay(2);
-
-	responce = emmcSendCommand(3, 0);
+	printf("Responce for ACMD41: %x\n", emmcControllerBasicStruct1_t->responce0);
+	printf("Status: %x\n", emmcControllerBasicStruct1_t->status);
+	responce = emmcSendCommand(ALL_SEND_CID, 0, 100000);
 	
-	delay(50);
-	// printf("Responce: %x\n", emmcControllerBasicStruct1_t->responce0);
-	// printf("Status: %x\n", emmcControllerBasicStruct1_t->status);
-	// printf("Interrupt: %x\n", emmcControllerBasicStruct1_t->interrupt);
+	delay(5);
+	printf("CID : %x%x%x%x", emmcControllerBasicStruct1_t->responce0, emmcControllerBasicStruct1_t->responce1, emmcControllerBasicStruct1_t->responce2, emmcControllerBasicStruct1_t->responce3);
+
+	responce = emmcSendCommand(SEND_RELATIVE_ADDR, 0, 100000);
+	delay(5);
 	responce = emmcControllerBasicStruct1_t->responce0;
 
 	devEmmc.cardRCA = (responce >> 16) & 0xFFFF;
+
+	printf ("Card RCA : %x", devEmmc.cardRCA);
 	// Entering Data state
-	// responce = emmcSendCommand(7, 0);
+	responce = emmcSendCommand(CARD_SELECT, (uint32_t)(devEmmc.cardRCA << 16), 100000);
 
 	delay (5);
+	printf("Interrupt: %x\n", emmcControllerBasicStruct1_t->interrupt);
 
-	responce = emmcControllerBasicStruct1_t -> responce0;
-	// printf("Responce 0: %x", emmcControllerBasicStruct1_t->responce0);
-	emmcSendCommand(7, (uint32_t)(devEmmc.cardRCA << 16));
+	responce = emmcControllerBasicStruct1_t->blockSizeCount;
+	responce = ~(0xFFF);
+	responce |= 0x200;
+	emmcControllerBasicStruct1_t->blockSizeCount = responce;
+	responce = emmcControllerBasicStruct1_t->responce0;
 
-	delay(5);
-	
+	// emmcSendCommand(SEND_SCR, 0, 1000000);
+
+	// delay(10);
+
+	// printf("Responce: %x\n", emmcControllerBasicStruct1_t->responce0);
+	// printf("Status: %x\n", emmcControllerBasicStruct1_t->status);
+	// printf("Interrupt: %x\n", emmcControllerBasicStruct1_t->interrupt);
+	// printf("DATA: %x", emmcControllerBasicStruct1_t->data);
+	// printf("**********************************************\n");
+
+	// devEmmc.cardBusWidth = emmcControllerBasicStruct1_t->responce0;
+	// devEmmc.cardBusWidth = __builtin_bswap32(devEmmc.cardBusWidth);
+	// devEmmc.cardBusWidth = (devEmmc.cardBusWidth >> 16) & 0xf;
+	// printf("Bus Width = %x", devEmmc.cardBusWidth);
 
 	uint32_t oldImask = emmcControllerBasicStruct1_t -> interruptMask;
 	uint32_t newImask = oldImask & ~(1 << 8);
+	emmcControllerBasicStruct1_t->interruptMask = newImask;
 
-	emmcControllerBasicStruct1_t -> interruptMask = responce;
-
-	// emmcSendCommand(ACMD(6), 0x2);
+	emmcSendCommand(SET_BUS_WIDTH, (uint32_t)(devEmmc.cardRCA << 16)|0x2, 100000);
 	delay(5);
 
 	uint32_t control0 = emmcControllerBasicStruct1_t -> control0;
@@ -312,9 +345,16 @@ void emmcInit() {
 	emmcControllerBasicStruct1_t -> control0 = control0;
 	emmcControllerBasicStruct1_t -> interruptMask = oldImask;
 
-	delay(100);
+	printf("Responce: %x\n", emmcControllerBasicStruct1_t->responce0);
+	printf("Status: %x\n", emmcControllerBasicStruct1_t->status);
+	printf("Interrupt: %x\n", emmcControllerBasicStruct1_t->interrupt);
+	printf("**********************************************\n");
+	delay(5);
 
 	emmcControllerBasicStruct1_t -> interrupt = 0xFFFFFFFF;
+
+	delay(5);
+	printf("Status: %x\n", emmcControllerBasicStruct1_t->status);
 
 	// gpioBlink(500, 5);
 	

@@ -1,4 +1,5 @@
 #include <stdOutput.h>
+#include <assemblyFunctions.h>
 
 uint32_t cursorPosition =0;
 uint32_t startX=0;
@@ -137,8 +138,10 @@ void printf(char *string, ...) {
 	va_end(argumentsList);
 }
 
-
-
+void clearScreen() {
+	setForeColour(0);
+	FullScreenToForeColour();
+}
 
 
 

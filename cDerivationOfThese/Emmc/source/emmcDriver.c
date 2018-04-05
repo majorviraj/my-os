@@ -57,10 +57,16 @@ void kernel_main() {
 
 
 	volatile uint32_t dataBlockBuffer[64];
-	emmcSendData(17,0, &dataBlockBuffer);
-	for (uint8_t i=44; i < 64; i++) {
+	emmcSendData(READ_SINGLE, 0, &dataBlockBuffer);
+	for (uint8_t i=62; i < 64; i++) {
 		uint32_t print_data = dataBlockBuffer[i];
 		printf("Number %i is = %x\n", i, print_data);
+		// if (i%20 == 0){
+		// 	delay(1000*10);
+		// 	clearScreen();
+		// 	setStartPosition(0,0);
+		// 	setCursor(0);
+		// }
 	}
 	while(1){
 		// volatile uint32_t data = emmcControllerBasicStruct1_t -> data;

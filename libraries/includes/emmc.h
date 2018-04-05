@@ -19,6 +19,8 @@
 #define CMD_RSPNS_136    0x00010000
 #define CMD_RSPNS_48     0x00020000
 #define CMD_RSPNS_48B    0x00030000
+#define INT_READ_RDY     0x00000020
+#define INT_WRITE_RDY    0x00000010
 #define TM_MULTI_BLOCK   0x00000020
 #define TM_DAT_DIR_HC    0x00000000
 #define TM_DAT_DIR_CH    0x00000010
@@ -31,10 +33,19 @@
 
 // CMDTM register values for all commands
 #define GO_IDLE_STATE (0 << 24)|CMD_RSPNS_NO
+#define ALL_SEND_CID (2 << 24)|CMD_RSPNS_136
+#define SEND_RELATIVE_ADDR (3 << 24)|CMD_RSPNS_48
+#define CARD_SELECT (7 << 24)|CMD_RSPNS_48B
 #define SEND_IF_COMMAND (8 << 24)|CMD_RSPNS_48
-#define APP_CMD_NO_RCA (0x37 << 24)|CMD_RSPNS_NO
+#define READ_SINGLE (17 << 24)|CMD_RSPNS_48|CMD_IS_DATA|TM_DAT_DIR_CH
+#define READ_MULTI (18 << 24)|CMD_RSPNS_48|TM_MULTI_BLOCK|TM_DAT_DIR_CH
+#define WRITE_SINGLE (24 << 24)|CMD_RSPNS_48|CMD_IS_DATA|TM_DAT_DIR_HC
+#define WRITE_MULTI (25 << 24)|CMD_RSPNS_48|TM_MULTI_BLOCK|TM_DAT_DIR_HC 
+#define APP_CMD_NO_RCA (55 << 24)|CMD_RSPNS_NO
 #define APP_CMD (55 << 24)|CMD_RSPNS_48
 
+#define SET_BUS_WIDTH (6 << 24)|CMD_RSPNS_48|A_COMMAND_ID
+#define SEND_SCR (51 << 24)|CMD_RSPNS_48|CMD_IS_DATA|TM_DAT_DIR_CH| A_COMMAND_ID
 #define SD_OP_COND (41 << 24)|CMD_RSPNS_48|A_COMMAND_ID
 
 typedef struct {
@@ -118,13 +129,14 @@ struct emmcDevice {
 	uint32_t cardSupports18v;
 	uint32_t cardIsSDHC;
 	uint32_t cardRCA;
+	uint32_t cardBusWidth;
 
 };
 void emmcGetStatus();
 
 void emmcAllRegisters();
 
-uint32_t emmcSendCommand(uint32_t, uint32_t);
+uint32_t emmcSendCommand(uint32_t, uint32_t, uint32_t);
 
 void emmcInit();
 void emmcSendData(uint32_t, uint32_t, uint32_t*);

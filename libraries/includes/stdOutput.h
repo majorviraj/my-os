@@ -29,6 +29,8 @@ void putString(char * string);
 
 void printf(char *string, ...);
 
+void clearScreen();
+
 
 /*Code for enabling the MiniUART for debugging purposes. 
 * Uses the pin8 (GPIO 14) as the Tx pin for UART.

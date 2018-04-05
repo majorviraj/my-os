@@ -2,7 +2,8 @@
 #define __ASSEMBLEY_FUNCTIONS_H_
 
 #include <intTypes.h>
-
+extern void setForeColour(uint32_t);
+extern void FullScreenToForeColour();
 extern int frameBufferInit(int, int, int);
 extern void UsbInitialise();
 extern void keyboardInit();
