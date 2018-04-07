@@ -187,13 +187,19 @@ void emmcSendData(uint32_t command, uint32_t blockAddress, uint32_t* buf) {
 	emmcControllerBasicStruct1_t->arg1 = blockAddress;
 	emmcControllerBasicStruct1_t->cmdtm = command;
 	// delay(5);
-	printf("Interrupt in data**************** %x", emmcControllerBasicStruct1_t->interrupt);
-	while(!(uint32_t)(emmcControllerBasicStruct1_t->interrupt & INT_READ_RDY) == INT_READ_RDY)
+	
+	// printf("Interrupt in data**************** %x", emmcControllerBasicStruct1_t->interrupt);
 
+	while((emmcControllerBasicStruct1_t->interrupt & INT_READ_RDY) != INT_READ_RDY) {
+		printf("Interrupt in data while =  %x", emmcControllerBasicStruct1_t->interrupt);
+	}
+	printf("Interrupt in data**************** %x\n", emmcControllerBasicStruct1_t->interrupt);
+	printf("responce for data  = %x\n", emmcControllerBasicStruct1_t->responce0);
 	// delay(5);
 	for (uint16_t i = 0;i<64;i++) {
 		*buf = emmcControllerBasicStruct1_t->data;
 		buf++;
+		printf("DATA = %x", emmcControllerBasicStruct1_t->data);
 	}
 
 }

@@ -12,17 +12,16 @@ void setStartPosition(unsigned int x, unsigned int y) {
 	cursorPosition = 0;
 }
 
-
 void setCursor(unsigned int cursorPos) {
 	cursorPosition = cursorPos;
 }
-
 
 //1366*78 -> 1358*62
 
 void putChar(char character, uint32_t *cursor) {
 	drawCharacter(character, startX + ((*cursor)*8)%1016, 
 					(uint32_t)(16*(((*cursor)*8)/1016)) + startY);
+	// if ((uint32_t)(16*(((*cursor)*8)/1016)) + startY == )
 	(*cursor)++;
 }
 
