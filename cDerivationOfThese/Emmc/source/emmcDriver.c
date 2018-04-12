@@ -48,17 +48,11 @@ void kernel_main() {
 	printf("Emmc Init Done\n");
 	delay(1000);
 
-	volatile uint32_t dataBlockBuffer[64];
+	volatile uint32_t dataBlockBuffer[128];
 	emmcSendData(READ_SINGLE, 0, &dataBlockBuffer);
-	for (uint8_t i=58; i < 64; i++) {
-		uint32_t print_data = dataBlockBuffer[i];
-		printf("Number %i is = %x\n", i, print_data);
-		// if (i%20 == 0){
-		// 	delay(1000*10);
-		// 	clearScreen();
-		// 	setStartPosition(0,0);
-		// 	setCursor(0);
-		// }
+	for (uint8_t i=0; i < 128; i << 2) {
+		printf("%x: ", i << 2);
+		printf("%x\t%x\t%x\t%x\n", dataBlockBuffer[i], dataBlockBuffer[i+1], dataBlockBuffer[i+2], dataBlockBuffer[i+3]);
 	}
 	while(1){
 		// volatile uint32_t data = emmcControllerBasicStruct1_t -> data;

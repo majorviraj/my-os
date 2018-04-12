@@ -50,8 +50,7 @@ uint32_t emmcGPIOSet() {
 
 }
 
-uint32_t emmcGetClockDivider(unsigned int base_clock, unsigned int target_rate)
-{
+uint32_t emmcGetClockDivider(unsigned int base_clock, unsigned int target_rate) {
 	// MATH - HOW DOES IT WORK!?
 	unsigned int targetted_divisor = 0;
 	if(target_rate > base_clock)
@@ -94,13 +93,6 @@ uint32_t emmcGetClockDivider(unsigned int base_clock, unsigned int target_rate)
 	unsigned int freq_select = divisor & 0xFF;
 	unsigned int upper_bits = (divisor >> 8) & 0x3;
 	unsigned int ret = (freq_select << 8) | (upper_bits << 6) | (0 << 5);
-
-	// For debugging
-	//int denominator = -1;
-	//if(divisor != 0)
-	//	denominator = divisor * 2;
-	//
-	//int actual_clock = base_clock / denominator;
 
 	return ret;
 }
@@ -196,12 +188,23 @@ void emmcSendData(uint32_t command, uint32_t blockAddress, uint32_t* buf) {
 	printf("Interrupt in data**************** %x\n", emmcControllerBasicStruct1_t->interrupt);
 	printf("responce for data  = %x\n", emmcControllerBasicStruct1_t->responce0);
 	// delay(5);
-	for (uint16_t i = 0;i<64;i++) {
-		*buf = emmcControllerBasicStruct1_t->data;
+	for (uint16_t i = 0;i<128;i++) {
+		*buf = __builtin_bswap32(emmcControllerBasicStruct1_t->data);
 		buf++;
-		printf("DATA = %x", emmcControllerBasicStruct1_t->data);
 	}
 
+}
+
+/*
+* @brief This function reads data from the specified byte address into the buffer specified.
+*        It reads number of bytes of the length of the array
+* @param Pointer to the buffer to be filled
+* @param Length of the buffer. (should be length of char array)
+*/
+void emmcReadData(uint32_t* buffer, uint32_t bufferLength, uint64_t address) {
+	
+	_Bool isBlockAligned, is;
+	 uint16_t i = 0x200000; 
 }
 
 void emmcInit() {

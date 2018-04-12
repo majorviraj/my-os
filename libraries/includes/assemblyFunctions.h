@@ -12,6 +12,9 @@ extern int drawCharacter(int, int, int);	// char, x, y
 extern void drawCircle(int, int, int);
 extern void _enable_interrupts();
 
+// extern void mailboxRead(uint32_t);
+// extern void mailboxWrite(uint32_t);
+
 // Functions defined in systemTimer.s
 
 // Return the base of Timer Peripheral
