@@ -18,13 +18,17 @@
 #include <jtag.h>
 #include <stdOutput.h>
 #include <emmc.h>
-
-masterBootRecord_t* masterBootRecord;
-biosPartitionBlock_t* partition1;
+#include <libfatfs.h>
 
 void readMBR() {
-	uint32_t mbrBuffer[128];
-	emmcSendData(READ_SINGLE, 0, &mbrBuffer);
-	masterBootRecord = mbrBuffer;
-
+	uint8_t mbrBuffer[512];
+	mbrBuffer[511] = 0x52;
+	masterBootRecord_t* masterBootRecord = (masterBootRecord_t*)&mbrBuffer;
+	printf("new mbr sign %x\n", masterBootRecord->MBR_bootSignature);
+	emmcSendData(READ_SINGLE, 0, (uint32_t*)&mbrBuffer);
+	printf("mbrSign %x\n", mbrBuffer[510]);
+	masterBootRecord = (masterBootRecord_t*)&mbrBuffer;
+	printf("mbrSign %x\n", mbrBuffer[0x1c2]);
+	printf("mbrSign %x\n", mbrBuffer[511]);
+	printf("mbrSign %x\n", masterBootRecord[511]);
 }

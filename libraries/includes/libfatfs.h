@@ -1,15 +1,7 @@
-#ifndef _LIB_FAT_FS_
-#define _LIB_FAT_FS_
+#ifndef LIB_FAT_FS
+#define LIB_FAT_FS
 
-//MBR
-typedef struct masterBootRecord_struct {
-	uint8_t MBR_reservedCodeArea1[218];
-	uint8_t MBR_diskTimeStamp;
-	uint8_t MBR_reservedCodeArea2[216];
-	uint8_t MBR_diskSignature[6];
-	partitionEntry_t partitionEntries[4];
-	uint16_t MBR_bootSignature;
-} masterBootRecord_t;
+#include <intTypes.h>
 
 //Partition entry in the MBR
 typedef struct partitionEntry_struct {
@@ -19,10 +11,19 @@ typedef struct partitionEntry_struct {
 	uint8_t CHSAddressOfLastSector[3];
 	uint32_t LBAOfFirstSector; //important field
 	uint32_t numberOfSectorsInPartition;
-} partitionEntry_t;
+} __attribute__((packed)) partitionEntry_t;
 
+//MBR
+typedef struct masterBootRecord_struct {
+	uint8_t MBR_reservedCodeArea1[218];
+	uint8_t MBR_diskTimeStamp;
+	uint8_t MBR_reservedCodeArea2[216];
+	uint8_t MBR_diskSignature[6];
+	partitionEntry_t partitionEntries[4];
+	uint16_t MBR_bootSignature;
+} __attribute__((packed)) masterBootRecord_t;
 
-//Boot ENtry, first sector of any partition
+//Boot Entry, first sector of any partition
 typedef struct bootEntry_struct {
 	uint8_t BS_jmpBoot[3];				// 0x000 ;jump for legacy reasons
 	uint8_t BS_OEMName[8]; 				// 0x003 ;OEM Name in ASCII 
@@ -51,10 +52,10 @@ typedef struct bootEntry_struct {
 	uint32_t BS_VolID;					// 0x043 ;Volume serial number 
 	uint8_t BS_VolLab[11];				// 0x047 ;Volume label in ASCII. User defines when creating the file system 
 	uint8_t BS_FileSystemType[8];		// 0x052 ;File system type label in ASCII 
-} biosParameterBlock_t;
+} __attribute__((packed)) biosParameterBlock_t;
 
-
-
+masterBootRecord_t* masterBootRecord;
+biosParameterBlock_t* partition1;
 
 void readMBR();
 

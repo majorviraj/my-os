@@ -6,6 +6,7 @@
 #include <emmc.h>
 #include <jtag.h>
 #include <stdOutput.h>
+#include <libfatfs.h>
 
 void frameBufferSetup(int width, int height, int bitDepth){
     uint32_t error = frameBufferInit(width, height, bitDepth);
@@ -19,14 +20,6 @@ void frameBufferSetup(int width, int height, int bitDepth){
         // gpioBlink(200, 10);
 		delay(1000);
     }
-}
-
-void kernel_main2() {
-	// setLEDasOutput();
-
-	while(1) {	
-		gpioBlink(200, 10);
-	}
 }
 
 void kernel_main() {
@@ -48,12 +41,15 @@ void kernel_main() {
 	printf("Emmc Init Done\n");
 	delay(1000);
 
-	volatile uint32_t dataBlockBuffer[128];
-	emmcSendData(READ_SINGLE, 0, &dataBlockBuffer);
-	for (uint8_t i=0; i < 128; i << 2) {
-		printf("%i: \t", i << 2);
-		printf("%x\t\t\t%x\t\t\t%x\t\t\t%x\n", dataBlockBuffer[i], dataBlockBuffer[i+1], dataBlockBuffer[i+2], dataBlockBuffer[127]);
-	}
+	// volatile uint32_t dataBlockBuffer[128];
+	// emmcSendData(READ_SINGLE, 0, &dataBlockBuffer);
+	// for (uint8_t i=0; i < 128; i << 2) {
+	// 	printf("%x: ", i << 2);
+	// 	printf("%x\t%x\t%x\t%x\n", dataBlockBuffer[i], dataBlockBuffer[i+1], dataBlockBuffer[i+2], dataBlockBuffer[i+3]);
+	// }
+	readMBR();
+	printf("Mbr sign %x\n", masterBootRecord->MBR_bootSignature);
+	printf("Parttion type %x\n", masterBootRecord->partitionEntries[0].partitionType);
 	while(1){
 		// volatile uint32_t data = emmcControllerBasicStruct1_t -> data;
 	}

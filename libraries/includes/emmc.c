@@ -189,7 +189,7 @@ void emmcSendData(uint32_t command, uint32_t blockAddress, uint32_t* buf) {
 	printf("responce for data  = %x\n", emmcControllerBasicStruct1_t->responce0);
 	// delay(5);
 	for (uint16_t i = 0;i<128;i++) {
-		*buf = __builtin_bswap32(emmcControllerBasicStruct1_t->data);
+		*buf = emmcControllerBasicStruct1_t->data;
 		buf++;
 	}
 
@@ -204,7 +204,7 @@ void emmcSendData(uint32_t command, uint32_t blockAddress, uint32_t* buf) {
 void emmcReadData(uint32_t* buffer, uint32_t bufferLength, uint64_t address) {
 	
 	_Bool isBlockAligned, is;
-	 uint16_t i = 0x200000; 
+	uint32_t i = 0x200000; 
 }
 
 void emmcInit() {
