@@ -20,15 +20,27 @@
 #include <emmc.h>
 #include <libfatfs.h>
 
+void* my_memcpy(const void *dest, const void *src, unsigned int bytesToCopy)
+{
+    char *s = (char *)src;
+    char *d = (char *)dest;
+    while (bytesToCopy > 0)
+    {
+        *d++ = *s++;
+        bytesToCopy--;
+    }
+    return (void*)dest; // Disregards const modifier
+}
+
 void readMBR() {
-	uint8_t mbrBuffer[512];
-	mbrBuffer[511] = 0x52;
-	masterBootRecord_t* masterBootRecord = (masterBootRecord_t*)&mbrBuffer;
-	printf("new mbr sign %x\n", masterBootRecord->MBR_bootSignature);
+	volatile uint8_t mbrBuffer[512];
+	// mbrBuffer[511] = 0x52;
 	emmcSendData(READ_SINGLE, 0, (uint32_t*)&mbrBuffer);
-	printf("mbrSign %x\n", mbrBuffer[510]);
-	masterBootRecord = (masterBootRecord_t*)&mbrBuffer;
-	printf("mbrSign %x\n", mbrBuffer[0x1c2]);
-	printf("mbrSign %x\n", mbrBuffer[511]);
-	printf("mbrSign %x\n", masterBootRecord[511]);
+	// masterBootRecord = (masterBootRecord_t*)&mbrBuffer;
+	my_memcpy(&masterBootRecord, &mbrBuffer,512);
+	// printf("new mbr sign %x\n", masterBootRecord.MBR_bootSignature);
+	// printf("mbr buffer 510 sign %x\n", mbrBuffer[510]);
+	// printf("mbr buffer 0x1c2 sign %x\n", mbrBuffer[0x1c2]);
+	// printf("mbr buffer 511 sign %x\n", mbrBuffer[511]);
+	// printf("size of structure is: %i\n", sizeof(masterBootRecord));
 }

@@ -47,9 +47,13 @@ void kernel_main() {
 	// 	printf("%x: ", i << 2);
 	// 	printf("%x\t%x\t%x\t%x\n", dataBlockBuffer[i], dataBlockBuffer[i+1], dataBlockBuffer[i+2], dataBlockBuffer[i+3]);
 	// }
+	
 	readMBR();
-	printf("Mbr sign %x\n", masterBootRecord->MBR_bootSignature);
-	printf("Parttion type %x\n", masterBootRecord->partitionEntries[0].partitionType);
+	printf("Mbr sign %x\n", masterBootRecord.MBR_bootSignature);
+	printf("CHS 0 %x\n", masterBootRecord.partitionEntries[0].CHSAddressOfFirstSector[0]);
+	printf("CHS 1 %x\n", masterBootRecord.partitionEntries[0].CHSAddressOfFirstSector[1]);
+	printf("CHS 2 %x\n", masterBootRecord.partitionEntries[0].CHSAddressOfFirstSector[2]);
+	printf("Partition type %x\n", masterBootRecord.partitionEntries[0].partitionType);
 	while(1){
 		// volatile uint32_t data = emmcControllerBasicStruct1_t -> data;
 	}

@@ -3,7 +3,7 @@
 
 #include <intTypes.h>
 
-//Partition entry in the MBR
+//Partition entry in the MBR, total size = 16 Bytes
 typedef struct partitionEntry_struct {
 	uint8_t statusBootable;
 	uint8_t CHSAddressOfFirstSector[3];
@@ -16,12 +16,12 @@ typedef struct partitionEntry_struct {
 //MBR
 typedef struct masterBootRecord_struct {
 	uint8_t MBR_reservedCodeArea1[218];
-	uint8_t MBR_diskTimeStamp;
+	uint8_t MBR_diskTimeStamp[6];
 	uint8_t MBR_reservedCodeArea2[216];
 	uint8_t MBR_diskSignature[6];
 	partitionEntry_t partitionEntries[4];
 	uint16_t MBR_bootSignature;
-} __attribute__((packed)) masterBootRecord_t;
+} masterBootRecord_t;
 
 //Boot Entry, first sector of any partition
 typedef struct bootEntry_struct {
@@ -54,9 +54,10 @@ typedef struct bootEntry_struct {
 	uint8_t BS_FileSystemType[8];		// 0x052 ;File system type label in ASCII 
 } __attribute__((packed)) biosParameterBlock_t;
 
-masterBootRecord_t* masterBootRecord;
+masterBootRecord_t masterBootRecord;
 biosParameterBlock_t* partition1;
 
+void* my_memcpy(const void *dest, const void *src, unsigned int bytesToCopy);
 void readMBR();
 
 #endif
