@@ -55,9 +55,8 @@ typedef struct bootEntry_struct {
 } __attribute__((packed)) biosParameterBlock_t;
 
 masterBootRecord_t masterBootRecord;
-biosParameterBlock_t* partition1;
+biosParameterBlock_t partition1;
 
-void* my_memcpy(const void *dest, const void *src, unsigned int bytesToCopy);
 void readMBR();
 
 #endif
