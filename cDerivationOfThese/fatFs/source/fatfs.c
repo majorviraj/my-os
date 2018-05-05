@@ -41,21 +41,26 @@ void kernel_main() {
 	printf("Emmc Init Done\n");
 	delay(1000);
 
-	// volatile uint32_t dataBlockBuffer[128];
-	// emmcSendData(READ_SINGLE, 0, &dataBlockBuffer);
-	// for (uint8_t i=0; i < 128; i << 2) {
-	// 	printf("%x: ", i << 2);
-	// 	printf("%x\t%x\t%x\t%x\n", dataBlockBuffer[i], dataBlockBuffer[i+1], dataBlockBuffer[i+2], dataBlockBuffer[i+3]);
-	// }
-	
 	readMBR();
 	printf("Mbr sign %x\n", masterBootRecord.MBR_bootSignature);
-	printf("CHS 0 %x\n", masterBootRecord.partitionEntries[0].CHSAddressOfFirstSector[0]);
-	printf("CHS 1 %x\n", masterBootRecord.partitionEntries[0].CHSAddressOfFirstSector[1]);
-	printf("CHS 2 %x\n", masterBootRecord.partitionEntries[0].CHSAddressOfFirstSector[2]);
 	printf("Partition type %x\n", masterBootRecord.partitionEntries[0].partitionType);
+	printf("LBA of first sector of partition1 %x\n", masterBootRecord.partitionEntries[0].LBAOfFirstSector);
+
+
+	readPartition1BPB();
+	printf("OEM Name %x \n", partition1.BS_OEMName[0]);
+	printf("bytes per sector in partition1 %x \n", partition1.BPB_BytesPerSector);
+	printf("Sectors per cluster %x \n", partition1.BPB_SectorsPerCluster);
+	printf("number of FAT table copies %i \n", partition1.BPB_NumberOfFATs);
+	printf("Media type %x \n", partition1.BPB_MediaType);
+	printf("Total Sectors 32 %x \n", partition1.BPB_TotalSectors32);
+	printf("Total Sectors in this partition %x \n", partition1.BPB_SectorsPerFAT32);
+	printf("Cluster no. of Root Directory %x\n", partition1.BPB_RootDirectoryCluster);
+
+
 	while(1){
 		// volatile uint32_t data = emmcControllerBasicStruct1_t -> data;
 	}
 
 }
+

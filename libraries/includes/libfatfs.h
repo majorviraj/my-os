@@ -42,21 +42,22 @@ typedef struct bootEntry_struct {
 	uint32_t BPB_SectorsPerFAT32;		// 0x024 ;32-bit size in sectors of one FAT 
 	uint16_t BPB_ExtFlags;				// 0x028 ;A flag for FAT 
 	uint16_t BPB_FSVersion;				// 0x02a ;The major and minor version number 
-	uint32_t BPB_RootCluster;			// 0x02c ;Cluster where the root directory can be found 
+	uint32_t BPB_RootDirectoryCluster;	// 0x02c ;Cluster where the root directory can be found 
 	uint16_t BPB_FSInfo;				// 0x030 ;Sector where FSINFO structure can be found
 	uint16_t BPB_BackupBootSec;			// 0x032 ;Sector where backup copy of boot sector is located 
 	uint8_t BPB_Reserved[12];			// 0x034 ;Reserved 
 	uint8_t BS_DrvNum;					// 0x040 ;BIOS INT13h drive number 
 	uint8_t BS_Reserved1;				// 0x041 ;Not used 
-	uint8_t BS_BootSig;					// 0x42 ;Extended boot signature to identify if the next three values are valid 
+	uint8_t BS_BootSig;					// 0x042 ;Extended boot signature to identify if the next three values are valid 
 	uint32_t BS_VolID;					// 0x043 ;Volume serial number 
 	uint8_t BS_VolLab[11];				// 0x047 ;Volume label in ASCII. User defines when creating the file system 
 	uint8_t BS_FileSystemType[8];		// 0x052 ;File system type label in ASCII 
-} __attribute__((packed)) biosParameterBlock_t;
+} biosParameterBlock_t;
 
 masterBootRecord_t masterBootRecord;
 biosParameterBlock_t partition1;
 
 void readMBR();
-
+void readPartition1BPB();
+// void my_memcpy(uint8_ts*, uint8_t*, uint32_t);
 #endif
