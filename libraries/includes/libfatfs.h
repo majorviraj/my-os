@@ -39,7 +39,7 @@ typedef struct bootEntry_struct {
 	uint16_t BPB_NumberOfHeads;			// 0x01a ;Number of heads in storage device 
 	uint32_t BPB_HiddenSectors;			// 0x01c ;Number of sectors before the start of partition 
 	uint32_t BPB_TotalSectors32;		// 0x020 ;32-bit value of number of sectors in file system.  Either this value or the 16-bit value above must be  0 
-	uint32_t BPB_SectorsPerFAT32;		// 0x024 ;32-bit size in sectors of one FAT 
+	uint32_t BPB_SectorsPerFAT32Table;	// 0x024 ;32-bit size in sectors of one FAT table
 	uint16_t BPB_ExtFlags;				// 0x028 ;A flag for FAT 
 	uint16_t BPB_FSVersion;				// 0x02a ;The major and minor version number 
 	uint32_t BPB_RootDirectoryCluster;	// 0x02c ;Cluster where the root directory can be found 
@@ -54,10 +54,32 @@ typedef struct bootEntry_struct {
 	uint8_t BS_FileSystemType[8];		// 0x052 ;File system type label in ASCII 
 } biosParameterBlock_t;
 
+
+
+typedef struct directoryEntry_struct {
+	uint8_t name[11];				// Offset; 0x00 - (11 bytes)	
+	uint8_t attribute; 				// Offset: 0x0B
+	uint8_t reserved; 				// Reserved for Windows NT (Supposedly this tells us about the casing)
+    uint8_t creationTimeInTenths; 	// Creation time in tenths of a second. Note: Only 24 bits used
+    uint16_t createTime; 			// 5 bits Hour, 6 bits minutes, 5 bits seconds
+    uint16_t createDate; 			// 7 bits year, 4 bits month, 5 bits day
+    uint16_t lastAccessDate; 		// 
+    uint16_t firstClusterHigh; 		// High 16 bits is first cluster number
+    uint16_t lastModifiedTime;		//
+    uint16_t lastModifiedDate;		//
+    uint16_t firstClusterLow;  		// Low 16 bits is the first cluster number
+    uint32_t size; 					// In bytes
+    uint8_t hasLongName;
+    uint8_t longName[256];
+} directoryEntry_t;
+
+
 masterBootRecord_t masterBootRecord;
 biosParameterBlock_t partition1;
+directoryEntry_t rootDirectory;
 
 void readMBR();
 void readPartition1BPB();
-// void my_memcpy(uint8_ts*, uint8_t*, uint32_t);
+void readRootDirectory();
+void my_memcpy(uint8_t*, uint8_t*, uint32_t, uint32_t);
 #endif
