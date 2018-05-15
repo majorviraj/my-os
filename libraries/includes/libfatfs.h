@@ -78,8 +78,15 @@ masterBootRecord_t masterBootRecord;
 biosParameterBlock_t partition1;
 directoryEntry_t rootDirectory;
 
+uint32_t previousRequestedCluster;
+uint32_t fat32[128];
+
 void readMBR();
 void readPartition1BPB();
 void readRootDirectory();
 void my_memcpy(uint8_t*, uint8_t*, uint32_t, uint32_t);
+uint32_t getNextClusterFromFAT(uint32_t currentCluster);
+
+uint8_t* readFile();
+
 #endif

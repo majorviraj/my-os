@@ -37,7 +37,7 @@ void readMBR() {
 }
 
 void readPartition1BPB() {
-	const uint8_t sdCardReadBuffer[512];
+	volatile uint8_t sdCardReadBuffer[512];
 	emmcSendData(READ_SINGLE, masterBootRecord.partitionEntries[0].LBAOfFirstSector , (uint32_t*)&sdCardReadBuffer);
 	
 	// for(int i =0; i<90; i++) {
@@ -140,6 +140,38 @@ void readRootDirectory() {
 	
 }
 	
+uint32_t getNextClusterFromFAT(uint32_t currentClusterNumber) {
+	volatile uint8_t sdCardReadBuffer[512];
+	uint32_t FATStartCluster = masterBootRecord.partitionEntries[0].LBAOfFirstSector
+								+ partition1.BPB_ReservedSectorsCount;
+
+	
+	uint32_t clusterOffsetFromStartOfFAT = currentClusterNumber/128;
+	uint32_t indiceInCluster = currentClusterNumber%128;
+	if (clusterOffsetFromStartOfFAT != (uint32_t)(previousRequestedCluster/128)) {
+	//Load the part of the FAT table into fat32 array buffer as it is not present in the buffer
+		//MEND THINGS HERE!!!!!!!
+		emmcSendData(READ_SINGLE, FATStartCluster + clusterOffsetFromStartOfFAT, (uint32_t*) &sdCardReadBuffer);
+		// my_memcpy(&fat32, &sdCardReadBuffer, )
+		memcpy(&fat32, &sdCardReadBuffer, 512);
+	}
+
+	previousRequestedCluster = currentClusterNumber;
+
+	return fat32[currentClusterNumber] & 0x0fffffff;
+
+	// for(int i=0; i<partition1.BPB_SectorsPerFAT32Table; i++) {
+	// 	emmcSendData(READ_SINGLE, FATStartCluster + i, (uint32_t*)&sdCardReadBuffer);
+	// 	my_memcpy(&fat32 + i*512, &sdCardReadBuffer, 512, 0);
+	// }
+
+	
+}
+
+uint8_t* readFile() {
+	
+}
+
 void my_memcpy(uint8_t* destination, uint8_t* source, uint32_t length, uint32_t sourceOffset) {
 	for(uint32_t i=0; i<length; i++) {
 		destination[i] = source[i+sourceOffset];
