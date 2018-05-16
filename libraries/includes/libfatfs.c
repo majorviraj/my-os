@@ -146,7 +146,7 @@ uint32_t getNextClusterFromFAT(uint32_t currentClusterNumber) {
 								+ partition1.BPB_ReservedSectorsCount;
 
 	
-	uint32_t clusterOffsetFromStartOfFAT = currentClusterNumber/128;
+	uint32_t clusterOffsetFromStartOfFAT = (uint32_t)(currentClusterNumber/128);
 	uint32_t indiceInCluster = currentClusterNumber%128;
 	if (clusterOffsetFromStartOfFAT != (uint32_t)(previousRequestedCluster/128)) {
 	//Load the part of the FAT table into fat32 array buffer as it is not present in the buffer
@@ -168,8 +168,50 @@ uint32_t getNextClusterFromFAT(uint32_t currentClusterNumber) {
 	
 }
 
-uint8_t* readFile() {
+file_t* readFile(uint16_t firstClusterLow, uint16_t firstClusterHigh, uint32_t fileSize) {
+	uint8_t file[fileSize]; //fileSize stored in 32byte directory entries is in bytes, not sectors
+		
+	uint32_t fileFirstCluster = masterBootRecord.partitionEntries[0].LBAOfFirstSector
+								+ partition1.BPB_ReservedSectorsCount
+								+ (partition1.BPB_NumberOfFATs * partition1.BPB_SectorsPerFAT32Table) 
+								+ ((firstClusterHigh<<16) | firstClusterLow) -2;
 	
+	
+
+	volatile uint8_t sdCardReadBuffer[512];
+
+	emmcSendData(READ_SINGLE, fileFirstCluster, (uint32_t*) &sdCardReadBuffer);
+	memcpy(&file, &sdCardReadBuffer, 512);
+
+	uint32_t nextClusterAsPerFAT = getNextClusterFromFAT(fileFirstCluster);
+	uint32_t nextClusterToRead = 0;
+	uint32_t previousCluster = 0;
+	uint32_t i = 1;
+	while(nextClusterAsPerFAT<0x0ffffff8) {
+		if(nextClusterAsPerFAT == 0x0ffffff7) {
+			printf("\n****BAD CLUSTER ENCOUNTERED WHILE READING FILE****\n");
+			break;
+		}
+
+		previousCluster = nextClusterAsPerFAT;
+		nextClusterToRead = nextClusterAsPerFAT - 2 + masterBootRecord.partitionEntries[0].LBAOfFirstSector
+								+ partition1.BPB_ReservedSectorsCount
+								+ (partition1.BPB_NumberOfFATs * partition1.BPB_SectorsPerFAT32Table);
+								//The -2 is mandatory, cluster numbering starts from 2
+		emmcSendData(READ_SINGLE, nextClusterToRead, (uint32_t*) &sdCardReadBuffer);
+		memcpy(&file[i*512], &sdCardReadBuffer, 512);
+
+		nextClusterAsPerFAT = getNextClusterFromFAT(previousCluster);
+		i += 1;
+	}
+
+	file_t* fileStruct;
+	fileStruct->size = fileSize;
+	memcpy(fileStruct->file, &file, (i-1)*512);
+
+	//NOTE:This corrupts a portion of memory in the array "file" if the file size is not a multiple of 512.
+
+	return &fileStruct;
 }
 
 void my_memcpy(uint8_t* destination, uint8_t* source, uint32_t length, uint32_t sourceOffset) {
