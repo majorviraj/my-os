@@ -36,10 +36,10 @@ unsigned int* returnGpio() {
 }
 
 void gpioBlink(uint16_t time,uint16_t number) {
-	printf("in a blink time : %i, number : %i\n", time, number);
-	// for (uint16_t i=0; i<number; i++) {
-	// 	gpioToggle();
-	// 	delay(time);
-	// }
-	// gpio[LED_GPCLR] = (1 << LED_GPIO_BIT);
+	// printf("in a blink time : %i, number : %i\n", time, number);
+	for (uint16_t i=0; i<number; i++) {
+		gpioToggle();
+		delay(time);
+	}
+	gpio[LED_GPCLR] = (1 << LED_GPIO_BIT);
 }

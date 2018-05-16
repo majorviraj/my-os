@@ -17,12 +17,38 @@ void frameBufferSetup(int width, int height, int bitDepth){
 
     else {
         // error handler
-        // gpioBlink(200, 10);
-		delay(1000);
+        gpioBlink(200, 10);
+		// delay(1000);
     }
 }
 
 void kernel_main() {
+	// setLEDasOutput();
+	_enable_interrupts();
+	frameBufferSetup(1024, 768, 16);
+	setStartPosition(0,0);
+	setCursor(0);
+	// gpioBlink(50, 100);
+	emmcInit();	
+	delay(1000);
+
+	uint8_t sdCardReadBuffer[512];
+	emmcSendData(READ_SINGLE, 0x2020, (uint32_t*)&sdCardReadBuffer);
+	uint32_t sd[128];
+	my_memcpy((uint8_t*)&sd, (uint8_t*)&sdCardReadBuffer, 512, 0);
+	for (uint8_t i=0; i < 128; i = i + 8) {
+		printf("%i: \t", i);
+		printf("%x\t\t\t%x\t\t\t%x\t\t\t%x\t\t\t%x\t\t\t%x\t\t\t%x\t\t\t%x\n", sd[i], sd[i+1], sd[i+2], sd[i+3], sd[i+4], sd[i+5], sd[i+6], sd[i+7]);
+	}
+	
+	while(1){
+
+	}
+	
+	
+}
+
+void kernel_main2() {
 
 	// jtagInit();
 	// setLEDasOutput();
@@ -35,6 +61,7 @@ void kernel_main() {
 	frameBufferSetup(1024, 768, 16);
 	setStartPosition(0,0);
 	setCursor(0);
+	// printf("Emmc Init Done\n");
 	// timerInit(LOAD_VALUE_1S_1_PRESCALLAR, Bit23, TIMER_CONTROL_PRESCALLAR_1);
 
 	emmcInit();
