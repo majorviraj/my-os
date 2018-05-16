@@ -69,10 +69,12 @@ typedef struct directoryEntry_struct {
     uint16_t lastModifiedDate;		//
     uint16_t firstClusterLow;  		// Low 16 bits is the first cluster number
     uint32_t size; 					// In bytes
-    uint8_t hasLongName;
-    uint8_t longName[256];
 } directoryEntry_t;
 
+typedef struct file_struct {
+	uint32_t size;
+	uint8_t file[];
+} file_t;
 
 masterBootRecord_t masterBootRecord;
 biosParameterBlock_t partition1;
@@ -87,6 +89,7 @@ void readRootDirectory();
 void my_memcpy(uint8_t*, uint8_t*, uint32_t, uint32_t);
 uint32_t getNextClusterFromFAT(uint32_t currentCluster);
 
-uint8_t* readFile();
+void readDirectory(uint16_t, uint16_t);
+file_t readFile(uint16_t, uint16_t, uint32_t);
 
 #endif
