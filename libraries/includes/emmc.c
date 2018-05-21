@@ -12,7 +12,7 @@
 #define SD_1_8V_SUPPORT 	(1 << 24)
 #define SDHC_SUPPORT 		(1 << 30)
 
-#define DEBUG_LOG 0
+#define DEBUG_LOG 1
 volatile uint32_t* emmcControllerBasicForceInterrupt = (uint32_t*) (EMMC_CONTROLLER + 64);
 volatile uint32_t* spiInterruptSupport = (uint32_t*) (EMMC_CONTROLLER + 0xF0);
 volatile uint32_t* slotInterruptAndVersion = (uint32_t*) (EMMC_CONTROLLER + 0xFC);
@@ -188,25 +188,36 @@ void emmcSendData(uint32_t command, uint32_t blockAddress, uint32_t* buf) {
 	emmcControllerBasicStruct1_t->blockSizeCount = (1 << 16) | 512;
 	emmcControllerBasicStruct1_t->arg1 = blockAddress;
 	emmcControllerBasicStruct1_t->cmdtm = command;
-	// delay(5);
+	// delayCycles(5000);
 	
 	// printf("Interrupt in data**************** %x", emmcControllerBasicStruct1_t->interrupt);
+	#if !DEBUG_LOG
+	setForeColour(0xFFFF);
+	#endif
 
 	while((emmcControllerBasicStruct1_t->interrupt & INT_READ_RDY) != INT_READ_RDY) {
 		#if DEBUG_LOG
 		printf("Interrupt in data while =  %x", emmcControllerBasicStruct1_t->interrupt);
 		#endif
 	}
+	// #if DEBUG_LOG
+	uint32_t test = 0xdeadbeef;
+	
+	printf("Interrupt in data****************%x\n", test);
+
 	#if DEBUG_LOG
-	printf("Interrupt in data**************** %x\n", emmcControllerBasicStruct1_t->interrupt);
 	printf("responce for data  = %x\n", emmcControllerBasicStruct1_t->responce0);
 	#endif
-	// delay(5);
+	// delayCycles(20000);
+
 	for (uint16_t i = 0;i<128;i++) {
 		*buf = emmcControllerBasicStruct1_t->data;
 		buf++;
 	}
-
+	#if !DEBUG_LOG
+	setForeColour(0x0000);
+	#endif
+	
 }
 
 /*
@@ -225,7 +236,7 @@ void emmcInit() {
 
 	emmcGPIOSet();
 	// Reset the controller
-	
+		
 	uint32_t control1 = emmcControllerBasicStruct1_t -> control1;
 	control1 |= (1 << 24);
 
@@ -254,9 +265,9 @@ void emmcInit() {
 	control1 |= (1 << 0);							// Enabling internal clock
 	uint32_t freqForId = emmcGetClockDivider(BASE_CLOCK, 25000000);
 	if (freqForId == -1) {
-#if DEBUG_LOG
+	#if DEBUG_LOG
 		printf("Unable to get Frequency for the required Base Clock and Card Clock\n");
-#endif
+	#endif
 	}
 
 	
@@ -291,13 +302,13 @@ void emmcInit() {
 			delay(10);
 		}
 		else {
-#if DEBUG_LOG
+	#if DEBUG_LOG
 			printf("Got Correct Responce : %x\n", responce);
-#endif
+	#endif
 			break;
 		}
 	}
-
+	delayCycles(10000);
 	// Send command ACMD41
 	// responce = emmcSendCommand(SD_OP_COND, 0, 2000001);
 
@@ -313,9 +324,9 @@ void emmcInit() {
 
 	do {
 		responce = emmcSendCommand(SD_OP_COND, ACMD41_ALL, 100000);
-		// #if DEBUG_LOG
-		// printf("Responce ACMD41: %x\n", emmcControllerBasicStruct1_t->responce0);
-		// #endif
+		#if DEBUG_LOG
+		printf("Responce ACMD41: %x\n", emmcControllerBasicStruct1_t->responce0);
+		#endif
 		delayCycles(10000);
 	}while((uint32_t)(emmcControllerBasicStruct1_t->responce0 & (1 << 31)) != (1 << 31));
 

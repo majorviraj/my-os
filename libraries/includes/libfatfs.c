@@ -23,22 +23,21 @@
 
 void readMBR() {
 	volatile uint8_t sdCardReadBuffer[512];
-	// mbrBuffer[511] = 0x52;
 	emmcSendData(READ_SINGLE, 0, (uint32_t*)&sdCardReadBuffer);
-	// masterBootRecord = (masterBootRecord_t*)&mbrBuffer; //Shallow copy, did not work
-	my_memcpy(&masterBootRecord, &sdCardReadBuffer,512, 0); //Deep Copy, this works
-	// printf("new mbr sign %x\n", masterBootRecord_t.MBR_bootSignature);
-	// printf("mbr buffer 510 sign %x\n", mbrBuffer[510]);
-	// printf("mbr buffer 0x1c2 sign %x\n", mbrBuffer[0x1c2]);
-	// printf("mbr buffer 511 sign %x\n", mbrBuffer[511]);
-	// printf("size of structure is: %i\n", sizeof(masterBootRecord));
 
+	my_memcpy(&masterBootRecord, &sdCardReadBuffer,512, 0); //Deep Copy, this works
 
 }
 
 void readPartition1BPB() {
 	volatile uint8_t sdCardReadBuffer[512];
-	emmcSendData(READ_SINGLE, masterBootRecord.partitionEntries[0].LBAOfFirstSector , (uint32_t*)&sdCardReadBuffer);
+	printf("Partition LBA %x\n", masterBootRecord.partitionEntries[0].LBAOfFirstSector);
+	emmcSendData(READ_SINGLE, masterBootRecord.partitionEntries[0].LBAOfFirstSector, (uint32_t*)&sdCardReadBuffer);
+	// emmcSendData(READ_SINGLE, 0x2020, (uint32_t*)&sdCardReadBuffer2322);
+	// for (uint8_t i=0; i < 128; i = i + 8) {
+	// 	printf("%i: \t", i);
+	// 	printf("%x\t\t\t%x\t\t\t%x\t\t\t%x\t\t\t%x\t\t\t%x\t\t\t%x\t\t\t%x\n", sdCardReadBuffer2322[i], sdCardReadBuffer2322[i+1], sdCardReadBuffer2322[i+2], sdCardReadBuffer2322[i+3], sdCardReadBuffer2322[i+4], sdCardReadBuffer2322[i+5], sdCardReadBuffer2322[i+6], sdCardReadBuffer2322[i+7]);
+	// }
 	
 	// for(int i =0; i<90; i++) {
 	// 	printf("%x ", sdCardReadBuffer[i]);
@@ -46,11 +45,11 @@ void readPartition1BPB() {
 	// 		printf("\n");
 	// 	}
 	// }
-	//my_memcpy(&partition1, &sdCardReadBuffer, 90); //0x5a
+	// my_memcpy(&partition1, &sdCardReadBuffer, 90); //0x5a
 	for(int i =0; i<8; i++) {
 		partition1.BS_OEMName[i] = sdCardReadBuffer[i+3];
-
 	}
+
 	partition1.BPB_BytesPerSector = sdCardReadBuffer[0x00b] + (sdCardReadBuffer[0x00c]<<8);
 	partition1.BPB_SectorsPerCluster = sdCardReadBuffer[0x00d];
 	partition1.BPB_ReservedSectorsCount = sdCardReadBuffer[0x00e] +(sdCardReadBuffer[0x00f]<<8);
@@ -66,14 +65,13 @@ void readPartition1BPB() {
 	partition1.BPB_BackupBootSec = sdCardReadBuffer[0x032];
 	partition1.BS_BootSig = sdCardReadBuffer[0x042];
 
-	// printf("bytes per sector %x\n", sdCardReadBuffer[0x00b]);
-	// printf("oem name 0 %x\n", sdCardReadBuffer[3]);
-	// printf("oem name 1 %x\n", sdCardReadBuffer[4]);
+	printf("bytes per sector %x\n", partition1.BPB_BytesPerSector);
+	printf("oem name 0 %x\n", sdCardReadBuffer[3]);
+	printf("oem name 1 %x\n", sdCardReadBuffer[4]);
 }
 
 void readRootDirectory() {
 	volatile uint8_t sdCardReadBuffer[512];
-	//const uint8_t sdCardReadBuffer2[512];
 
 
 	uint32_t rootDirectoryClusterNumber = masterBootRecord.partitionEntries[0].LBAOfFirstSector
@@ -144,8 +142,7 @@ uint32_t getNextClusterFromFAT(uint32_t currentClusterNumber) {
 	volatile uint8_t sdCardReadBuffer[512];
 	uint32_t FATStartCluster = masterBootRecord.partitionEntries[0].LBAOfFirstSector
 								+ partition1.BPB_ReservedSectorsCount;
-
-	
+	previousRequestedCluster = 0xffffffff;
 	uint32_t clusterOffsetFromStartOfFAT = (uint32_t)(currentClusterNumber/128);
 	uint32_t indiceInCluster = currentClusterNumber%128;
 	if (clusterOffsetFromStartOfFAT != (uint32_t)(previousRequestedCluster/128)) {
@@ -155,7 +152,12 @@ uint32_t getNextClusterFromFAT(uint32_t currentClusterNumber) {
 		// my_memcpy(&fat32, &sdCardReadBuffer, )
 		memcpy(&fat32, &sdCardReadBuffer, 512);
 	}
-
+	printf("FAT: %x\n", masterBootRecord.partitionEntries[0].LBAOfFirstSector);
+	printf("FAT: %x\n", partition1.BPB_ReservedSectorsCount);
+	for (uint8_t i=0; i < 128; i = i + 8) {
+		printf("%i: \t", i);
+		printf("%x\t\t\t%x\t\t\t%x\t\t\t%x\t\t\t%x\t\t\t%x\t\t\t%x\t\t\t%x\n", fat32[i], fat32[i+1], fat32[i+2], fat32[i+3], fat32[i+4], fat32[i+5], fat32[i+6], fat32[i+7]);
+	}
 	previousRequestedCluster = currentClusterNumber;
 
 	return fat32[currentClusterNumber] & 0x0fffffff;
@@ -270,4 +272,11 @@ void my_memcpy(uint8_t* destination, uint8_t* source, uint32_t length, uint32_t 
 		destination[i] = source[i+sourceOffset];
 	}
 
+}
+
+void printSector(uint8_t* sector) {
+	for (uint8_t i=0; i < 128; i = i + 8) {
+		printf("%i: \t", i);
+		printf("%x\t\t\t%x\t\t\t%x\t\t\t%x\t\t\t%x\t\t\t%x\t\t\t%x\t\t\t%x\n", sector[i], sector[i+1], sector[i+2], sector[i+3], sector[i+4], sector[i+5], sector[i+6], sector[i+7]);
+	}
 }

@@ -17,12 +17,11 @@ void frameBufferSetup(int width, int height, int bitDepth){
 
     else {
         // error handler
-        gpioBlink(200, 10);
-		// delay(1000);
+        // gpioBlink(200, 10);
     }
 }
 
-void kernel_main() {
+void kernel_main2() {
 	// setLEDasOutput();
 	_enable_interrupts();
 	frameBufferSetup(1024, 768, 16);
@@ -32,48 +31,71 @@ void kernel_main() {
 	emmcInit();	
 	delay(1000);
 
+
 	uint8_t sdCardReadBuffer[512];
 	emmcSendData(READ_SINGLE, 0x2020, (uint32_t*)&sdCardReadBuffer);
 	uint32_t sd[128];
 	my_memcpy((uint8_t*)&sd, (uint8_t*)&sdCardReadBuffer, 512, 0);
-	for (uint8_t i=0; i < 128; i = i + 8) {
-		printf("%i: \t", i);
-		printf("%x\t\t\t%x\t\t\t%x\t\t\t%x\t\t\t%x\t\t\t%x\t\t\t%x\t\t\t%x\n", sd[i], sd[i+1], sd[i+2], sd[i+3], sd[i+4], sd[i+5], sd[i+6], sd[i+7]);
-	}
-	
+	// for (uint8_t i=0; i < 128; i = i + 8) {
+	// 	printf("%i: \t", i);
+	// 	printf("%x\t\t\t%x\t\t\t%x\t\t\t%x\t\t\t%x\t\t\t%x\t\t\t%x\t\t\t%x\n", sd[i], sd[i+1], sd[i+2], sd[i+3], sd[i+4], sd[i+5], sd[i+6], sd[i+7]);
+	// }
+	readMBR();
+	readPartition1BPB();
+	// printf("Cluster Information: %x", getNextClusterFromFAT(0x4));
+	readRootDirectory();
 	while(1){
 
 	}
 	
-	
 }
 
-void kernel_main2() {
+void kernel_main() {
 
-	// jtagInit();
-	// setLEDasOutput();
-// gpioBlink(200, 10);
-
-	// gpioBlink(50, 100);
-	
 	_enable_interrupts();
-	// volatile int toggledOnce =1;
 	frameBufferSetup(1024, 768, 16);
 	setStartPosition(0,0);
 	setCursor(0);
-	// printf("Emmc Init Done\n");
+	
 	// timerInit(LOAD_VALUE_1S_1_PRESCALLAR, Bit23, TIMER_CONTROL_PRESCALLAR_1);
-
+	// printf("yoyoyoyoyoyoyoyoyoyoyoyoyoyoyo\n");
 	emmcInit();
-	// printf("Emmc Init Done\n");
+
 	delay(1000);
 
+	// printf("yoyoyoyoyoyoyoyoyoyoyoyoyoyoyo\n");
 	readMBR();
 	// printf("Mbr sign %x\n", masterBootRecord.MBR_bootSignature);
 	// printf("Partition type %x\n", masterBootRecord.partitionEntries[0].partitionType);
 	// printf("LBA of first sector of partition1 %x\n", masterBootRecord.partitionEntries[0].LBAOfFirstSector);
 
+	// uint8_t sdCardReadBuffe[512];
+	// uint8_t sdCardReadBuffer667[512];
+	// uint8_t sdCardReadBuffer66[512];
+	// delay(1000);
+	// emmcSendData(READ_SINGLE, 0x2000, (uint32_t*)&sdCardReadBuffer667);
+	// delay(1000);
+	// emmcSendData(READ_SINGLE, 0x2000, (uint32_t*)&sdCardReadBuffe);
+	// delay(1000);
+	// emmcSendData(READ_SINGLE, 0x2000, (uint32_t*)&sdCardReadBuffer66);
 
+	// for (uint8_t i=0; i < 128; i = i + 8) {
+	// 	printf("%i: \t", i);
+	// 	printf("%x\t\t\t%x\t\t\t%x\t\t\t%x\t\t\t%x\t\t\t%x\t\t\t%x\t\t\t%x\n", sdCardReadBuffe[i], sdCardReadBuffe[i+1], sdCardReadBuffe[i+2], sdCardReadBuffe[i+3], sdCardReadBuffe[i+4], sdCardReadBuffe[i+5], sdCardReadBuffe[i+6], sdCardReadBuffe[i+7]);
+	// }
+	
+	
+	// for (uint8_t i=0; i < 128; i = i + 8) {
+	// 	printf("%i: \t", i);
+	// 	printf("%x\t\t\t%x\t\t\t%x\t\t\t%x\t\t\t%x\t\t\t%x\t\t\t%x\t\t\t%x\n", sdCardReadBuffer66[i], sdCardReadBuffer66[i+1], sdCardReadBuffer66[i+2], sdCardReadBuffer66[i+3], sdCardReadBuffer66[i+4], sdCardReadBuffer66[i+5], sdCardReadBuffer66[i+6], sdCardReadBuffer66[i+7]);
+	// }
+	
+	
+	// for (uint8_t i=0; i < 128; i = i + 8) {
+	// 	printf("%i: \t", i);
+	// 	printf("%x\t\t\t%x\t\t\t%x\t\t\t%x\t\t\t%x\t\t\t%x\t\t\t%x\t\t\t%x\n", sdCardReadBuffer667[i], sdCardReadBuffer667[i+1], sdCardReadBuffer667[i+2], sdCardReadBuffer667[i+3], sdCardReadBuffer667[i+4], sdCardReadBuffer667[i+5], sdCardReadBuffer667[i+6], sdCardReadBuffer667[i+7]);
+	// }
+	// printf("Cluster Information: %x", getNextClusterFromFAT(0x4));
 	readPartition1BPB();
 	//printf(" OEM Name %x \n", partition1.BS_OEMName[0]);
 	// printf(" bytes per sector in partition1 %x \n", partition1.BPB_BytesPerSector);
@@ -84,11 +106,12 @@ void kernel_main2() {
 	printf(" Total Sectors 32 %x \n", partition1.BPB_TotalSectors32);
 	printf(" Total Sectors in one copy of FAT32 table %x \n", partition1.BPB_SectorsPerFAT32Table);
 	printf(" Cluster no. of Root Directory %x\n", partition1.BPB_RootDirectoryCluster);
-
-	readRootDirectory();
+	
+	// readRootDirectory();
+	getNextClusterFromFAT(20);
 
 	while(1){
-		// volatile uint32_t data = emmcControllerBasicStruct1_t -> data;
+
 	}
 
 }

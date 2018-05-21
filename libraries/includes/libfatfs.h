@@ -54,8 +54,6 @@ typedef struct bootEntry_struct {
 	uint8_t BS_FileSystemType[8];		// 0x052 ;File system type label in ASCII 
 } biosParameterBlock_t;
 
-
-
 typedef struct directoryEntry_struct {
 	uint8_t name[11];				// Offset; 0x00 - (11 bytes)	
 	uint8_t attribute; 				// Offset: 0x0B
