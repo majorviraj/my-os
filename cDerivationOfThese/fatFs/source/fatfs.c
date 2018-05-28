@@ -58,11 +58,14 @@ void kernel_main() {
 	setCursor(0);
 	
 	// timerInit(LOAD_VALUE_1S_1_PRESCALLAR, Bit23, TIMER_CONTROL_PRESCALLAR_1);
-	// printf("yoyoyoyoyoyoyoyoyoyoyoyoyoyoyo\n");
+	printf("yoyoyoyoyoyoyoyoyoyoyoyoyoyoyo\n");
 	emmcInit();
 
 	delay(1000);
-
+	
+	clearScreen();
+	setStartPosition(0,0);
+	setCursor(0);
 	// printf("yoyoyoyoyoyoyoyoyoyoyoyoyoyoyo\n");
 	readMBR();
 	// printf("Mbr sign %x\n", masterBootRecord.MBR_bootSignature);
@@ -107,11 +110,29 @@ void kernel_main() {
 	printf(" Total Sectors in one copy of FAT32 table %x \n", partition1.BPB_SectorsPerFAT32Table);
 	printf(" Cluster no. of Root Directory %x\n", partition1.BPB_RootDirectoryCluster);
 	
-	// readRootDirectory();
-	getNextClusterFromFAT(20);
+	clearScreen();
+	setStartPosition(0,0);
+	setCursor(0);
+	readRootDirectory();
+
+	// printf("getNextClusterFromFAT(4) %x",getNextClusterFromFAT(4));
+
+	delay(15000);
+	// printf("getNextClusterFromFAT(5) %x",getNextClusterFromFAT(5));
+
+	// uint8_t* fileLoc = readFile(0xA, 0, 18693);
+	// clearScreen();
+	// setStartPosition(0,0);
+	// setCursor(0);
+	
+	// for(uint32_t i = 0; i < 50; i++)
+	// {
+	// 	printf("%c", fileLoc[i]);
+	// }
+	
+	// printf("file Loc %x\n", fileLoc);
 
 	while(1){
-
 	}
 
 }

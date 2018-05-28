@@ -65,8 +65,6 @@ void putString(char * string);
 
 void printf(char *string, ...);
 
-
-
 //Aux Mini UART Code
 
 typedef struct {

@@ -20,7 +20,7 @@
 #include <emmc.h>
 #include <libfatfs.h>
 
-
+uint32_t previousRequestedCluster = 0xffffffff;
 void readMBR() {
 	volatile uint8_t sdCardReadBuffer[512];
 	emmcSendData(READ_SINGLE, 0, (uint32_t*)&sdCardReadBuffer);
@@ -65,7 +65,7 @@ void readPartition1BPB() {
 	partition1.BPB_BackupBootSec = sdCardReadBuffer[0x032];
 	partition1.BS_BootSig = sdCardReadBuffer[0x042];
 
-	printf("bytes per sector %x\n", partition1.BPB_BytesPerSector);
+	printf("bytes per sector %x\n", partition1.BPB_ReservedSectorsCount);
 	printf("oem name 0 %x\n", sdCardReadBuffer[3]);
 	printf("oem name 1 %x\n", sdCardReadBuffer[4]);
 }
@@ -94,6 +94,7 @@ void readRootDirectory() {
 	// rootDirectory.firstClusterLow = sdCardReadBuffer[0x1a] + (sdCardReadBuffer[0x1b]<<8);
 	// rootDirectory.size = sdCardReadBuffer[0x1c] + (sdCardReadBuffer[0x1d]<<8) + (sdCardReadBuffer[0x1e]<<16) + (sdCardReadBuffer[0x1f]<<24);
 
+	printf("rootDirectoryClusterNumber %x", rootDirectoryClusterNumber);
 	printf("***Root Directory***");
 	my_memcpy(&rootDirectory, &sdCardReadBuffer, 32, 0);
 	printf("\n Name: %c", rootDirectory.name[0]);
@@ -142,9 +143,9 @@ uint32_t getNextClusterFromFAT(uint32_t currentClusterNumber) {
 	volatile uint8_t sdCardReadBuffer[512];
 	uint32_t FATStartCluster = masterBootRecord.partitionEntries[0].LBAOfFirstSector
 								+ partition1.BPB_ReservedSectorsCount;
-	previousRequestedCluster = 0xffffffff;
+	
 	uint32_t clusterOffsetFromStartOfFAT = (uint32_t)(currentClusterNumber/128);
-	uint32_t indiceInCluster = currentClusterNumber%128;
+	uint32_t indexInCluster = currentClusterNumber%128;
 	if (clusterOffsetFromStartOfFAT != (uint32_t)(previousRequestedCluster/128)) {
 	//Load the part of the FAT table into fat32 array buffer as it is not present in the buffer
 		//MEND THINGS HERE!!!!!!!
@@ -152,15 +153,16 @@ uint32_t getNextClusterFromFAT(uint32_t currentClusterNumber) {
 		// my_memcpy(&fat32, &sdCardReadBuffer, )
 		memcpy(&fat32, &sdCardReadBuffer, 512);
 	}
-	printf("FAT: %x\n", masterBootRecord.partitionEntries[0].LBAOfFirstSector);
-	printf("FAT: %x\n", partition1.BPB_ReservedSectorsCount);
-	for (uint8_t i=0; i < 128; i = i + 8) {
-		printf("%i: \t", i);
-		printf("%x\t\t\t%x\t\t\t%x\t\t\t%x\t\t\t%x\t\t\t%x\t\t\t%x\t\t\t%x\n", fat32[i], fat32[i+1], fat32[i+2], fat32[i+3], fat32[i+4], fat32[i+5], fat32[i+6], fat32[i+7]);
-	}
+	delay(1000);
+	// printf("FAT: %x\n", FATStartCluster);
+	// printf("FAT: %x\n", clusterOffsetFromStartOfFAT);
+	// for (uint8_t i=0; i < 128; i = i + 8) {
+	// 	printf("%i: \t", i);
+	// 	printf("%x\t\t\t%x\t\t\t%x\t\t\t%x\t\t\t%x\t\t\t%x\t\t\t%x\t\t\t%x\n", fat32[i], fat32[i+1], fat32[i+2], fat32[i+3], fat32[i+4], fat32[i+5], fat32[i+6], fat32[i+7]);
+	// }
 	previousRequestedCluster = currentClusterNumber;
 
-	return fat32[currentClusterNumber] & 0x0fffffff;
+	return fat32[indexInCluster] & 0x0fffffff;
 
 	// for(int i=0; i<partition1.BPB_SectorsPerFAT32Table; i++) {
 	// 	emmcSendData(READ_SINGLE, FATStartCluster + i, (uint32_t*)&sdCardReadBuffer);
@@ -170,7 +172,10 @@ uint32_t getNextClusterFromFAT(uint32_t currentClusterNumber) {
 	
 }
 //ABI of passing struct with variable sized array member has changed	
-file_t readFile(uint16_t fileFirstClusterLow, uint16_t fileFirstClusterHigh, uint32_t fileSize) {
+uint8_t* readFile(uint16_t fileFirstClusterLow, uint16_t fileFirstClusterHigh, uint32_t fileSize) {
+	clearScreen();
+	setStartPosition(0,0);
+	setCursor(0);
 	uint8_t file[fileSize]; //fileSize stored in 32byte directory entries is in bytes, not sectors
 	uint32_t fileFirstCluster = ((fileFirstClusterHigh<<16) | fileFirstClusterLow);	
 	uint32_t fileFirstClusterToRead = masterBootRecord.partitionEntries[0].LBAOfFirstSector
@@ -179,17 +184,20 @@ file_t readFile(uint16_t fileFirstClusterLow, uint16_t fileFirstClusterHigh, uin
 								+ fileFirstCluster -2;
 	
 	
-
+	printf("FIRST cluster %x\n", fileFirstClusterToRead);
 	volatile uint8_t sdCardReadBuffer[512];
 
 	emmcSendData(READ_SINGLE, fileFirstClusterToRead, (uint32_t*) &sdCardReadBuffer);
 	memcpy(&file, &sdCardReadBuffer, 512);
 
-	uint32_t nextClusterAsPerFAT = getNextClusterFromFAT(fileFirstCluster);
+	uint32_t nextClusterAsPerFAT = getNextClusterFromFAT(4);
+	printf("NExt %x\n", nextClusterAsPerFAT);
+	printf("filefirstCluster %x\n", fileFirstCluster);
 	uint32_t nextClusterToRead = 0;
-	uint32_t previousCluster = 0;
+	uint32_t previousCluster = 0xFFFFFFFF;
 	uint32_t i = 1;
 	while(nextClusterAsPerFAT<0x0ffffff8) {
+		
 		if(nextClusterAsPerFAT == 0x0ffffff7) {
 			printf("\n****BAD CLUSTER ENCOUNTERED WHILE READING FILE****\n");
 			break;
@@ -213,8 +221,12 @@ file_t readFile(uint16_t fileFirstClusterLow, uint16_t fileFirstClusterHigh, uin
 	memcpy(fileStruct.file, &file, (i-1)*512);
 
 	//NOTE:This corrupts a portion of memory in the array "file" if the file size is not a multiple of 512.
-
-	return fileStruct;
+	
+	for(uint32_t i = 0; i < fileSize; i++)
+	{
+		printf("%c", file[i]);
+	}
+	return &file;
 }
 
 void readDirectory(uint16_t directoryFirstClusterLow, uint16_t directoryFirstClusterHigh) {

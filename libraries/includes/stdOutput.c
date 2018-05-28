@@ -140,6 +140,9 @@ void printf(char *string, ...) {
 void clearScreen() {
 	setForeColour(0);
 	FullScreenToForeColour();
+	setForeColour(0xFFFF);
+	FullScreenToForeColour();
+	setForeColour(0);
 }
 
 

@@ -22,15 +22,15 @@ uint32_t emmcGPIOSet() {
 
 	volatile uint32_t* gpio = returnGpio();
 	// For GPIO Card Detect
-	// gpio[GPIO_GPFSEL4] &= ~(7 << (7*3));
+	gpio[GPIO_GPFSEL4] &= ~(7 << (7*3));
 
-	// gpio[GPIO_GPPUD] = 2;
-	// delayCycles(300);
-	// gpio[GPIO_GPPUDCLK1] = (1 << (47-32));
-	// delayCycles(300);
-	// gpio[GPIO_GPPUD] = 0;
-	// gpio[GPIO_GPPUDCLK1] = 0;
-	// gpio[GPIO_GPHEN1] |= (1 << (47-32));
+	gpio[GPIO_GPPUD] = 2;
+	delayCycles(300);
+	gpio[GPIO_GPPUDCLK1] = (1 << (47-32));
+	delayCycles(300);
+	gpio[GPIO_GPPUD] = 0;
+	gpio[GPIO_GPPUDCLK1] = 0;
+	gpio[GPIO_GPHEN1] |= (1 << (47-32));
 
 	// For GPIO_CLOCK and GPIO_CMD
 	gpio[GPIO_GPFSEL4] |= (7 << (8*3))|(7 << (9*3));
@@ -124,6 +124,9 @@ void emmcHandleInterrupts() {
 	if (interrupt & 0x8000) {
 		clearInterrupt |= 0xFFFF0000;
 	}
+	if ((interrupt & 0x900) == 0x900) {
+		clearInterrupt |= 0x900;
+	}
 	emmcControllerBasicStruct1_t->interrupt = clearInterrupt;
 }
 
@@ -197,7 +200,7 @@ void emmcSendData(uint32_t command, uint32_t blockAddress, uint32_t* buf) {
 
 	while((emmcControllerBasicStruct1_t->interrupt & INT_READ_RDY) != INT_READ_RDY) {
 		#if DEBUG_LOG
-		printf("Interrupt in data while =  %x", emmcControllerBasicStruct1_t->interrupt);
+		// printf("Interrupt in data while =  %x", emmcControllerBasicStruct1_t->interrupt);
 		#endif
 	}
 	// #if DEBUG_LOG
@@ -209,7 +212,7 @@ void emmcSendData(uint32_t command, uint32_t blockAddress, uint32_t* buf) {
 	printf("responce for data  = %x\n", emmcControllerBasicStruct1_t->responce0);
 	#endif
 	// delayCycles(20000);
-
+	emmcHandleInterrupts();
 	for (uint16_t i = 0;i<128;i++) {
 		*buf = emmcControllerBasicStruct1_t->data;
 		buf++;
@@ -270,9 +273,9 @@ void emmcInit() {
 	#endif
 	}
 
-	
-	control1 |= freqForId;	// Set frequency to 400 khz
-	control1 |= (7 << 16);							// Data timeout = TMCLK * 2^10
+
+	control1 |= freqForId;					// Set frequency to 400 khz
+	control1 |= (7 << 16);					// Data timeout = TMCLK * 2^10
 
 	emmcControllerBasicStruct1_t -> control1 = control1;
 
@@ -294,7 +297,6 @@ void emmcInit() {
 	delayMicro(5);
 	// send voltage 0x1 = 2.7 - 3.6V
 	// pattern = 0xAA
-	// printf("hbfkjwebfkwgflwhfliwhlifhilehfilwnclkwnefh");
 	responce = emmcSendCommand(SEND_IF_COMMAND, 0x1AA, 100000);
 	while(1){
 		if ((responce & 0x1FF) != 0x1AA) {
