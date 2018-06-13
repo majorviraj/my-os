@@ -54,8 +54,8 @@ typedef struct bootEntry_struct {
 	uint8_t BS_FileSystemType[8];		// 0x052 ;File system type label in ASCII 
 } biosParameterBlock_t;
 
-typedef struct directoryEntry_struct {
-	uint8_t name[11];				// Offset; 0x00 - (11 bytes)	
+typedef struct directoryEntry_struct { //NOTE : name field has been made of 26 bytes to accomodate LFN's; hence direct copying of 32 byte entries into struct wont work
+	uint8_t name[26*3];				// Offset; 0x00 - (11 bytes)	
 	uint8_t attribute; 				// Offset: 0x0B
 	uint8_t reserved; 				// Reserved for Windows NT (Supposedly this tells us about the casing)
     uint8_t creationTimeInTenths; 	// Creation time in tenths of a second. Note: Only 24 bits used
