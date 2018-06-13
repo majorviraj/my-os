@@ -16,8 +16,7 @@ void frameBufferSetup(int width, int height, int bitDepth){
     }
 
     else {
-        // error handler
-        // gpioBlink(200, 10);
+
     }
 }
 
@@ -126,8 +125,8 @@ void kernel_main() {
 	clearScreen();
 	setStartPosition(0,0);
 	setCursor(0);
-	char buf[1024 + 512];
-	readFile(0x351, 0x0, 1000, buf);
+	char buf[1597];
+	readFile(0x3CC7, 0x0, sizeof(buf), buf);
 	// for(uint32_t i = 0; i < 50; i++)
 	// {
 	// 	printf("%c", fileLoc[i]);

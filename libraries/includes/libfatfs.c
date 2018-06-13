@@ -198,6 +198,8 @@ uint8_t readFile(uint16_t fileFirstClusterLow, uint16_t fileFirstClusterHigh, ui
 	emmcSendData(READ_SINGLE, fileFirstClusterToRead, (uint32_t*) &sdCardReadBuffer);
 	memcpy(file, &sdCardReadBuffer, 512);
 
+	printSector(file);
+
 	uint32_t nextClusterAsPerFAT = getNextClusterFromFAT(fileFirstCluster);
 	printf("NExt %x\n", nextClusterAsPerFAT);
 	printf("filefirstCluster %x\n", fileFirstCluster);
@@ -210,7 +212,7 @@ uint8_t readFile(uint16_t fileFirstClusterLow, uint16_t fileFirstClusterHigh, ui
 			printf("\n****BAD CLUSTER ENCOUNTERED WHILE READING FILE****\n");
 			break;
 		}
-
+		printf("NExt %x\n", nextClusterAsPerFAT);
 		previousCluster = nextClusterAsPerFAT;
 		nextClusterToRead = nextClusterAsPerFAT - 2 
 							+ masterBootRecord.partitionEntries[0].LBAOfFirstSector
@@ -224,15 +226,15 @@ uint8_t readFile(uint16_t fileFirstClusterLow, uint16_t fileFirstClusterHigh, ui
 		i += 1;
 	}
 
-	file_t fileStruct;
-	fileStruct.size = fileSize;
-	memcpy(fileStruct.file, file, (i-1)*512);
+	// file_t fileStruct;
+	// fileStruct.size = fileSize;
+	// memcpy(fileStruct.file, file, (i-1)*512);
 
 	//NOTE:This corrupts a portion of memory in the array "file" if the file size is not a multiple of 512.
 	
 	for(uint32_t i = 0; i < fileSize; i++)
 	{
-		printf("%c", file+i );
+		printf("%c", *(file+i) );
 	}
 	return 0;
 }
@@ -300,3 +302,23 @@ void printSector(uint8_t* sector) {
 		printf("%x\t\t\t%x\t\t\t%x\t\t\t%x\t\t\t%x\t\t\t%x\t\t\t%x\t\t\t%x\n", sector[i], sector[i+1], sector[i+2], sector[i+3], sector[i+4], sector[i+5], sector[i+6], sector[i+7]);
 	}
 }
+
+// void cat(char* fileName) {
+
+// 	static volatile uint32_t currentDirectoryOld;
+// 	static volatile uint8_t DirectoryBuffer[512];
+// 	if (currentDirectoryOld != currentDirectory) {
+// 		emmcSendData(READ_SINGLE, currentDirectory, (uint32_t*)&DirectoryBuffer);
+// 		currentDirectoryOld = currentDirectory;
+// 	}
+
+	
+
+// 	directoryEntry_t entries[15];
+// 	for(int k=0; k<15; k++) {
+// 		my_memcpy(&entries[k], &DirectoryBuffer, 32, (k+1)*32);
+
+
+
+	
+// }
