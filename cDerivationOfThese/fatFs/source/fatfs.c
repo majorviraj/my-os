@@ -102,14 +102,16 @@ void kernel_main() {
 	readPartition1BPB();
 	//printf(" OEM Name %x \n", partition1.BS_OEMName[0]);
 	// printf(" bytes per sector in partition1 %x \n", partition1.BPB_BytesPerSector);
-	// printf(" Sectors per cluster %x \n", partition1.BPB_SectorsPerCluster);
+	printf(" Sectors per cluster %x \n", partition1.BPB_SectorsPerCluster);
 	printf(" Number of Reserved Sectors %x \n", partition1.BPB_ReservedSectorsCount);
 	// printf(" number of FAT table copies %i \n", partition1.BPB_NumberOfFATs);
 	// printf(" Media type %x \n", partition1.BPB_MediaType);
 	printf(" Total Sectors 32 %x \n", partition1.BPB_TotalSectors32);
 	printf(" Total Sectors in one copy of FAT32 table %x \n", partition1.BPB_SectorsPerFAT32Table);
 	printf(" Cluster no. of Root Directory %x\n", partition1.BPB_RootDirectoryCluster);
-	
+	printf("Number of Fats %x\n", partition1.BPB_NumberOfFATs);
+	delay(10000);
+
 	clearScreen();
 	setStartPosition(0,0);
 	setCursor(0);
@@ -121,10 +123,11 @@ void kernel_main() {
 	// printf("getNextClusterFromFAT(5) %x",getNextClusterFromFAT(5));
 
 	// uint8_t* fileLoc = readFile(0xA, 0, 18693);
-	// clearScreen();
-	// setStartPosition(0,0);
-	// setCursor(0);
-	
+	clearScreen();
+	setStartPosition(0,0);
+	setCursor(0);
+	char buf[1024 + 512];
+	readFile(0x351, 0x0, 1000, buf);
 	// for(uint32_t i = 0; i < 50; i++)
 	// {
 	// 	printf("%c", fileLoc[i]);
