@@ -6,7 +6,7 @@
 *Also Logical Block Adresses(LBA) are used. No support for CHS(cylinder head sector) type old files, nobody uses that anymore.
 *This driver is specifically designed for the raspberry pi and provides no support for FAT16 or FAT8 type legacy file systems.
 *
-*
+*NOTE: This FAT32 implementation assumes 1 cluster = 1 sector.
 */
 
 #include <assemblyFunctions.h>
@@ -71,16 +71,130 @@ void readPartition1BPB() {
 }
 
 void readRootDirectory() {
+	/*
+	*First calculate the number of clusters that this directory is spread into.
+	*Create a buffer with all those sectors in it.
+	*Then from that buffer, calculate the number of files/subdirectory entries in it. 
+	* NOTE the VFAT long file names while counting the entries.
+	*Create an array of the struct directoryEntry of the count of entries present.
+	*Fill 'em up.
+	*/
+
+	//NOTE: ASSUMING 1 cluster = 1 sector
+
+	uint16_t numberOfClustersOccupiedByDirectoryEntry = 1; 
+	uint32_t currentCluster = 2; //hard coded 2 since its the root directory, will always be here											
+	uint32_t nextClusterAsPerFAT = getNextClusterFromFAT(currentCluster); 
+	currentCluster = nextClusterAsPerFAT;
+	while(nextClusterAsPerFAT < 0x0ffffff8) {
+		numberOfClustersOccupiedByDirectoryEntry += 1;
+		nextClusterAsPerFAT = getNextClusterFromFAT(currentCluster);
+		currentCluster = nextClusterAsPerFAT;
+	}
+
+	//This will be the array with all the root directory entries after it is filled up in a while
+	uint8_t rootDirectoryBuffer[numberOfClustersOccupiedByDirectoryEntry * 512];
+
+
+
+	//Lets fill in this buffer now.
 	volatile uint8_t sdCardReadBuffer[512];
-
-
+	
 	uint32_t rootDirectoryClusterNumber = masterBootRecord.partitionEntries[0].LBAOfFirstSector
 											// + partition1.BPB_RootDirectoryCluster NOT SURE IF I HAVE TO ADD THIS OR NOT, COULDNT INTERPRET FROM THE DOCUMENTATION
 											+ partition1.BPB_ReservedSectorsCount
 											+ (partition1.BPB_NumberOfFATs * partition1.BPB_SectorsPerFAT32Table);
+
 	emmcSendData(READ_SINGLE, rootDirectoryClusterNumber, (uint32_t*)&sdCardReadBuffer);
+	my_memcpy(rootDirectoryBuffer, &sdCardReadBuffer, 512, 0);
+	currentCluster = 2; //hard coded 2 since its the root directory, will always be here											
+	nextClusterAsPerFAT = getNextClusterFromFAT(currentCluster); 
+	currentCluster = nextClusterAsPerFAT;
+	uint16_t i = 1;
+	while(nextClusterAsPerFAT < 0x0ffffff8) {
+		uint32_t clusterToRead = nextClusterAsPerFAT - 2 +
+									masterBootRecord.partitionEntries[0].LBAOfFirstSector
+									+ partition1.BPB_ReservedSectorsCount
+									+ (partition1.BPB_NumberOfFATs * partition1.BPB_SectorsPerFAT32Table);
+		
+		emmcSendData(READ_SINGLE, clusterToRead, (uint32_t*)&sdCardReadBuffer);
+		my_memcpy(rootDirectoryBuffer + i*512, &sdCardReadBuffer, 512, 0);
+		i++;
+		nextClusterAsPerFAT = getNextClusterFromFAT(currentCluster);
+		currentCluster = nextClusterAsPerFAT;
+	}	
+	//rootDirectoryBuffer is filled at this point!!
 	
+
+	//Now we have to calculate the number of files/subdirectories in it while ignoring the LFN's.
+	uint16_t numberOfEntries = 0;
 	
+	for(uint32_t i = 0; i < (uint32_t)((numberOfClustersOccupiedByDirectoryEntry*512) / 32); i++) {
+		
+		//Check for "end of directory entries marker" (i.e. first byte of entry is 0x00) and exit from loop
+		if(rootDirectoryBuffer[i*32] == 0x00) {
+			break;
+		}
+
+		//Count as an entry only if attribute says it is not a LFN entry (characterised by 0x0F)
+		if(rootDirectoryBuffer[i*32 + 0x0B] != 0x0F) {
+			numberOfEntries++;
+		}
+	}
+	//Now we have numberOfEntries ready here to create an array of struct directoryEntries
+	directoryEntry_t entries[numberOfEntries];
+
+
+	//Lets fill those structs.
+	uint16_t actualEntryNumber = 0;
+	uint16_t k = 0;
+	while(k < (numberOfClustersOccupiedByDirectoryEntry*512) / 32) {
+		
+		if(rootDirectoryBuffer[k*32 + 0x0B] == 0x0F) { //entry is LFN, fill name manually and other entries too
+			uint8_t numberOfLFNEntries = 1;
+			uint8_t sequenceNumber = rootDirectoryBuffer[k*32];
+			if(sequenceNumber & 0x40) {
+				numberOfLFNEntries = sequenceNumber & 0x0F;
+			}
+			for(uint8_t p = 0; p < numberOfLFNEntries; p++) {
+				for(uint8_t t=0; t<10; t++) {
+					entries[actualEntryNumber].name[p*26 + t] = rootDirectoryBuffer[(k+(numberOfLFNEntries - p - 1)) * 32 + 1 + t]; //+1 at rhs because first  entry is sequence number	
+				}
+				for(uint8_t t=0; t<12; t++) {
+					entries[actualEntryNumber].name[p*26 + t + 10] = rootDirectoryBuffer[(k+(numberOfLFNEntries - p - 1)) * 32 + 0x0E + t]; //+1 at rhs because first  entry is sequence number	
+				}
+				for(uint8_t t=0; t<4; t++) {
+					entries[actualEntryNumber].name[p*26 + t + 22] = rootDirectoryBuffer[(k+(numberOfLFNEntries - p - 1)) * 32 + 0x1C + t]; //+1 at rhs because first  entry is sequence number	
+				}
+			}
+			k = k + numberOfLFNEntries;
+		} else { //just directly copy 32 bytes to the struct taking care of the oversized name field in the struct buffed up to accomodate the LFN
+			for(uint8_t a = 0; a<8; a++) {
+				entries[actualEntryNumber].name[a] = rootDirectoryBuffer[k*32 + a];
+			}
+		}
+		my_memcpy(&entries[actualEntryNumber] + 26*3, &rootDirectoryBuffer, 24, (k*32) + 8);
+
+		actualEntryNumber += 1;
+	}
+
+	//print directory contents
+	for(int v = 0; v<numberOfEntries; v++) {
+		for(int nameCounter = 0; nameCounter<26*3; nameCounter++) {
+			printf("%c", entries[v].name[nameCounter]);	
+		}
+		// printf("Attribute: %x       ", entries[k].attribute);
+		printf("Size: %i       ", entries[v].size);
+		/*********************************************************
+		*REMEMBER CLUSTER NUMBERING BEGINS AT 2, so SUBTRACT 2 from LOW CLUSTER NUMBER
+		*FOUND IN THE DIRECTORY ENTRY TO SEEK THE CONTENTS OF THE FILE.
+		*/
+		printf("FirstCluster low: %x       ",entries[v].firstClusterLow);
+		printf("FirstCluster high: %x\n",entries[v].firstClusterHigh);
+	}
+
+
+
 
 	//memcpy not working for just first 32 bytes here as well, so deep copying manually
 	// for(int i =0 ;i<11; i++) {
@@ -105,45 +219,10 @@ void readRootDirectory() {
 	printf("FirstCluster low: %x      ",rootDirectory.firstClusterLow);
 	printf("FirstCluster high: %x\n",rootDirectory.firstClusterHigh);
 
+	
+
 	printf("***Other Directories and Files***\n");
-	directoryEntry_t entries[15];
-	for(int k=0; k<15; k++) {
-		my_memcpy(&entries[k], &sdCardReadBuffer, 32, (k+1)*32);
-		printf("Name: %c", entries[k].name[0]);
-		printf("%c", entries[k].name[1]);
-		printf("%c", entries[k].name[2]);
-		printf("%c", entries[k].name[3]);
-		printf("%c", entries[k].name[4]);
-		printf("%c", entries[k].name[5]);
-		printf("%c", entries[k].name[6]);
-		printf("%c", entries[k].name[7]);
-		printf("%c", entries[k].name[8]);
-		printf("%c", entries[k].name[9]);
-		printf("%c       ", entries[k].name[10]);
-		// printf("Attribute: %x       ", entries[k].attribute);
-		printf("Size: %i       ", entries[k].size);
-		/*********************************************************
-		*REMEMBER CLUSTER NUMBERING BEGINS AT 2, so SUBTRACT 2 from LOW CLUSTER NUMBER
-		*FOUND IN THE DIRECTORY ENTRY TO SEEK THE CONTENTS OF THE FILE.
-		*/
-		printf("FirstCluster low: %x       ",entries[k].firstClusterLow);
-		printf("FirstCluster high: %x\n",entries[k].firstClusterHigh);
-	}
 
-
-	// for(int i =0; i<64; i++) {
-	// 	printf("%x ", sdCardReadBuffer[i]);
-	// 	if(i%11 == 0  && i != 0) {
-	// 		printf("\n");
-	// 	}
-	// }
-	// printf("\n");
-	// for(int i =0; i<64; i++) {
-	// 	printf("%c .", sdCardReadBuffer[i]);
-	// 	if(i%11 == 0  && i != 0) {
-	// 		printf("\n");
-	// 	}
-	// }
 	
 }
 	
