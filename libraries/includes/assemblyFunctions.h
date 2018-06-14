@@ -3,6 +3,7 @@
 
 #include <intTypes.h>
 extern void setForeColour(uint16_t);
+extern void drawPixel(uint16_t, uint16_t);
 extern void FullScreenToForeColour();
 extern int frameBufferInit(int, int, int);
 
