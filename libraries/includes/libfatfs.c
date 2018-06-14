@@ -174,7 +174,7 @@ void readRootDirectory() {
 			}
 		}
 		my_memcpy(&entries[actualEntryNumber] + 26*3, &rootDirectoryBuffer, 24, (k*32) + 8);
-
+		k += 1;
 		actualEntryNumber += 1;
 	}
 
