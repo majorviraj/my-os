@@ -67,7 +67,7 @@ typedef struct directoryEntry_struct { //NOTE : name field has been made of 26 b
     uint16_t lastModifiedDate;		//
     uint16_t firstClusterLow;  		// Low 16 bits is the first cluster number
     uint32_t size; 					// In bytes
-} directoryEntry_t;
+}__attribute__((packed)) directoryEntry_t;
 
 typedef struct file_struct {
 	uint32_t size;

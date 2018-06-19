@@ -6,3 +6,7 @@
 *.sh
 *.list
 *.nn
+GPATH
+GRTAGS
+GSYMS
+GTAGS

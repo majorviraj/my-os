@@ -16,8 +16,7 @@ void frameBufferSetup(int width, int height, int bitDepth){
     }
 
     else {
-        // error handler
-        // gpioBlink(200, 10);
+
     }
 }
 
@@ -119,15 +118,18 @@ void kernel_main() {
 
 	// printf("getNextClusterFromFAT(4) %x",getNextClusterFromFAT(4));
 
-	delay(15000);
+	// delay(15000);
+	while(1){
+
+	}
 	// printf("getNextClusterFromFAT(5) %x",getNextClusterFromFAT(5));
 
 	// uint8_t* fileLoc = readFile(0xA, 0, 18693);
 	clearScreen();
 	setStartPosition(0,0);
 	setCursor(0);
-	char buf[1024 + 512];
-	readFile(0x351, 0x0, 1000, buf);
+	char buf[1597];
+	readFile(0x3CC7, 0x0, sizeof(buf), buf);
 	// for(uint32_t i = 0; i < 50; i++)
 	// {
 	// 	printf("%c", fileLoc[i]);
