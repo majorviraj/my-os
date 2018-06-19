@@ -118,7 +118,10 @@ void kernel_main() {
 
 	// printf("getNextClusterFromFAT(4) %x",getNextClusterFromFAT(4));
 
-	delay(15000);
+	// delay(15000);
+	while(1){
+
+	}
 	// printf("getNextClusterFromFAT(5) %x",getNextClusterFromFAT(5));
 
 	// uint8_t* fileLoc = readFile(0xA, 0, 18693);

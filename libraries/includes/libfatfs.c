@@ -144,6 +144,9 @@ void readRootDirectory() {
 	//Now we have numberOfEntries ready here to create an array of struct directoryEntries
 	directoryEntry_t entries[numberOfEntries];
 
+	clearScreen();
+	setStartPosition(0,0);
+	setCursor(0);
 
 	//Lets fill those structs.
 	uint16_t actualEntryNumber = 0;
@@ -169,22 +172,23 @@ void readRootDirectory() {
 			}
 			k = k + numberOfLFNEntries;
 		} else { //just directly copy 32 bytes to the struct taking care of the oversized name field in the struct buffed up to accomodate the LFN
-			for(uint8_t a = 0; a<8; a++) {
+			for(uint8_t a = 0; a<11; a++) {
 				entries[actualEntryNumber].name[a] = rootDirectoryBuffer[k*32 + a];
 			}
 		}
-		my_memcpy(&entries[actualEntryNumber] + 26*3, &rootDirectoryBuffer, 24, (k*32) + 8);
+		my_memcpy(&entries[actualEntryNumber] + 26*3, &rootDirectoryBuffer, 21, (k*32) + 11);
 		k += 1;
 		actualEntryNumber += 1;
 	}
+	
 
 	//print directory contents
 	for(int v = 0; v<numberOfEntries; v++) {
-		for(int nameCounter = 0; nameCounter<26*3; nameCounter++) {
+		for(int nameCounter = 0; nameCounter<26; nameCounter++) {
 			printf("%c", entries[v].name[nameCounter]);	
 		}
 		// printf("Attribute: %x       ", entries[k].attribute);
-		printf("Size: %i       ", entries[v].size);
+		printf("Size: %x       ", entries[v].size);
 		/*********************************************************
 		*REMEMBER CLUSTER NUMBERING BEGINS AT 2, so SUBTRACT 2 from LOW CLUSTER NUMBER
 		*FOUND IN THE DIRECTORY ENTRY TO SEEK THE CONTENTS OF THE FILE.
@@ -194,8 +198,10 @@ void readRootDirectory() {
 	}
 
 
-
-
+	printSector(&rootDirectoryBuffer);
+	printf("\n%x", entries[1].attribute);
+	printf("\n%x\n", entries[1].createDate);
+	printSector(&entries[1]);
 	//memcpy not working for just first 32 bytes here as well, so deep copying manually
 	// for(int i =0 ;i<11; i++) {
 	// 	rootDirectory.name[i] = sdCardReadBuffer[i];
@@ -208,20 +214,20 @@ void readRootDirectory() {
 	// rootDirectory.firstClusterLow = sdCardReadBuffer[0x1a] + (sdCardReadBuffer[0x1b]<<8);
 	// rootDirectory.size = sdCardReadBuffer[0x1c] + (sdCardReadBuffer[0x1d]<<8) + (sdCardReadBuffer[0x1e]<<16) + (sdCardReadBuffer[0x1f]<<24);
 
-	printf("rootDirectoryClusterNumber %x", rootDirectoryClusterNumber);
-	printf("***Root Directory***");
-	my_memcpy(&rootDirectory, &sdCardReadBuffer, 32, 0);
-	printf("\n Name: %c", rootDirectory.name[0]);
-	printf("%c", rootDirectory.name[1]);
-	printf("%c", rootDirectory.name[2]);
-	printf("%c       ", rootDirectory.name[3]);
-	printf("Attribute: %x       ", rootDirectory.attribute);
-	printf("FirstCluster low: %x      ",rootDirectory.firstClusterLow);
-	printf("FirstCluster high: %x\n",rootDirectory.firstClusterHigh);
+	// printf("rootDirectoryClusterNumber %x", rootDirectoryClusterNumber);
+	// printf("***Root Directory***");
+	// my_memcpy(&rootDirectory, &sdCardReadBuffer, 32, 0);
+	// printf("\n Name: %c", rootDirectory.name[0]);
+	// printf("%c", rootDirectory.name[1]);
+	// printf("%c", rootDirectory.name[2]);
+	// printf("%c       ", rootDirectory.name[3]);
+	// printf("Attribute: %x       ", rootDirectory.attribute);
+	// printf("FirstCluster low: %x      ",rootDirectory.firstClusterLow);
+	// printf("FirstCluster high: %x\n",rootDirectory.firstClusterHigh);
 
 	
 
-	printf("***Other Directories and Files***\n");
+	// printf("***Other Directories and Files***\n");
 
 	
 }
