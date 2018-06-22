@@ -20,7 +20,7 @@ struct emmcDevice devEmmc;
 
 uint32_t emmcGPIOSet() {
 
-	volatile uint32_t* gpio = returnGpio();
+	// volatile uint32_t* gpio = returnGpio();
 	// For GPIO Card Detect
 	gpio[GPIO_GPFSEL4] &= ~(7 << (7*3));
 
@@ -206,7 +206,8 @@ void emmcSendData(uint32_t command, uint32_t blockAddress, uint32_t* buf) {
 	// #if DEBUG_LOG
 	uint32_t test = 0xdeadbeef;
 	
-	printf("Interrupt in data****************%x\n", test);
+	// delayCycles(10000);
+	printf("Interrupt in data****************%x\n", emmcControllerBasicStruct1_t->responce0);
 
 	#if DEBUG_LOG
 	printf("responce for data  = %x\n", emmcControllerBasicStruct1_t->responce0);

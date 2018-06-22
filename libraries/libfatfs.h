@@ -89,5 +89,6 @@ uint32_t getNextClusterFromFAT(uint32_t currentCluster);
 
 void readDirectory(uint16_t, uint16_t);
 uint8_t readFile(uint16_t, uint16_t, uint32_t, uint8_t*);
+void printSector(uint8_t*);
 
 #endif

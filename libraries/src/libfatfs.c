@@ -22,13 +22,11 @@
 
 uint32_t previousRequestedCluster = 0xffffffff;
 void readMBR() {
-	
 	emmcSendData(READ_SINGLE, 0, (uint32_t*)&masterBootRecord);
-
 }
 
 void readPartition1BPB() {
-	volatile uint8_t sdCardReadBuffer[512];
+	uint8_t sdCardReadBuffer[512];
 	printf("Partition LBA %x\n", masterBootRecord.partitionEntries[0].LBAOfFirstSector);
 	emmcSendData(READ_SINGLE, masterBootRecord.partitionEntries[0].LBAOfFirstSector, (uint32_t*)&sdCardReadBuffer);
 	// emmcSendData(READ_SINGLE, 0x2020, (uint32_t*)&sdCardReadBuffer2322);
@@ -96,7 +94,7 @@ void readRootDirectory() {
 
 
 	//Lets fill in this buffer now.
-	volatile uint8_t sdCardReadBuffer[512];
+	uint8_t sdCardReadBuffer[512];
 	
 	uint32_t rootDirectoryClusterNumber = masterBootRecord.partitionEntries[0].LBAOfFirstSector
 											// + partition1.BPB_RootDirectoryCluster NOT SURE IF I HAVE TO ADD THIS OR NOT, COULDNT INTERPRET FROM THE DOCUMENTATION
@@ -104,7 +102,7 @@ void readRootDirectory() {
 											+ (partition1.BPB_NumberOfFATs * partition1.BPB_SectorsPerFAT32Table);
 
 	emmcSendData(READ_SINGLE, rootDirectoryClusterNumber, (uint32_t*)&sdCardReadBuffer);
-	my_memcpy(rootDirectoryBuffer, &sdCardReadBuffer, 512, 0);
+	my_memcpy(rootDirectoryBuffer, (uint8_t*)&sdCardReadBuffer, 512, 0);
 	currentCluster = 2; //hard coded 2 since its the root directory, will always be here											
 	nextClusterAsPerFAT = getNextClusterFromFAT(currentCluster); 
 	currentCluster = nextClusterAsPerFAT;
@@ -116,7 +114,7 @@ void readRootDirectory() {
 								 + (partition1.BPB_NumberOfFATs * partition1.BPB_SectorsPerFAT32Table);
 		
 		emmcSendData(READ_SINGLE, clusterToRead, (uint32_t*)&sdCardReadBuffer);
-		my_memcpy(rootDirectoryBuffer + i*512, &sdCardReadBuffer, 512, 0);
+		my_memcpy(rootDirectoryBuffer + i*512, (uint8_t*)&sdCardReadBuffer, 512, 0);
 		i++;
 		nextClusterAsPerFAT = getNextClusterFromFAT(currentCluster);
 		currentCluster = nextClusterAsPerFAT;
@@ -200,7 +198,7 @@ void readRootDirectory() {
 }
 	
 uint32_t getNextClusterFromFAT(uint32_t currentClusterNumber) {
-	volatile uint8_t sdCardReadBuffer[512];
+	uint8_t sdCardReadBuffer[512];
 	uint32_t FATStartCluster = masterBootRecord.partitionEntries[0].LBAOfFirstSector
 								+ partition1.BPB_ReservedSectorsCount;
 	
@@ -233,7 +231,7 @@ uint8_t readFile(uint16_t fileFirstClusterLow, uint16_t fileFirstClusterHigh, ui
 	
 	
 	printf("FIRST cluster %x\n", fileFirstClusterToRead);
-	volatile uint8_t sdCardReadBuffer[512];
+	uint8_t sdCardReadBuffer[512];
 
 	emmcSendData(READ_SINGLE, fileFirstClusterToRead, (uint32_t*) &sdCardReadBuffer);
 	memcpy(file, &sdCardReadBuffer, 512);
@@ -301,7 +299,7 @@ void readDirectory(uint16_t directoryFirstClusterLow, uint16_t directoryFirstClu
 	//as each cluster stores 16 entries
 	directoryEntry_t entries[16*numberOfClustersOccupiedByDirectory];
 
-	volatile uint8_t sdCardReadBuffer[512];
+	uint8_t sdCardReadBuffer[512];
 	
 	//Time to fill up these structs
 	nextClusterAsPerFAT = getNextClusterFromFAT(directoryFirstCluster);

@@ -47,7 +47,7 @@ void scanf(char *typeSpecifierString, char* inputBuffer) {
 					if(isNegative) {
 						enteredNumber *= -1;
 					}
-					*inputBuffer = (char *)enteredNumber; 
+					*inputBuffer = (char)enteredNumber; 
 					break;
 					
 			}

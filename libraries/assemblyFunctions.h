@@ -34,6 +34,6 @@ extern void delayMicro(uint32_t);
 // Halts the processor for the given number of clock cycles
 extern void delayCycles(uint32_t);
 
-
+void* memcpy ( void *, const void *, uint32_t);
 
 #endif

@@ -1,16 +1,34 @@
-#ifndef _STD_OUTPUT_
-#define _STD_OUTPUT_
+#ifndef STD_OUTPUT
+#define STD_OUTPUT
 
 #include <assemblyFunctions.h>
 #include <stdarg.h>
 #include <intTypes.h>
 #include <rpiGpio.h>
 
+
+/*Code for enabling the MiniUART for debugging purposes. 
+* Uses the pin8 (GPIO 14) as the Tx pin for UART.
+* Uses the pin10 (GPIO 15) as the Rx pin for UART. 
+* Call MiniUartInit function first to initialise the UART
+* on GPIO 14 and 15 and use them for alternate function, AUX peripheral.
+*/
+
+#define AUX_BASE    ( PERIPHERAL_BASE + 0x215000 )
+
+#define AUX_MINI_UART_ENABLE 	(1<<0)
+#define AUX_ENABLE_SPI0 		(1<<1)
+#define AUX_ENABLE_SPI1 		(1<<2)
+
+
+#define SYSTEM_FREQUENCY    250000000
+
+//Aux Mini UART Code
+
 /*Just a wrapper for drawChar which takes input as a single character,
 * either single ASCII character or single digit number, based on 4th parameter,
 * which is a type specifier and can take values 'i' or 'c'
 */
-
 
 void setCursor(unsigned int);
 
@@ -31,41 +49,6 @@ void printf(char *string, ...);
 
 void clearScreen();
 
-
-/*Code for enabling the MiniUART for debugging purposes. 
-* Uses the pin8 (GPIO 14) as the Tx pin for UART.
-* Uses the pin10 (GPIO 15) as the Rx pin for UART. 
-* Call MiniUartInit function first to initialise the UART
-* on GPIO 14 and 15 and use them for alternate function, AUX peripheral.
-*/
-
-#define AUX_BASE    ( PERIPHERAL_BASE + 0x215000 )
-
-#define AUX_MINI_UART_ENABLE 	(1<<0)
-#define AUX_ENABLE_SPI0 		(1<<1)
-#define AUX_ENABLE_SPI1 		(1<<2)
-
-
-#define SYSTEM_FREQUENCY    250000000
-
-
-
-void setCursor(unsigned int);
-
-void setStartPosition(unsigned int x, unsigned int y);
-
-//This is just a wrapper for 
-void putChar(char character, uint32_t *cursor);
-
-void put(char character);
-
-void putInt(int x);
-
-void putString(char * string);
-
-void printf(char *string, ...);
-
-//Aux Mini UART Code
 
 typedef struct {
 

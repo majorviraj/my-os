@@ -58,8 +58,7 @@ void gpioToggle();
 
 void setLEDasOutput();
 
-unsigned int* returnGpio();
-
 void gpioBlink(uint16_t, uint16_t);
+volatile uint32_t* gpio;
 
 #endif

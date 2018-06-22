@@ -8,11 +8,13 @@
 #include <libfatfs.h>
 #include <lib_bmp.h>
 
+uint8_t* fileLoc = (uint8_t*)0x80000;
+
 void frameBufferSetup(int width, int height, int bitDepth){
     uint32_t error = frameBufferInit(width, height, bitDepth);
 
     if (error == 0){
-        return 0;
+        return;
     }
 
     else {
@@ -43,32 +45,6 @@ void kernel_main() {
 	// printf("Partition type %x\n", masterBootRecord.partitionEntries[0].partitionType);
 	// printf("LBA of first sector of partition1 %x\n", masterBootRecord.partitionEntries[0].LBAOfFirstSector);
 
-	// uint8_t sdCardReadBuffe[512];
-	// uint8_t sdCardReadBuffer667[512];
-	// uint8_t sdCardReadBuffer66[512];
-	// delay(1000);
-	// emmcSendData(READ_SINGLE, 0x2000, (uint32_t*)&sdCardReadBuffer667);
-	// delay(1000);
-	// emmcSendData(READ_SINGLE, 0x2000, (uint32_t*)&sdCardReadBuffe);
-	// delay(1000);
-	// emmcSendData(READ_SINGLE, 0x2000, (uint32_t*)&sdCardReadBuffer66);
-
-	// for (uint8_t i=0; i < 128; i = i + 8) {
-	// 	printf("%i: \t", i);
-	// 	printf("%x\t\t\t%x\t\t\t%x\t\t\t%x\t\t\t%x\t\t\t%x\t\t\t%x\t\t\t%x\n", sdCardReadBuffe[i], sdCardReadBuffe[i+1], sdCardReadBuffe[i+2], sdCardReadBuffe[i+3], sdCardReadBuffe[i+4], sdCardReadBuffe[i+5], sdCardReadBuffe[i+6], sdCardReadBuffe[i+7]);
-	// }
-	
-	
-	// for (uint8_t i=0; i < 128; i = i + 8) {
-	// 	printf("%i: \t", i);
-	// 	printf("%x\t\t\t%x\t\t\t%x\t\t\t%x\t\t\t%x\t\t\t%x\t\t\t%x\t\t\t%x\n", sdCardReadBuffer66[i], sdCardReadBuffer66[i+1], sdCardReadBuffer66[i+2], sdCardReadBuffer66[i+3], sdCardReadBuffer66[i+4], sdCardReadBuffer66[i+5], sdCardReadBuffer66[i+6], sdCardReadBuffer66[i+7]);
-	// }
-	
-	
-	// for (uint8_t i=0; i < 128; i = i + 8) {
-	// 	printf("%i: \t", i);
-	// 	printf("%x\t\t\t%x\t\t\t%x\t\t\t%x\t\t\t%x\t\t\t%x\t\t\t%x\t\t\t%x\n", sdCardReadBuffer667[i], sdCardReadBuffer667[i+1], sdCardReadBuffer667[i+2], sdCardReadBuffer667[i+3], sdCardReadBuffer667[i+4], sdCardReadBuffer667[i+5], sdCardReadBuffer667[i+6], sdCardReadBuffer667[i+7]);
-	// }
 	// printf("Cluster Information: %x", getNextClusterFromFAT(0x4));
 	readPartition1BPB();
 	//printf(" OEM Name %x \n", partition1.BS_OEMName[0]);
@@ -93,11 +69,10 @@ void kernel_main() {
 	delay(15000);
 	// printf("getNextClusterFromFAT(5) %x",getNextClusterFromFAT(5));
 
-	uint8_t fileLoc[60978];
-	// readFile(, 0, sizeof(fileLoc), &fileLoc);
-	// clearScreen();
-	// setStartPosition(0,0);
-	// setCursor(0);
+	readFile(0xB0E6, 0, 0xEE32, (uint8_t*)fileLoc);
+	clearScreen();
+	setStartPosition(0,0);
+	setCursor(0);
 	// char buf[1024 + 512];
 	// readFile(0x351, 0x0, 1000, buf);
 	// for(uint32_t i = 0; i < 50; i++)
@@ -106,7 +81,7 @@ void kernel_main() {
 	// }
 	
 	// printf("file Loc %x\n", fileLoc);
-	// renderBmp(&fileLoc, sizeof(fileLoc), 1, 767);
+	renderBmp((uint8_t*)fileLoc, 0xEE32, 1, 767);
 
 	while(1){
 	}

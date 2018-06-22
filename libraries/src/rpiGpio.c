@@ -31,9 +31,9 @@ void setLEDasOutput() {
 	gpio[LED_GPFSEL] |= (1 << 15);
 }
 
-unsigned int* returnGpio() {
-	return gpio;
-}
+// unsigned int* returnGpio() {
+// 	return gpio;
+// }
 
 void gpioBlink(uint16_t time,uint16_t number) {
 	// printf("in a blink time : %i, number : %i\n", time, number);
