@@ -17,6 +17,7 @@ void frameBufferSetup(int width, int height, int bitDepth){
     }
 }
 */
+volatile unsigned long long fbwkubfiwebu = 846494;
 void kernel_main() {
 
 	while(1) {

@@ -1,10 +1,10 @@
 .section .init
-.globl _start
-_start:
+@ .globl _start
+@ _start:
 
-	b main
+	@ b main
 .section .text
-main:
+kernel_main:
 
 	ldr r0,=0x20200000
 	

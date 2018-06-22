@@ -3,8 +3,10 @@
 #include <interrupt.h>
 #include <intTypes.h>
 #include <timer.h>
+#include <stdOutput.h>
+#include <intTypes.h>
  
-/* 
+ 
 void frameBufferSetup(int width, int height, int bitDepth){
     int error = frameBufferInit(width, height, bitDepth);
 
@@ -16,7 +18,7 @@ void frameBufferSetup(int width, int height, int bitDepth){
         // error handler
     }
 }
-*/
+
 
 void kernel_main() {
 

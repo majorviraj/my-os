@@ -54,7 +54,7 @@ $(BUILD)output.elf : $(OBJECTS) $(LINKER) $(BUILD)main.o
 
 # Rule to make the object files.
 $(BUILD)%.o: $(SOURCE)%.s $(BUILD)
-	$(ARMGNU)-as -I $(SOURCE) $< -o $@
+	$(ARMGNU)-as -mfpu=vfp -march=armv6zk -I $(SOURCE) $< -o $@
 
 $(BUILD)main.o: main.s
 	$(ARMGNU)-as -I $(SOURCE) main.s -o build/main.o 

@@ -5,10 +5,10 @@
 #include <timer.h>
 #include <emmc.h>
 #include <jtag.h>
- 
-/* 
+#include <stdOutput.h>
+
 void frameBufferSetup(int width, int height, int bitDepth){
-    int error = frameBufferInit(width, height, bitDepth);
+    uint32_t error = frameBufferInit(width, height, bitDepth);
 
     if (error == 0){
         return 0;
@@ -16,31 +16,46 @@ void frameBufferSetup(int width, int height, int bitDepth){
 
     else {
         // error handler
+        // gpioBlink(200, 10);
+		delay(1000);
     }
 }
-*/
+
+void kernel_main2() {
+	// setLEDasOutput();
+
+	while(1) {	
+		gpioBlink(200, 10);
+	}
+}
 
 void kernel_main() {
 
-	jtagInit();
+	// jtagInit();
+	// setLEDasOutput();
+// gpioBlink(200, 10);
+
 	// gpioBlink(50, 100);
-	setLEDasOutput();
 	
 	_enable_interrupts();
 	// volatile int toggledOnce =1;
-
+	frameBufferSetup(1024, 768, 16);
+	setStartPosition(0,0);
+	setCursor(0);
 	// timerInit(LOAD_VALUE_1S_1_PRESCALLAR, Bit23, TIMER_CONTROL_PRESCALLAR_1);
 
-	// emmcControllerBasicStruct1_t -> cmdtm = 0x112A0010;
-	// emmcControllerBasicStruct1_t -> arg1 = 0x8000;
-
 	emmcInit();
-	delayMicro(2000);
+	printf("Emmc Init Done\n");
+	delay(1000);
 
-	// emmcGetStatus();
-	// emmcAllRegisters();
+	volatile uint32_t dataBlockBuffer[128];
+	emmcSendData(READ_SINGLE, 0, &dataBlockBuffer);
+	for (uint8_t i=0; i < 128; i << 2) {
+		printf("%i: \t", i << 2);
+		printf("%x\t\t\t%x\t\t\t%x\t\t\t%x\n", dataBlockBuffer[i], dataBlockBuffer[i+1], dataBlockBuffer[i+2], dataBlockBuffer[127]);
+	}
 	while(1){
-		volatile uint32_t data = emmcControllerBasicStruct1_t -> data;
+		// volatile uint32_t data = emmcControllerBasicStruct1_t -> data;
 	}
 
 }

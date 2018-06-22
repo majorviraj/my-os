@@ -1,14 +1,7 @@
 /* main file for Screen From Scratch*/
-
-.section .init
-.globl _start
-_start:
-
-b main
-
 .section .text
 
-main:
+kernel_main:
 	mov sp, #0x8000			@Initialise the stack at 0x8000
 							@as the rpi bootloader is setup in such a way
 	mov r0, #1024			@width
@@ -45,3 +38,22 @@ mov r1, #440
 bl drawPixel
 	ldr r0, =#1000000
 	bl delayMicro
+
+.globl _reset_
+.globl undefinedInstruction
+.globl softwareInterrupt
+.globl prefetchAbort
+.globl interruptRequest
+.globl fastInterrupt
+
+_reset_:
+	b 0x0000
+undefinedInstruction:
+	
+softwareInterrupt:
+	nop
+prefetchAbort:
+	nop
+interruptRequest:
+	nop
+fastInterrupt:

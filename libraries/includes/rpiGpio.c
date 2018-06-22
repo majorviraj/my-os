@@ -1,7 +1,8 @@
 #include <rpiGpio.h>
 #include <intTypes.h>
 #include <timer.h>
-volatile unsigned int* gpio = (unsigned int*)GPIO_BASE;
+#include <stdOutput.h>
+volatile uint32_t* gpio = (unsigned int*)GPIO_BASE;
 unsigned int stateOfLed=0;
 
 void gpioToggle() {
@@ -17,7 +18,17 @@ void gpioToggle() {
 }
 
 void setLEDasOutput() {
-	gpio[LED_GPFSEL] |= (1 << LED_GPIO_BIT);
+	
+
+	// gpio[GPIO_GPPUD] = 2;
+	// delayCycles(75);
+	// gpio[GPIO_GPPUDCLK1] = (1 << 3);
+	// delayCycles(75);
+	// gpio[GPIO_GPPUD] = 0;
+	// gpio[GPIO_GPPUDCLK1] = 0;
+
+	gpio[LED_GPFSEL] &= ~(7 << 15);
+	gpio[LED_GPFSEL] |= (1 << 15);
 }
 
 unsigned int* returnGpio() {
@@ -25,7 +36,7 @@ unsigned int* returnGpio() {
 }
 
 void gpioBlink(uint16_t time,uint16_t number) {
-
+	// printf("in a blink time : %i, number : %i\n", time, number);
 	for (uint16_t i=0; i<number; i++) {
 		gpioToggle();
 		delay(time);

@@ -5,8 +5,8 @@ getMailBoxBaseAddress:
     ldr r0,=0x2000B880
     mov pc,lr
 
-/*Write data to Mailbox*/
 
+/*Write data to Mailbox*/
 .globl mailboxWrite
 mailboxWrite:
     push {lr}
@@ -38,8 +38,8 @@ mailboxWrite:
 
     pop {pc}
 
-/*Methord to read response from mailbox*/
 
+/*Methord to read response from mailbox*/
 .globl mailboxRead
 mailboxRead:
     push {lr}

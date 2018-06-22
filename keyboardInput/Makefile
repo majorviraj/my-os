@@ -36,7 +36,7 @@ OBJECTS := $(patsubst $(SOURCE)%.s,$(BUILD)%.o,$(wildcard $(SOURCE)*.s))
 
 # Rule to make everything.
 all: $(TARGET) $(LIST)
-	@echo $(OBJECTS)
+
 # Rule to remake everything. Does not include clean.
 rebuild: all
 
@@ -54,7 +54,7 @@ $(BUILD)output.elf : $(OBJECTS) $(LINKER) $(BUILD)main.o
 
 # Rule to make the object files.
 $(BUILD)%.o: $(SOURCE)%.s $(BUILD)
-	$(ARMGNU)-as -I $(SOURCE) $< -o $@
+	$(ARMGNU)-as -mfpu=vfp -march=armv6zk -I $(SOURCE) $< -o $@
 
 $(BUILD)main.o: main.s
 	$(ARMGNU)-as -I $(SOURCE) main.s -o build/main.o 

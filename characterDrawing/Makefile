@@ -50,14 +50,14 @@ $(TARGET) : $(BUILD)output.elf
 
 # Rule to make the elf file.
 $(BUILD)output.elf : $(OBJECTS) $(LINKER) $(BUILD)main.o
-	$(ARMGNU)-ld --no-undefined $(OBJECTS) $(BUILD)main.o -L $(SOURCE) $(patsubst %,-l % , $(LIBRARIES)) -Map $(MAP) -o $(BUILD)output.elf -T $(LINKER)
+	$(ARMGNU)-ld $(OBJECTS) $(BUILD)main.o -L $(SOURCE) $(patsubst %,-l % , $(LIBRARIES)) -Map $(MAP) -o $(BUILD)output.elf -T $(LINKER)
 
 # Rule to make the object files.
 $(BUILD)%.o: $(SOURCE)%.s $(BUILD)
-	$(ARMGNU)-as -I $(SOURCE) $< -o $@
+	$(ARMGNU)-as -mfpu=vfp -march=armv6zk -I $(SOURCE) $< -o $@
 
-$(BUILD)main.o: main.s
-	$(ARMGNU)-as -I $(SOURCE) main.s -o build/main.o 
+$(BUILD)main.o:
+	$(ARMGNU)-as -I $(SOURCE) source/main.s -o build/main.o 
 
 $(BUILD):
 	mkdir $@

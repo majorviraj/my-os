@@ -1,7 +1,8 @@
 #!/bin/bash
 
-udisksctl mount -b /dev/mmcblk0p1 &&
+boot=2DBD-A7B6
+udisksctl mount -b /dev/sdb1 &&
 make all &&
-rm -rf /media/chinmay/boot/kernel.img &&
-cp kernel.img /media/chinmay/boot1/kernel.img 
-udisksctl unmount -b /dev/mmcblk0p1
+rm -rf /media/chinmay/$boot/kernel.img &&
+cp -v kernel.img /media/chinmay/$boot/kernel.img 
+udisksctl unmount -b /dev/sdb1
