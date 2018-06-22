@@ -142,16 +142,29 @@ void readRootDirectory() {
 		}
 	}
 	//Now we have numberOfEntries ready here to create an array of struct directoryEntries
-	directoryEntry_t entries[numberOfEntries];
-
 	clearScreen();
 	setStartPosition(0,0);
 	setCursor(0);
+	directoryEntry_t entries[numberOfEntries] __attribute__((packed));
+	printf("Size of struct : %i\n", sizeof(entries));
+	directoryEntry_t entries2;
+	printf("Size of struct2 : %i\n", sizeof(entries2));
+	directoryEntry_t entries23[10];
+	printf("Size of struct2 : %i\n", sizeof(entries23));
+	directoryEntry_t entriesP23[10] __attribute__((packed));
+	printf("Size of struct2 : %i\n", sizeof(entriesP23));
+	// while(1) {
+
+	// }
 
 	//Lets fill those structs.
 	uint16_t actualEntryNumber = 0;
 	uint16_t k = 0;
 	while(k < (numberOfClustersOccupiedByDirectoryEntry*512) / 32) {
+
+		if(rootDirectoryBuffer[k*32] == 0x00) {
+			break;
+		}
 		
 		if(rootDirectoryBuffer[k*32 + 0x0B] == 0x0F) { //entry is LFN, fill name manually and other entries too
 			uint8_t numberOfLFNEntries = 1;

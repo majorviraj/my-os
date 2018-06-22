@@ -9,7 +9,6 @@ typedef struct bmp_header_struct
 	uint32_t bmpSize;
 	uint32_t bmpReserved;
 	uint32_t bmpImageOffset;
-	
 	uint32_t bmpHeaderSize;
 	int bmpWidth;
 	int bmpHeight;
@@ -21,7 +20,7 @@ typedef struct bmp_header_struct
 	int bmpYPixelsPerMeter;
 	uint32_t bmpColourUsed;
 	uint32_t bmpColourImportant;
-} bmp_header_t;
+}__attribute__((packed)) bmp_header_t;
 
 void renderBmp(uint8_t* file, uint32_t fileSize, uint16_t x, uint16_t y);
 

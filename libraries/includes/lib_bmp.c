@@ -1,12 +1,6 @@
 #include <assemblyFunctions.h>
-#include <rpiGpio.h>
-#include <interrupt.h>
 #include <intTypes.h>
-#include <timer.h>
-#include <emmc.h>
-#include <jtag.h>
 #include <stdOutput.h>
-#include <emmc.h>
 #include <libfatfs.h>
 #include <lib_bmp.h>
 
