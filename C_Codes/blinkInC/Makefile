@@ -1,39 +1,37 @@
 ARMGNU ?= arm-none-eabi
-BUILD = build/
-SOURCE = source/
-LIBRARIES = ../../libraries/
-LIST = kernel.list
-SYMBOLS = kernel.nm
-TARGET = kernel.img
+DEBUG = ./debug/
+SOURCE = ./source/
+ASM_LIBRARIES = ../../libraries/asm/
+C_LIBRARIES = ../../libraries/
+LIST = ./debug/kernel.list
+SYMBOLS = ./debug/kernel.nm
+TARGET = ./kernel.img
 UPLOADSCRIPT = ./run.sh
-CFLAGS = -O2 -mfpu=vfp -mfloat-abi=softfp -march=armv6zk -mtune=arm1176jzf-s -nostartfiles -g -Wl,-T,linkerScript.ld
-OBJECTS := $(wildcard $(SOURCE)*.c) $(wildcard $(SOURCE)*.s) $(wildcard $(LIBRARIES)*.s) $(wildcard $(LIBRARIES)*.a)
+CFLAGS = -O1 -mfpu=vfp -mfloat-abi=softfp -march=armv6zk -mtune=arm1176jzf-s -nostartfiles -std=gnu11 -ggdb -Wreturn-local-addr -Wl,-T,linkerScript.ld,--no-wchar-size-warning
+OBJECTS := $(wildcard $(SOURCE)*.c) $(wildcard $(SOURCE)*.s) $(wildcard $(ASM_LIBRARIES)*.s) $(wildcard $(ASM_LIBRARIES)*.a) $(wildcard $(C_LIBRARIES)src/*.c)
+
+.PHONY: debug clean program all
 
 all: $(TARGET) $(LIST)
 
-$(TARGET) : $(BUILD)output.elf
-	$(ARMGNU)-objcopy $(BUILD)output.elf -O binary $(TARGET)
+$(TARGET) : $(DEBUG)output.elf
+	$(ARMGNU)-objcopy $(DEBUG)output.elf -O binary $(TARGET)
 
-$(LIST) : $(BUILD)output.elf
-	$(ARMGNU)-objdump -D $(BUILD)output.elf > $(LIST)
-	$(ARMGNU)-nm $(BUILD)output.elf > $(SYMBOLS)
+$(LIST) : $(DEBUG)output.elf
+	$(ARMGNU)-objdump -t -D $(DEBUG)output.elf > $(LIST)
+	$(ARMGNU)-nm $(DEBUG)output.elf > $(SYMBOLS)
 
-$(BUILD)output.elf: $(OBJECTS) $(BUILD)
-	$(ARMGNU)-gcc $(CFLAGS) -I$(LIBRARIES) $(OBJECTS) -o $(BUILD)output.elf
-
-$(BUILD) :
-	mkdir $@
-
-.PHONY: debug clean program all
+$(DEBUG)output.elf: $(OBJECTS)
+	$(ARMGNU)-gcc $(CFLAGS) -I$(C_LIBRARIES) $(OBJECTS) -o $(DEBUG)output.elf
 
 program:
 	$(UPLOADSCRIPT)
 
-debug:
-	gdbgui --gdb $(ARMGNU)-gdb 'build/output.elf'
+jtag:
+	-openocd -f openocd.cfg
 
 clean:
-	-rm -rf $(BUILD)
+	-rm -rf $(DEBUG)*
 	-rm -f $(TARGET)
 	-rm -f $(SYMBOLS)
 	-rm -f $(LIST)
