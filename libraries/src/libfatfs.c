@@ -219,9 +219,7 @@ uint32_t getNextClusterFromFAT(uint32_t currentClusterNumber) {
 }
 //ABI of passing struct with variable sized array member has changed	
 uint8_t readFile(uint16_t fileFirstClusterLow, uint16_t fileFirstClusterHigh, uint32_t fileSize, uint8_t* file) {
-	clearScreen();
-	setStartPosition(0,0);
-	setCursor(0);
+	
 	// uint8_t file[fileSize]; //fileSize stored in 32byte directory entries is in bytes, not sectors
 	uint32_t fileFirstCluster = ((fileFirstClusterHigh<<16) | fileFirstClusterLow);	
 	uint32_t fileFirstClusterToRead = masterBootRecord.partitionEntries[0].LBAOfFirstSector
@@ -236,7 +234,7 @@ uint8_t readFile(uint16_t fileFirstClusterLow, uint16_t fileFirstClusterHigh, ui
 	emmcSendData(READ_SINGLE, fileFirstClusterToRead, (uint32_t*) &sdCardReadBuffer);
 	memcpy(file, &sdCardReadBuffer, 512);
 
-	printSector(file);
+	// printSector(file);
 
 	uint32_t nextClusterAsPerFAT = getNextClusterFromFAT(fileFirstCluster);
 	printf("NExt %x\n", nextClusterAsPerFAT);
@@ -262,6 +260,9 @@ uint8_t readFile(uint16_t fileFirstClusterLow, uint16_t fileFirstClusterHigh, ui
 
 		nextClusterAsPerFAT = getNextClusterFromFAT(previousCluster);
 		i += 1;
+		if (i > 121) {
+			break;
+		}
 	}
 
 	// file_t fileStruct;
@@ -269,11 +270,13 @@ uint8_t readFile(uint16_t fileFirstClusterLow, uint16_t fileFirstClusterHigh, ui
 	// memcpy(fileStruct.file, file, (i-1)*512);
 
 	//NOTE:This corrupts a portion of memory in the array "file" if the file size is not a multiple of 512.
-	
-	for(uint32_t i = 0; i < fileSize; i++)
-	{
-		printf("%c", *(file+i) );
-	}
+	clearScreen();
+	setStartPosition(0,0);
+	setCursor(0);
+	// for(uint32_t i = 0; i < fileSize; i++)
+	// {
+	// 	printSector(file + i);
+	// }
 	return 0;
 }
 

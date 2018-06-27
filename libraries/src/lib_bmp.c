@@ -12,16 +12,18 @@
 
 void renderBmp(uint8_t* file, uint32_t fileSize, uint16_t x, uint16_t y) {
 	bmp_header_t bmp_header;
+	memset(&bmp_header, 0, sizeof(bmp_header_t));
 	memcpy(&bmp_header, file, 54);
-	
+
 	//Print BMP Header info to check if file was properly loaded.
 	printf("BMP INFO***********\nIdentifier: %c", bmp_header.bmpIdentifier[0]);	
-	printf("%c", bmp_header.bmpIdentifier[1]);
-	printf("BMP File Size: %c", bmp_header.bmpSize);	
-	printf("BMP Width: %c", bmp_header.bmpWidth);
-	printf("BMP Height: %c", bmp_header.bmpHeight);	
-	printf("BMP ColourDepth: %c", bmp_header.bmpColourDepth);
-	printf("BMP CompressionType: %c\n", bmp_header.bmpCompressionType);
+	printf("%c\n", bmp_header.bmpIdentifier[1]);
+	printf("BMP File Size: %x\n", bmp_header.bmpSize);	
+	printf("BMP Width: %x\n", bmp_header.bmpWidth);
+	printf("BMP Height: %x\n", bmp_header.bmpHeight);	
+	printf("BMP ColourDepth: %x\n", bmp_header.bmpColourDepth);
+	printf("BMP CompressionType: %x\n", bmp_header.bmpCompressionType);
+	printf("BMP: Image offset %x\n", bmp_header.bmpImageOffset);
 
 	//Now extract the actual raw image data from the file into a new aray which conforms to the bmp standar.
 	//BMP files store raw data in 32 bit DWORDS. So it expects no. of bytes in a row to be a multiple of 4
@@ -39,11 +41,11 @@ void renderBmp(uint8_t* file, uint32_t fileSize, uint16_t x, uint16_t y) {
 		for(uint32_t i = 0; i < bmp_header.bmpWidth; i++) {
 			//Check little-endinness or big-endiannes if the code does not work.
 			setForeColour(file[k*rowSize + i*2 + bmp_header.bmpImageOffset] 
-							& (file[k*rowSize + (i*2 + 1) + bmp_header.bmpImageOffset]<<8) );
+							+ (file[k*rowSize + (i*2 + 1) + bmp_header.bmpImageOffset]<<8) );
 			drawPixel(x, y);
 			x += 1; 
 		}
-		y += 1;
+		y -= 1;
 		x = originalX;
 	}
 	

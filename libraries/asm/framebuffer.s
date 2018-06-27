@@ -6,12 +6,12 @@
 
 .globl frameBufferData
 frameBufferData:
-    .int 1366 	/* #0 Physical Width */
-    .int 768 	/* #4 Physical Height */
-    .int 1366 	/* #8 Virtual Width */
-    .int 768 	/* #12 Virtual Height */
+    .int 1366 		/* #0 Physical Width */
+    .int 768 		/* #4 Physical Height */
+    .int 1366 		/* #8 Virtual Width */
+    .int 768 		/* #12 Virtual Height */
     .int 0 		/* #16 GPU - Pitch */
-    .int 16 	/* #20 Bit Depth */
+    .int 16 		/* #20 Bit Depth */
     .int 0 		/* #24 X */
     .int 0 		/* #28 Y */
     .int 0 		/* #32 GPU - Pointer to the frame buffer in memory*/

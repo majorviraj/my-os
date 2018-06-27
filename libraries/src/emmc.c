@@ -13,6 +13,7 @@
 #define SDHC_SUPPORT 		(1 << 30)
 
 #define DEBUG_LOG 1
+
 volatile uint32_t* emmcControllerBasicForceInterrupt = (uint32_t*) (EMMC_CONTROLLER + 64);
 volatile uint32_t* spiInterruptSupport = (uint32_t*) (EMMC_CONTROLLER + 0xF0);
 volatile uint32_t* slotInterruptAndVersion = (uint32_t*) (EMMC_CONTROLLER + 0xFC);
@@ -222,6 +223,23 @@ void emmcSendData(uint32_t command, uint32_t blockAddress, uint32_t* buf) {
 	setForeColour(0x0000);
 	#endif
 	
+}
+
+int emmcTestData(uint32_t blockAddress, uint32_t* buf, size_t sizeOfBuffer) {
+	if (sizeOfBuffer % 512 != 0) {
+		printf ("emmcTestData: The size should be a multiple of 512");
+		return -1;
+	}
+	
+	if (sizeOfBuffer == 512) {
+		emmcSendData(READ_SINGLE, blockAddress, buf);
+	} 
+	else {
+		emmcSendCommand(SET_BLOCK_COUNT, sizeOfBuffer % 512, 100000);
+		emmcControllerBasicStruct1_t->blockSizeCount = ((sizeOfBuffer % 512) << 16) | 512;
+		
+
+	}
 }
 
 /*

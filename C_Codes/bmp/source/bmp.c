@@ -8,12 +8,12 @@
 #include <libfatfs.h>
 #include <lib_bmp.h>
 
-uint8_t* fileLoc = (uint8_t*)0x80000;
+uint8_t* fileLoc = (uint8_t*)0xF1000;
 
 void frameBufferSetup(int width, int height, int bitDepth){
     uint32_t error = frameBufferInit(width, height, bitDepth);
 
-    if (error == 0){
+    if (error == 0) {
         return;
     }
 
@@ -66,13 +66,14 @@ void kernel_main() {
 
 	// printf("getNextClusterFromFAT(4) %x",getNextClusterFromFAT(4));
 
-	delay(15000);
+	// delay(15000);
 	// printf("getNextClusterFromFAT(5) %x",getNextClusterFromFAT(5));
 
-	readFile(0xB0E6, 0, 0xEE32, (uint8_t*)fileLoc);
-	clearScreen();
-	setStartPosition(0,0);
-	setCursor(0);
+	readFile(0xB0E6, 0x0, 0xEE32, (uint8_t*)fileLoc);
+	// delay(15000);
+	// clearScreen();
+	// setStartPosition(0,0);
+	// setCursor(0);
 	// char buf[1024 + 512];
 	// readFile(0x351, 0x0, 1000, buf);
 	// for(uint32_t i = 0; i < 50; i++)
