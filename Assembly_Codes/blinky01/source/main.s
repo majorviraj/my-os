@@ -1,9 +1,6 @@
-.section .init
-@ .globl _start
-@ _start:
 
-	@ b main
 .section .text
+.globl kernel_main
 kernel_main:
 
 	ldr r0,=0x20200000

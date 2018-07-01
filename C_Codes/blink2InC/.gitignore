@@ -1,7 +1,4 @@
-build/
-.vscode/
+debug/
 kernel.img
-kernel.nm
-kernel.list
 .directory
 run.sh

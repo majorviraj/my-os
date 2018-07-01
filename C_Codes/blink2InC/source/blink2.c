@@ -1,21 +1,15 @@
-#include <includes/rpiGpio.h>
+#include <rpiGpio.h>
+#include <assemblyFunctions.h>
 
-volatile unsigned int* gpio = (unsigned int*)PERIPHERAL_BASE;
-
-volatile unsigned int tim;
 void kernel_main() {
-    // gpio = (unsigned int*) GPIO_BASE;
 
-    gpio[LED_GPFSEL] |= (1 << LED_GPIO_BIT);
+	gpio[16] |= (1 << 21);
+	while(1) {
 
-    while(1) {
+		delayMicro(400 * 1000);
+		gpio[32] = (1 << 15);
 
-        for (tim = 0; tim < 500000; tim++);
-
-        gpio[LED_GPCLR] = (1 << LED_GPIO_BIT);
-
-        for (tim = 0; tim < 500000; tim++);
-
-        gpio[LED_GPSET] = (1 << LED_GPIO_BIT);
-    }
+		delayMicro(400 * 1000);
+		gpio[44] = (1 << 15);
+    	}
 }

@@ -20,12 +20,12 @@ void gpioToggle() {
 void setLEDasOutput() {
 	
 
-	// gpio[GPIO_GPPUD] = 2;
-	// delayCycles(75);
-	// gpio[GPIO_GPPUDCLK1] = (1 << 3);
-	// delayCycles(75);
-	// gpio[GPIO_GPPUD] = 0;
-	// gpio[GPIO_GPPUDCLK1] = 0;
+	gpio[GPIO_GPPUD] = 2;
+	delayCycles(75);
+	gpio[GPIO_GPPUDCLK1] = (1 << 3);
+	delayCycles(75);
+	gpio[GPIO_GPPUD] = 0;
+	gpio[GPIO_GPPUDCLK1] = 0;
 
 	gpio[LED_GPFSEL] &= ~(7 << 15);
 	gpio[LED_GPFSEL] |= (1 << 15);

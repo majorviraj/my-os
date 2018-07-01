@@ -32,6 +32,12 @@ void kernel_main() {
 	
 	// timerInit(LOAD_VALUE_1S_1_PRESCALLAR, Bit23, TIMER_CONTROL_PRESCALLAR_1);
 	printf("yoyoyoyoyoyoyoyoyoyoyoyoyoyoyo\n");
+	printf("\nThe Number 1 (at 0x1000001):%x", *(uint32_t*)0x1000001);
+	printf("\nThe Number 2 (at 0x1000002):%x", *(uint32_t*)0x1000002);
+	delay(10000);
+	while (1) {
+
+	}
 	emmcInit();
 
 	delay(1000);
@@ -48,8 +54,7 @@ void kernel_main() {
 	readRootDirectory();
 
 
-	printf("\nThe Number 1 :%x", *(uint8_t*)0x1000001);
-	printf("\nThe Number 2 :%x", *(uint8_t*)0x1000002);
+	
 
 	while(1){
 	}

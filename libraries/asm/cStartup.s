@@ -138,12 +138,15 @@ _init_mmu:
 	mcr p15,0,r2,c7,c10,4 ;@ DSB ??
 
 	mvn r2,#0
-	bic r2,#0xC
+	@ bic r2,#0xc
 	mcr p15,0,r2,c3,c0,0 ;@ domain
 
 	mcr p15,0,r0,c2,c0,0 ;@ tlb base
 	mcr p15,0,r0,c2,c0,1 ;@ tlb base
 
+	@ c1, Control Register ( Used to enable/disable/config various things )
+	@ such an interrupt vector address, progream flow prediction etc but
+	@ for us it does MMU config and enabling also
 	mrc p15,0,r2,c1,c0,0
 	orr r2,r2,r1
 	mcr p15,0,r2,c1,c0,0

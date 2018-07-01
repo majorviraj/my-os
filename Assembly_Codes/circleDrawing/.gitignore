@@ -1,6 +1,4 @@
-build/
+debug/
+kernel.img
 .directory
 run.sh
-kernel.img
-kernel.list
-kernel.map
