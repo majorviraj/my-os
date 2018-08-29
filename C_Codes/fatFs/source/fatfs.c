@@ -20,34 +20,6 @@ void frameBufferSetup(int width, int height, int bitDepth){
     }
 }
 
-void kernel_main2() {
-	// setLEDasOutput();
-	_enable_interrupts();
-	frameBufferSetup(1024, 768, 16);
-	setStartPosition(0,0);
-	setCursor(0);
-	// gpioBlink(50, 100);
-	emmcInit();	
-	delay(1000);
-
-
-	uint8_t sdCardReadBuffer[512];
-	emmcSendData(READ_SINGLE, 0x2020, (uint32_t*)&sdCardReadBuffer);
-	uint32_t sd[128];
-	my_memcpy((uint8_t*)&sd, (uint8_t*)&sdCardReadBuffer, 512, 0);
-	// for (uint8_t i=0; i < 128; i = i + 8) {
-	// 	printf("%i: \t", i);
-	// 	printf("%x\t\t\t%x\t\t\t%x\t\t\t%x\t\t\t%x\t\t\t%x\t\t\t%x\t\t\t%x\n", sd[i], sd[i+1], sd[i+2], sd[i+3], sd[i+4], sd[i+5], sd[i+6], sd[i+7]);
-	// }
-	readMBR();
-	readPartition1BPB();
-	// printf("Cluster Information: %x", getNextClusterFromFAT(0x4));
-	readRootDirectory();
-	while(1){
-
-	}
-	
-}
 
 void kernel_main() {
 
@@ -98,7 +70,11 @@ void kernel_main() {
 	// 	printf("%x\t\t\t%x\t\t\t%x\t\t\t%x\t\t\t%x\t\t\t%x\t\t\t%x\t\t\t%x\n", sdCardReadBuffer667[i], sdCardReadBuffer667[i+1], sdCardReadBuffer667[i+2], sdCardReadBuffer667[i+3], sdCardReadBuffer667[i+4], sdCardReadBuffer667[i+5], sdCardReadBuffer667[i+6], sdCardReadBuffer667[i+7]);
 	// }
 	// printf("Cluster Information: %x", getNextClusterFromFAT(0x4));
+	
 	readPartition1BPB();
+	
+	
+	
 	//printf(" OEM Name %x \n", partition1.BS_OEMName[0]);
 	// printf(" bytes per sector in partition1 %x \n", partition1.BPB_BytesPerSector);
 	printf(" Sectors per cluster %x \n", partition1.BPB_SectorsPerCluster);
@@ -111,20 +87,30 @@ void kernel_main() {
 	printf("Number of Fats %x\n", partition1.BPB_NumberOfFATs);
 	delay(10000);
 
+	
+	
+	//Reads root directory using readDirectory function
+	clearScreen();
+	delay(2000);
+	setStartPosition(0,0);
+	setCursor(0);
+	readDirectory(0x0002 , 0x0000);
+
+	delay(2000);
+
+	//Reads root directory using readRootDirectory function
 	clearScreen();
 	setStartPosition(0,0);
 	setCursor(0);
+	printf("calling readRootDirectory");
 	readRootDirectory();
 
-	// printf("getNextClusterFromFAT(4) %x",getNextClusterFromFAT(4));
 
-	// delay(15000);
 	while(1){
 
 	}
-	// printf("getNextClusterFromFAT(5) %x",getNextClusterFromFAT(5));
+	
 
-	// uint8_t* fileLoc = readFile(0xA, 0, 18693);
 	clearScreen();
 	setStartPosition(0,0);
 	setCursor(0);

@@ -210,6 +210,7 @@ void readRootDirectory()
 		printf("FirstCluster low: %x       ", entries[v].firstClusterLow);
 		printf("FirstCluster high: %x\n", entries[v].firstClusterHigh);
 	}
+	printf("Exiting readRootDirectory");
 }
 
 uint32_t getNextClusterFromFAT(uint32_t currentClusterNumber)
@@ -294,52 +295,161 @@ uint8_t readFile(uint16_t fileFirstClusterLow, uint16_t fileFirstClusterHigh, ui
 
 void readDirectory(uint16_t directoryFirstClusterLow, uint16_t directoryFirstClusterHigh)
 {
+
+
+	printf("Inside ReadDirectory");
 	uint32_t directoryFirstCluster = ((directoryFirstClusterHigh << 16) | directoryFirstClusterLow);
 	uint32_t directoryFirstClusterToRead = masterBootRecord.partitionEntries[0].LBAOfFirstSector + partition1.BPB_ReservedSectorsCount + (partition1.BPB_NumberOfFATs * partition1.BPB_SectorsPerFAT32Table) + directoryFirstCluster - 2;
 	//NOTE: -2 wont work for root directory, hence use different function for reading root directory
 
-	//First let's count the number of entries present here, so we can creat an array of directory entries
-	uint16_t numberOfClustersOccupiedByDirectory = 1;
-	uint32_t nextClusterAsPerFAT = getNextClusterFromFAT(directoryFirstCluster);
-	uint32_t previousCluster = 0;
+	/*
+	*First calculate the number of clusters that this directory is spread into.
+	*Create a buffer with all those sectors in it.
+	*Then from that buffer, calculate the number of files/subdirectory entries in it. 
+	* NOTE the VFAT long file names while counting the entries.
+	*Create an array of the struct directoryEntry of the count of entries present.
+	*Fill 'em up.
+	*/
+
+	//NOTE: ASSUMING 1 cluster = 1 sector
+
+	uint16_t numberOfClustersOccupiedByDirectoryEntry = 1;
+	uint32_t currentCluster = directoryFirstCluster;
+	uint32_t nextClusterAsPerFAT = getNextClusterFromFAT(currentCluster);
+	currentCluster = nextClusterAsPerFAT;
 	while (nextClusterAsPerFAT < 0x0ffffff8)
 	{
-		previousCluster = nextClusterAsPerFAT;
-		nextClusterAsPerFAT = getNextClusterFromFAT(previousCluster);
-		numberOfClustersOccupiedByDirectory++;
+		numberOfClustersOccupiedByDirectoryEntry += 1;
+		nextClusterAsPerFAT = getNextClusterFromFAT(currentCluster);
+		currentCluster = nextClusterAsPerFAT;
 	}
 
-	//Create an array of directory entries of length 16*numberOfClustersOccupiedByDirectory
-	//as each cluster stores 16 entries
-	directoryEntry_t entries[16 * numberOfClustersOccupiedByDirectory];
+	
+	printf("Number of clusersOccupiedByDirectoryEntry = %x", numberOfClustersOccupiedByDirectoryEntry);
+	
+	
+	
+	//This will be the array with all the directory entries after it is filled up in a while
+	
+	uint8_t directoryBuffer[numberOfClustersOccupiedByDirectoryEntry * 512];
 
+	//Lets fill in this buffer now.
 	uint8_t sdCardReadBuffer[512];
 
-	//Time to fill up these structs
-	nextClusterAsPerFAT = getNextClusterFromFAT(directoryFirstCluster);
-	previousCluster = 0;
-
-	//load from first cluster
 	emmcSendData(READ_SINGLE, directoryFirstClusterToRead, (uint32_t *)&sdCardReadBuffer);
-	for (int k = 0; k < 16; k++)
-	{
-		//Maybe try using my_memcpy if this does not work
-		memcpy(&entries[0], &sdCardReadBuffer[k * 32], 32); //!!!!entry[0] is the directory info
-	}
-
-	//load from consecutive clusters
+	my_memcpy(directoryBuffer, (uint8_t *)&sdCardReadBuffer, 512, 0);
+	currentCluster = directoryFirstCluster;
+	nextClusterAsPerFAT = getNextClusterFromFAT(currentCluster);
+	currentCluster = nextClusterAsPerFAT;
 	uint16_t i = 1;
 	while (nextClusterAsPerFAT < 0x0ffffff8)
 	{
-		previousCluster = nextClusterAsPerFAT;
-		nextClusterAsPerFAT = getNextClusterFromFAT(previousCluster);
-		emmcSendData(READ_SINGLE, directoryFirstClusterToRead, (uint32_t *)&sdCardReadBuffer);
-		for (int k = 0; k < 16; k++)
-		{
-			memcpy(&entries[i * 16 + k], &sdCardReadBuffer[k * 32], 32);
-		}
+		uint32_t clusterToRead = nextClusterAsPerFAT - 2 + masterBootRecord.partitionEntries[0].LBAOfFirstSector + partition1.BPB_ReservedSectorsCount + (partition1.BPB_NumberOfFATs * partition1.BPB_SectorsPerFAT32Table);
+
+		emmcSendData(READ_SINGLE, clusterToRead, (uint32_t *)&sdCardReadBuffer);
+		my_memcpy(directoryBuffer + i * 512, (uint8_t *)&sdCardReadBuffer, 512, 0);
 		i++;
+		nextClusterAsPerFAT = getNextClusterFromFAT(currentCluster);
+		currentCluster = nextClusterAsPerFAT;
 	}
+	//directoryBuffer is filled at this point!!
+
+
+	//Now we have to calculate the number of files/subdirectories in it while ignoring the LFN's.
+	uint16_t numberOfEntries = 0;
+
+	for (uint32_t i = 0; i < (uint32_t)((numberOfClustersOccupiedByDirectoryEntry * 512) / 32); i++)
+	{
+
+		//Check for "end of directory entries marker" (i.e. first byte of entry is 0x00) and exit from loop
+		if (directoryBuffer[i * 32] == 0x00)
+		{
+			break;
+		}
+
+		//Count as an entry only if attribute says it is not a LFN entry (characterised by 0x0F)
+		if (directoryBuffer[i * 32 + 0x0B] != 0x0F && directoryBuffer[i * 32] != 0xE5)
+		{
+			numberOfEntries++;
+		}
+	}
+	//Now we have numberOfEntries ready here to create an array of struct directoryEntries
+	directoryEntry_t entries[numberOfEntries];
+
+	printf("Number of Entries = %x", numberOfEntries);
+
+
+
+
+	//Lets fill those structs.
+	uint16_t actualEntryNumber = 0;
+	uint16_t k = 0;
+	while (k < (numberOfClustersOccupiedByDirectoryEntry * 512) / 32)
+	{
+
+		if (directoryBuffer[k * 32] == 0x00)
+		{
+			break;
+		}
+
+		if (directoryBuffer[k * 32] != 0xE5) //Ignore if it is a ghost entry, marked by E5.
+		{
+			if (directoryBuffer[k * 32 + 0x0B] == 0x0F)
+			{ //entry is LFN, fill name manually and other entries too
+				uint8_t numberOfLFNEntries = 1;
+				uint8_t sequenceNumber = directoryBuffer[k * 32];
+				if (sequenceNumber & 0x40)
+				{
+					numberOfLFNEntries = sequenceNumber & 0x0F;
+				}
+				for (uint8_t p = 0; p < numberOfLFNEntries; p++)
+				{
+					for (uint8_t t = 0; t < 10; t++)
+					{
+						entries[actualEntryNumber].name[p * 26 + t] = directoryBuffer[(k + (numberOfLFNEntries - p - 1)) * 32 + 1 + t]; //+1 at rhs because first  entry is sequence number
+					}
+					for (uint8_t t = 0; t < 12; t++)
+					{
+						entries[actualEntryNumber].name[p * 26 + t + 10] = directoryBuffer[(k + (numberOfLFNEntries - p - 1)) * 32 + 0x0E + t]; //+1 at rhs because first  entry is sequence number
+					}
+					for (uint8_t t = 0; t < 4; t++)
+					{
+						entries[actualEntryNumber].name[p * 26 + t + 22] = directoryBuffer[(k + (numberOfLFNEntries - p - 1)) * 32 + 0x1C + t]; //+1 at rhs because first  entry is sequence number
+					}
+				}
+				k = k + numberOfLFNEntries;
+			}
+			else
+			{ //just directly copy 32 bytes to the struct taking care of the oversized name field in the struct buffed up to accomodate the LFN
+				for (uint8_t a = 0; a < 11; a++)
+				{
+					entries[actualEntryNumber].name[a] = directoryBuffer[k * 32 + a];
+				}
+			}
+
+			my_memcpy((void *)&entries[actualEntryNumber] + 26 * 3, (void *)&directoryBuffer, 21, (k * 32) + 11);
+			actualEntryNumber += 1;
+		}
+		k += 1;
+	}
+
+	//print directory contents
+	for (int v = 0; v < numberOfEntries; v++)
+	{
+		for (int nameCounter = 0; nameCounter < 26; nameCounter++)
+		{
+			printf("%c", entries[v].name[nameCounter]);
+		}
+		// printf("Attribute: %x       ", entries[k].attribute);
+		printf("Size: %x       ", entries[v].size);
+		/*********************************************************
+		*REMEMBER CLUSTER NUMBERING BEGINS AT 2, so SUBTRACT 2 from LOW CLUSTER NUMBER
+		*FOUND IN THE DIRECTORY ENTRY TO SEEK THE CONTENTS OF THE FILE.
+		*/
+		printf("FirstCluster low: %x       ", entries[v].firstClusterLow);
+		printf("FirstCluster high: %x\n", entries[v].firstClusterHigh);
+	}
+	printf("Exiting readDirectory");
 }
 
 void my_memcpy(uint8_t *destination, uint8_t *source, uint32_t length, uint32_t sourceOffset)
