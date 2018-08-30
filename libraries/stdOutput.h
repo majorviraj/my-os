@@ -6,6 +6,9 @@
 #include <intTypes.h>
 #include <rpiGpio.h>
 
+#define TOTAL_LINES 1
+#define CHARS_PER_LINE 1
+
 
 /*Code for enabling the MiniUART for debugging purposes. 
 * Uses the pin8 (GPIO 14) as the Tx pin for UART.
@@ -30,6 +33,11 @@
 * which is a type specifier and can take values 'i' or 'c'
 */
 
+uint32_t cursorPosition =0;
+uint32_t startX=0;
+uint32_t startY=0;
+
+
 void setCursor(unsigned int);
 
 void setStartPosition(unsigned int x, unsigned int y);
@@ -45,9 +53,17 @@ void putHex(uint32_t x);
 
 void putString(char * string);
 
-void printf(char *string, ...);
+void printToScreen(char *string, ...);
 
 void clearScreen();
+
+// Buffer related functions and variables
+
+uint32_t bufferCursor = 0;
+uint32_t lineNumber = 0;
+
+uint8_t display_buffer[TOTAL_LINES][CHARS_PER_LINE];
+
 
 
 typedef struct {

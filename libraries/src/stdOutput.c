@@ -1,11 +1,6 @@
 #include <stdOutput.h>
 #include <assemblyFunctions.h>
 
-uint32_t cursorPosition =0;
-uint32_t startX=0;
-uint32_t startY=0;
-
-
 void setStartPosition(unsigned int x, unsigned int y) {
 	startX = x;
 	startY = y;
@@ -78,7 +73,7 @@ void putString(char *string) {
 }
 
 
-void printf(char *string, ...) {
+void printToScreen(char *string, ...) {
 	va_list argumentsList;
 	va_start(argumentsList, string);
 	char *traverseString;
@@ -144,6 +139,134 @@ void clearScreen() {
 	FullScreenToForeColour();
 	setForeColour(0);
 }
+
+
+
+
+
+
+/*
+ * printf appends the strings to the buffer. It uses putHexToBuffer, putIntToBuffer,
+ * putStringToBuffer. All of these use putToBuffer which is responsible for appending
+ * one single character to the buffer. putToBuffer also checks if the buffer is full,
+ * or if the line is completed etc.
+ * 
+*/
+
+void putToBuffer(char character) {
+	display_buffer[lineNumber][bufferCursor] = character;
+}	
+
+
+void putIntToBuffer(int x) {
+	if (x<0) {
+		putToBuffer('-');
+		x *= -1;	
+	}
+	uint32_t lengthOfX = 1;
+	uint8_t length = 1;
+	uint32_t orignalX = x;
+
+	while ((x/10) > 0) {
+		lengthOfX *= 10;
+		x = x/10;
+	}
+
+	x = orignalX;
+	while(lengthOfX > 0) {
+		putToBuffer((uint32_t)(x/lengthOfX) + 0x30);
+		x -= (x/lengthOfX)*lengthOfX;
+		lengthOfX = lengthOfX/10;
+	}
+}
+
+void putHexToBuffer(uint32_t x) {
+	putString("0x");
+	uint32_t lengthOfX = 0xF0000000;
+	uint32_t hexMsb = 0;
+	for (uint8_t i=0; i<8; i++) {
+		hexMsb = x & lengthOfX;
+		hexMsb = hexMsb >> 28;
+		if (hexMsb > 9) {
+			hexMsb += 7;
+		}
+		putToBuffer((uint32_t)hexMsb + 0x30);
+		x = x << 4;
+	}
+}
+
+void putStringToBuffer(char *string) {
+	int i = 0;
+	while(*(string + i) != '\0') {
+		putToBuffer(*(string+i));
+		i++;
+	}
+}
+
+
+void printf(char *string, ...) {
+	va_list argumentsList;
+	va_start(argumentsList, string);
+	char *traverseString;
+	traverseString = string;
+	int i;
+	char *s;
+	int c;
+	for (traverseString = string; (*traverseString)!='\0'; traverseString++) {
+		
+		if(*traverseString == '%') {
+			
+			traverseString++;
+			switch(*traverseString) {
+				case 'c':
+					i = va_arg(argumentsList, int);
+					putToBuffer(i);
+					break;
+				case 'i':
+					i = va_arg(argumentsList, int);
+					putInt(i);
+					break;
+				case 's':
+					s = va_arg(argumentsList, char *);
+					putString(s);
+					break;
+				case 'x':
+					i = va_arg(argumentsList, int);
+					putHex((uint32_t)i);
+					break;
+				default:
+					putString("Unknown symbol after percent sign \n");
+					break;
+			}
+
+		}
+		else if (*traverseString == '\n') {
+			startX = 0;
+			startY += 16;
+			setBufferCursor(0);
+		}
+
+		else if (*traverseString == '\t') {
+			startX += 8*4;
+			if (startX > 1024) {
+				startX = 0;
+				startY += 16;
+			}
+			setBufferCursor(0);
+		}
+
+		else {
+			putToBuffer(*traverseString);
+		}
+
+	}
+	va_end(argumentsList);
+
+}
+
+
+
+
 
 
 
