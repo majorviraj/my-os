@@ -1,8 +1,5 @@
 .section .init
-.globl _start
-_start:
 
-b main
 
 .section .data
 .align 2
@@ -22,7 +19,8 @@ charToPrint:
 
 .section .text
 
-main:
+.globl kernel_main
+kernel_main:
 	mov sp, #0x8000			@Initialise the stack at 0x8000
 							@as the rpi bootloader is setup in such a way
 	ldr r0, =#1024			@width
