@@ -28,7 +28,7 @@ void frameBufferSetup(int width, int height, int bitDepth){
 void kernel_main() {
 
 	_enable_interrupts();
-	frameBufferSetup(1024, 768, 16);
+	frameBufferSetup(1920, 1080, 16);
 	setStartPosition(0,0);
 	setCursor(0);
 	
