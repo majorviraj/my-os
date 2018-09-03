@@ -6,8 +6,8 @@
 #include <intTypes.h>
 #include <rpiGpio.h>
 
-#define MAX_LINES -1
-#define CHARS_PER_LINE -1
+#define MAX_LINES 1
+#define CHARS_PER_LINE 1
 #define BAD_LINE 1
 
 
@@ -34,16 +34,16 @@
 * which is a type specifier and can take values 'i' or 'c'
 */
 
-uint32_t cursorPosition =0;
-uint32_t startX=0;
-uint32_t startY=0;
-
-
-void setCursor(unsigned int);
+uint32_t cursorPosition;
+uint32_t startX;
+uint32_t startY;
 
 void setStartPosition(unsigned int x, unsigned int y);
 
+void setCursor(unsigned int);
+
 //This is just a wrapper for 
+
 void putChar(char character, uint32_t *cursor);
 
 void put(char character);
@@ -54,17 +54,29 @@ void putHex(uint32_t x);
 
 void putString(char * string);
 
-void printToScreen(char *string, ...);
+void printf(char *string, ...);
 
 void clearScreen();
 
 // Buffer related functions and variables
 
-uint32_t bufferCursor = 0;
-uint32_t lineNumber = 0;
+uint32_t bufferCursor;
+uint32_t lineNumber;
 
 uint8_t display_buffer[MAX_LINES][CHARS_PER_LINE + 1]; //1 extra byte per line for the flag.
 
+
+void putToBuffer(char character);
+
+void putIntToBuffer(int x);
+
+void putHexToBuffer(uint32_t x);
+
+void putStringToBuffer(char * string);
+
+void printToScreen(char *string, ...);
+
+void setBufferCursor(int);
 
 
 typedef struct {
@@ -112,4 +124,4 @@ void miniUARTInit(uint32_t baudRate, uint32_t frameSize);
 void miniUARTWrite(char c);
 
 
-#endif
+#endif /* STD_OUTPUT */
