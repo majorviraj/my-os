@@ -6,8 +6,9 @@
 #include <intTypes.h>
 #include <rpiGpio.h>
 
-#define TOTAL_LINES 1
-#define CHARS_PER_LINE 1
+#define MAX_LINES -1
+#define CHARS_PER_LINE -1
+#define BAD_LINE 1
 
 
 /*Code for enabling the MiniUART for debugging purposes. 
@@ -62,7 +63,7 @@ void clearScreen();
 uint32_t bufferCursor = 0;
 uint32_t lineNumber = 0;
 
-uint8_t display_buffer[TOTAL_LINES][CHARS_PER_LINE];
+uint8_t display_buffer[MAX_LINES][CHARS_PER_LINE + 1]; //1 extra byte per line for the flag.
 
 
 

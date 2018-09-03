@@ -155,6 +155,17 @@ void clearScreen() {
 
 void putToBuffer(char character) {
 	display_buffer[lineNumber][bufferCursor] = character;
+	display_buffer[lineNumber][CHARS_PER_LINE] = BAD_LINE;
+	bufferCursor++;
+	if(bufferCursor > CHARS_PER_LINE) {
+		bufferCursor = 0;
+		lineNumber++;
+	}
+
+	if(lineNumber > MAX_LINES) {
+		//What to do if the buffer is full? write that handler here
+		What to do if the buffer is full? write that handler here
+	}
 }	
 
 
@@ -224,15 +235,15 @@ void printf(char *string, ...) {
 					break;
 				case 'i':
 					i = va_arg(argumentsList, int);
-					putInt(i);
+					putIntToBuffer(i);
 					break;
 				case 's':
 					s = va_arg(argumentsList, char *);
-					putString(s);
+					putStringToBuffer(s);
 					break;
 				case 'x':
 					i = va_arg(argumentsList, int);
-					putHex((uint32_t)i);
+					putHexToBuffer((uint32_t)i);
 					break;
 				default:
 					putString("Unknown symbol after percent sign \n");
