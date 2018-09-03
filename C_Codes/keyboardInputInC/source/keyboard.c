@@ -1,9 +1,6 @@
-extern int frameBufferInit(int, int, int);
-extern void UsbInitialise();
-extern void keyboardInit();
-extern char KeyboardGetChar();
-extern int drawCharacter(int, int, int);
-unsigned int hh;
+#include<stdOutput.h>
+
+int hh;
 void frameBufferSetup(int width, int height, int bitDepth){
     int error = frameBufferInit(width, height, bitDepth);
 
@@ -17,29 +14,22 @@ void frameBufferSetup(int width, int height, int bitDepth){
 }
 
 void kernel_main() {
+    UsbInitialise();
+    
+
     char character = 0;
     int x, y = 0;
 
     frameBufferSetup(1024, 768, 16);
     
+    printf("\n\n\n\n\n\n\n\nyolyolo!\n\n");
     while(1){
-        
+           
         do {
-        
-
-            character = KeyboardGetChar();
+        keyboardInit();
+        character = KeyboardGetChar();
         }while( character == 0);
 
-        x += drawCharacter(character, x, y);
-
-        if (x > 1023) {
-            x = 0;
-            y++;
-        }
-
-        if (y > 767) {
-            y = 0;
-        }
-
+        printf("%c", character);
     }
 }

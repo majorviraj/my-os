@@ -8,7 +8,9 @@
 #include <libfatfs.h>
 #include <lib_bmp.h>
 
-uint8_t* fileLoc = (uint8_t*)0xF1000;
+uint8_t* fileLocIndia = (uint8_t*)0xF1000;
+uint8_t* fileLocMangoos = (uint8_t*)0x200000;
+
 
 void frameBufferSetup(int width, int height, int bitDepth){
     uint32_t error = frameBufferInit(width, height, bitDepth);
@@ -26,7 +28,7 @@ void frameBufferSetup(int width, int height, int bitDepth){
 void kernel_main() {
 
 	_enable_interrupts();
-	frameBufferSetup(1024, 768, 16);
+	frameBufferSetup(1920, 1080, 16);
 	setStartPosition(0,0);
 	setCursor(0);
 	
@@ -69,7 +71,8 @@ void kernel_main() {
 	// delay(15000);
 	// printf("getNextClusterFromFAT(5) %x",getNextClusterFromFAT(5));
 
-	readFile(0xB0E6, 0x0, 0xEE32, (uint8_t*)fileLoc);
+	readFile(0xDA2D, 0x0, 0xEE32, (uint8_t*)fileLocIndia);
+	readFile(0xEB10, 0x0, 0xD012, (uint8_t*)fileLocMangoos);
 	// delay(15000);
 	// clearScreen();
 	// setStartPosition(0,0);
@@ -82,7 +85,8 @@ void kernel_main() {
 	// }
 	
 	// printf("file Loc %x\n", fileLoc);
-	renderBmp((uint8_t*)fileLoc, 0xEE32, 1, 767);
+	renderBmp((uint8_t*)fileLocIndia, 0xD012, 1, 767);
+	renderBmp((uint8_t*)fileLocMangoos, 0xEE32, 512, 500);
 
 	while(1){
 	}
