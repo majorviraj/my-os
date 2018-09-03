@@ -23,8 +23,8 @@ charToPrint:
 kernel_main:
 	mov sp, #0x8000			@Initialise the stack at 0x8000
 							@as the rpi bootloader is setup in such a way
-	ldr r0, =#1024			@width
-	mov r1, #768			@height
+	ldr r0, =#1920			@width
+	ldr r1, =#1080			@height
 	mov r2, #16				@bitDepth
 	bl frameBufferInit
 

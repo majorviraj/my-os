@@ -10,4 +10,4 @@
 //"enter" escape sequence is received.
 void scanf(char *, char *); 
 
-#endif
+#endif	/*STD_INPUT */
