@@ -18,21 +18,30 @@ void frameBufferSetup(int width, int height, int bitDepth)
     }
 }
 
-
 void kernel_main()
 {
-	char* test = "yoko\nooyyoyo\tyooyoy";
+    char *test = "yoko\nooyyoyo\tyooyoy";
+    uart_init();
+    _enable_interrupts();
 
+    frameBufferSetup(1024, 768, 16);
+    printf(test);
+    char n = '\n';
+    printf("%c", n);
+    int i = 0;
+    printf("Width, %i\n", frameBufferData);
+    uart_putchar('Q');
+    uart_putchar('X');
+    while (1)
+    {
 
-	frameBufferSetup(1920, 1080, 16);
-	printf(test);
-	char n = '\n';
-	printf("%c", n);
-	int i = 0;
-	printf("Width, %i\n", frameBufferData);
-	
-    while(1) {
-		uart_putchar('Q');
-        uart_putchar('X');
-	}
+        while (1)
+        {
+            if (AUX_MU_LSR_REG & 0x01)
+                break;
+        }
+        char x = (AUX_MU_IO_REG);
+        printf("Hex value: %x     \t", x);
+        printf("Char : %c\n", x);
+    }
 }

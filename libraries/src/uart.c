@@ -1,4 +1,5 @@
 #include <uart.h>
+#include <interrupt.h>
 
 //GPIO14  TXD0 and TXD1
 //GPIO15  RXD0 and RXD1
@@ -13,9 +14,12 @@ void uart_init() {
 	AUX_MU_CNTL_REG = 0;
 	AUX_MU_LCR_REG = 3;
 	AUX_MU_MCR_REG = 0;
-	AUX_MU_IER_REG = 0x5;
+	AUX_MU_IER_REG = 0x5; //Enable rx interrupts
 	AUX_MU_IIR_REG = 0xC6;
 	AUX_MU_BAUD_REG = 270;
+
+	IRQController->enableIRQ1 |= (1<<29); //aux interrupt enabled
+
 
 	//GPIO function selection
 	unsigned int ra;
@@ -27,9 +31,9 @@ void uart_init() {
 	GPFSEL1 = ra;
 
 	GPPUD = 0;
-	for(volatile uint32_t temp_loop_uart=0; temp_loop_uart<150; temp_loop_uart) ;
+	delayCycles(300);
 	GPPUDCLK0 = (1<<14)|(1<<15);
-	for(volatile uint32_t temp_loop_uart=0; temp_loop_uart<150; temp_loop_uart) ;
+	delayCycles(300);
 	GPPUDCLK0 = 0;
 
 	AUX_MU_CNTL_REG = 3; //Enable UART fifo's.
@@ -45,9 +49,9 @@ void uart_putchar(uint32_t c)
     AUX_MU_IO_REG = c;
 }
 
-void c_irq_handler (void)
+void uart_irq_handler (void)
 {
-    uint32_t receivedChar;
+    char receivedChar;
 
     //an interrupt has occurred, find out why
     while(1) //resolve all interrupts to uart
@@ -56,7 +60,8 @@ void c_irq_handler (void)
         if((AUX_MU_IIR_REG & 6)==4)
         {
             //receiver holds a valid byte
-            receivedChar = AUX_MU_IO_REG; //read byte from rx fifo
+            receivedChar = (char)AUX_MU_IO_REG; //read byte from rx fifo
+	    printf("Printed from IRQ Handler: %c\n", receivedChar);
         }
     }
 

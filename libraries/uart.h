@@ -61,7 +61,7 @@
 #define IRQ_DISABLE_BASIC (HWREG(0x2000B224))
 
 void uart_putchar(uint32_t c);
-void c_irq_handler (void);
+void uart_irq_handler (void);
 void uart_init();
 
 #endif
