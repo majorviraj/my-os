@@ -13,6 +13,8 @@
 #define RPI_BASIC_GPU_1_HALTED_IRQ      (1 << 5)
 #define RPI_BASIC_ACCESS_ERROR_1_IRQ    (1 << 6)
 #define RPI_BASIC_ACCESS_ERROR_0_IRQ    (1 << 7)
+#define RPI_BASIC_PENDING_1_IRQ         (1 << 8)
+#define RPI_BASIC_PENDING_2_IRQ         (1 << 9)
 
 typedef struct {
     volatile unsigned int IRQBasicPending;

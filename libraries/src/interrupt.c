@@ -9,7 +9,15 @@ void __attribute__((interrupt("IRQ"))) interruptRequest() {
     	//Call timer interrupt handler
 
 			ARMrpiTimer -> IRQClear = 1;
-    		gpioToggle();
+    			gpioToggle();
+			printf("Timer IRQ!!");
+    } else if (IRQController->IRQBasicPending & RPI_BASIC_PENDING_1_IRQ){
+	    
+	    //Interrupt number 29 is Aux_peripheral interrupt. Call the uart_irq_handler function here
+
+	    if (IRQController->IRQGPUpending1 & (1<<29)) {
+		    uart_irq_handler();
+	    }
     }
 
 }
