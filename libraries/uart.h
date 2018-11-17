@@ -1,5 +1,5 @@
-#ifndef UART
-#define UART
+#ifndef UART_H
+#define UART_H
 
 /*Code for enabling the MiniUART for debugging purposes. 
 * Uses the pin8 (GPIO 14) as the Tx pin for UART.
@@ -60,8 +60,10 @@
 #define IRQ_DISABLE2 	(HWREG(0x2000B220))
 #define IRQ_DISABLE_BASIC (HWREG(0x2000B224))
 
+uint32_t uart_que_size;
 void uart_putchar(uint32_t c);
 void uart_irq_handler (void);
 void uart_init();
+char uart_interrupt_deque();
 
 #endif

@@ -1,5 +1,6 @@
 #include <interrupt.h>
 #include <timer.h>
+#include <uart.h>
 
 void __attribute__((interrupt("IRQ"))) interruptRequest() {
     

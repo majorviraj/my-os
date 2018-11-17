@@ -1,4 +1,5 @@
 #include <uart.h>
+#include <stdOutput.h>
 #include <interrupt.h>
 
 //GPIO14  TXD0 and TXD1
@@ -7,6 +8,13 @@
 //alt function 0 for uart0
 
 //((250,000,000/115200)/8)-1 = 270
+
+char uart_que_arr[20];
+uint32_t uart_que_front = 0;
+uint32_t uart_que_rear = 0;
+uint32_t uart_que_size = 0;
+
+int uart_interrupt_enque (char);
 
 void uart_init() {
 	AUX_ENABLES = 1;
@@ -42,27 +50,55 @@ void uart_init() {
 
 void uart_putchar(uint32_t c)
 {
-    while(1)
-    {
-        if(AUX_MU_LSR_REG & 0x20) break;
-    }
-    AUX_MU_IO_REG = c;
+	while(1)
+	{
+		if(AUX_MU_LSR_REG & 0x20) break;
+	}
+	AUX_MU_IO_REG = c;
 }
 
 void uart_irq_handler (void)
 {
-    char receivedChar;
+	char received_char;
 
-    //an interrupt has occurred, find out why
-    while(1) //resolve all interrupts to uart
-    {
-        if((AUX_MU_IIR_REG & 1)==1) break; //no more interrupts
-        if((AUX_MU_IIR_REG & 6)==4)
-        {
-            //receiver holds a valid byte
-            receivedChar = (char)AUX_MU_IO_REG; //read byte from rx fifo
-	    printf("Printed from IRQ Handler: %c\n", receivedChar);
-        }
-    }
+	//an interrupt has occurred, find out why
+	while(1) //resolve all interrupts to uart
+	{
+		if((AUX_MU_IIR_REG & 1)==1) break; //no more interrupts
+		if((AUX_MU_IIR_REG & 6)==4)
+		{
+        		//receiver holds a valid byte
+        		received_char = (char)AUX_MU_IO_REG; //read byte from rx fifo
+			// printf("Printed from IRQ Handler: %c\n", received_char);
+			uart_interrupt_enque(received_char);
+		}
+	}
+}
 
+int uart_interrupt_enque (char recieved_data) {
+
+	if (uart_que_size == 20) {
+		printf("Queue is Full\n");
+		return -1;
+	}
+	
+	uart_que_arr[uart_que_rear] = recieved_data;
+	uart_que_rear++;
+	uart_que_rear = uart_que_rear % (sizeof(uart_que_arr)/sizeof(char));
+	uart_que_size++;
+	return 0;
+}
+
+char uart_interrupt_deque () {
+	
+	if (uart_que_size == 0) {
+		printf("Queue is Empty\n");
+		return -1;
+	}
+
+	char tmp = uart_que_arr[uart_que_front];
+	uart_que_front++;
+	uart_que_front = uart_que_front % (sizeof(uart_que_arr)/sizeof(char));
+	uart_que_size--;
+	return tmp;
 }

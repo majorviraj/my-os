@@ -4,5 +4,4 @@
 
 .globl save_context
 save_context:
-	ldr r1, =process_control_block
-	
+	b _inf_loop
