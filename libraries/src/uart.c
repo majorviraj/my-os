@@ -9,12 +9,11 @@
 
 //((250,000,000/115200)/8)-1 = 270
 
-char uart_que_arr[20];
-uint32_t uart_que_front = 0;
-uint32_t uart_que_rear = 0;
-uint32_t uart_que_size = 0;
+volatile uint32_t uart_queue_front = 0;
+volatile uint32_t uart_queue_rear = 0;
+volatile uint32_t uart_queue_size = 0;
 
-int uart_interrupt_enque (char);
+void uart_interrupt_enqueue (char);
 
 void uart_init() {
 	AUX_ENABLES = 1;
@@ -70,35 +69,34 @@ void uart_irq_handler (void)
         		//receiver holds a valid byte
         		received_char = (char)AUX_MU_IO_REG; //read byte from rx fifo
 			// printf("Printed from IRQ Handler: %c\n", received_char);
-			uart_interrupt_enque(received_char);
+			uart_interrupt_enqueue(received_char);
 		}
 	}
 }
 
-int uart_interrupt_enque (char recieved_data) {
+void uart_interrupt_enqueue (char recieved_data) {
 
-	if (uart_que_size == 20) {
+	if (uart_queue_size == 20) {
 		printf("Queue is Full\n");
 		return -1;
 	}
 	
-	uart_que_arr[uart_que_rear] = recieved_data;
-	uart_que_rear++;
-	uart_que_rear = uart_que_rear % (sizeof(uart_que_arr)/sizeof(char));
-	uart_que_size++;
-	return 0;
+	uart_queue_arr[uart_queue_rear] = recieved_data;
+	uart_queue_rear++;
+	uart_queue_rear = uart_queue_rear % (sizeof(uart_queue_arr)/sizeof(char));
+	uart_queue_size++;
 }
 
-char uart_interrupt_deque () {
+char uart_interrupt_dequeue () {
 	
-	if (uart_que_size == 0) {
+	if (uart_queue_size == 0) {
 		printf("Queue is Empty\n");
 		return -1;
 	}
 
-	char tmp = uart_que_arr[uart_que_front];
-	uart_que_front++;
-	uart_que_front = uart_que_front % (sizeof(uart_que_arr)/sizeof(char));
-	uart_que_size--;
+	char tmp = uart_queue_arr[uart_queue_front];
+	uart_queue_front++;
+	uart_queue_front = uart_queue_front % (sizeof(uart_queue_arr)/sizeof(char));
+	uart_queue_size--;
 	return tmp;
 }

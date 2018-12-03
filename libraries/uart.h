@@ -60,7 +60,13 @@
 #define IRQ_DISABLE2 	(HWREG(0x2000B220))
 #define IRQ_DISABLE_BASIC (HWREG(0x2000B224))
 
-uint32_t uart_que_size;
+volatile uint32_t uart_queue_size;
+volatile uint32_t uart_queue_front;
+volatile uint32_t uart_queue_rear;
+volatile uint32_t uart_queue_size;
+volatile char uart_queue_arr[20];
+
+
 void uart_putchar(uint32_t c);
 void uart_irq_handler (void);
 void uart_init();
