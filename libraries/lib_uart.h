@@ -12,6 +12,7 @@
 #include <stdarg.h>
 #include <intTypes.h>
 #include <rpiGpio.h>
+#include <lib_queue.h>
 
 #define AUX_BASE	( PERIPHERAL_BASE + 0x215000 )
 #define HWREG(x)	(*((volatile uint32_t *)(x)))
@@ -60,11 +61,7 @@
 #define IRQ_DISABLE2 	(HWREG(0x2000B220))
 #define IRQ_DISABLE_BASIC (HWREG(0x2000B224))
 
-volatile uint32_t uart_queue_size;
-volatile uint32_t uart_queue_front;
-volatile uint32_t uart_queue_rear;
-volatile uint32_t uart_queue_size;
-volatile char uart_queue_arr[20];
+queue_t* uart_queue;
 
 
 void uart_putchar(uint32_t c);

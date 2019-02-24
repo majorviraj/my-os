@@ -1,77 +1,92 @@
 #include <stdOutput.h>
 #include <stdInput.h>
-#include <uart.h>
+#include <lib_uart.h>
 #include <timer.h>
 
 int hh;
 void frameBufferSetup(int width, int height, int bitDepth)
 {
-    int error = frameBufferInit(width, height, bitDepth);
+	int error = frameBufferInit(width, height, bitDepth);
 
-    if (error == 0)
-    {
-        return 0;
-    }
+	if (error == 0)
+	{
+		return 0;
+	}
 
-    else
-    {
-        // error handler
-    }
+	else
+	{
+		// error handler
+	}
 }
 
 void kernel_main()
 {
-    char *test = "yoko\nooyyoyo\tyooyoy";
-    uart_init();
-    _enable_interrupts();
+	char *test = "yoko\nooyyoyo\tyooyoy";
 
-    //To toggle GPIO
-    setLEDasOutput();
-    // timerInit(LOAD_VALUE_1S_1_PRESCALLAR, Bit23, TIMER_CONTROL_PRESCALLAR_1);
+	_enable_interrupts();
 
-    frameBufferSetup(1024, 768, 16);
-    printf(test);
-    char n = '\n';
-    printf("%c", n);
-    int i = 0;
-    printf("Width, %i\n", frameBufferData);
-    uart_putchar('U');
-    uart_putchar('A');
-    uart_putchar('R');
-    uart_putchar('T');
+	// frameBufferSetup(1024, 768, 16);
+	uart_init();
 
-    printf("\n");
-    uart_interrupt_enqueue('V');
-    uart_interrupt_enqueue('X');
-    uart_interrupt_enqueue('L');
+	// printf("Full array: ");
+	uart_putchar('B');
+	uart_putchar('E');
+	uart_putchar('G');
+	uart_putchar('N');
+	while (1)
+	{
 
-    printf("Full array: ");
-    for (int k = 0; k < 20; k++)
-    {
-        printf("%c  ", uart_queue_arr[k]);
-    }
-    printf("\nDone printing array outside while1\n");
+		/*Following block polls the UART registers to check for input and prints them.
+	* Do not use this unless UART interrupt controlled input is not working.
+	*/
+		//     while (1)
+		//     {
+		//         if (AUX_MU_LSR_REG & 0x01)
+		//             break;
+		//     }
+		//     char x = (AUX_MU_IO_REG);
+		//     printf("Hex value: %x     \t", x);
+		//     printf("Char : %c\n", x);
+		// }
 
-    while (1)
-    {
+		// if (!queue_is_empty(uart_queue))
+		// {
+		//     printf("%c", dequeue(uart_queue));
+		// }
 
-        /*Following block polls the UART registers to check for input and prints them.
-        * Do not use this unless UART interrupt controlled input is not working.
-        */
-        //     while (1)
-        //     {
-        //         if (AUX_MU_LSR_REG & 0x01)
-        //             break;
-        //     }
-        //     char x = (AUX_MU_IO_REG);
-        //     printf("Hex value: %x     \t", x);
-        //     printf("Char : %c\n", x);
-        // }
-
-        if (uart_queue_size != 0)
-        {
-            printf("%c", uart_interrupt_dequeue());
-        }
-
-    }
+		if (!queue_is_empty(uart_queue))
+		{
+			uart_putchar('F');
+			uart_putchar('Q');
+			uart_putchar(':');
+			uart_putchar(' ');
+			delay(15000);
+			// while (uart_queue->size >= 5)
+			// {
+			// 	// printf("%c  ", uart_queue->pointer[k]);
+			// 	uart_putchar(dequeue(uart_queue));
+			// 	// uart_putchar(uart_queue->pointer[k]);
+			// 	// uart_putchar(' ');
+			// }
+			// delay(10000);
+			while (!queue_is_empty(uart_queue))
+			{
+				// printf("%c  ", uart_queue->pointer[k]);
+				uart_putchar(dequeue(uart_queue));
+				// uart_putchar(uart_queue->pointer[k]);
+				// uart_putchar(' ');
+			}
+			// printf("\nDone printing array outside while1\n");
+			uart_putchar('S');
+			uart_putchar('z');
+			uart_putchar(':');
+			uart_putchar((char)uart_queue->size);
+			uart_putchar('\t');
+			uart_putchar('D');
+			uart_putchar('O');
+			uart_putchar('N');
+			uart_putchar('E');
+			uart_putchar('\n');
+		}
+	}
 }

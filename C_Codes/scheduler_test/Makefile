@@ -18,7 +18,7 @@ $(TARGET) : $(DEBUG)output.elf
 	$(ARMGNU)-objcopy $(DEBUG)output.elf -O binary $(TARGET)
 
 $(LIST) : $(DEBUG)output.elf
-	$(ARMGNU)-objdump -t -D $(DEBUG)output.elf > $(LIST)
+	$(ARMGNU)-objdump -t -D -S $(DEBUG)output.elf > $(LIST)
 	$(ARMGNU)-nm $(DEBUG)output.elf > $(SYMBOLS)
 
 $(DEBUG)output.elf: $(OBJECTS) $(INCLUDES)

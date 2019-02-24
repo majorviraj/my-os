@@ -1,6 +1,7 @@
-#include <uart.h>
+#include <lib_uart.h>
 #include <stdOutput.h>
 #include <interrupt.h>
+#include <lib_queue.h>
 
 //GPIO14  TXD0 and TXD1
 //GPIO15  RXD0 and RXD1
@@ -9,13 +10,14 @@
 
 //((250,000,000/115200)/8)-1 = 270
 
-volatile uint32_t uart_queue_front = 0;
-volatile uint32_t uart_queue_rear = 0;
-volatile uint32_t uart_queue_size = 0;
+
 
 void uart_interrupt_enqueue (char);
 
 void uart_init() {
+
+	uart_queue = (queue_t*)create_queue(20);
+
 	AUX_ENABLES = 1;
 	AUX_MU_IER_REG = 0;
 	AUX_MU_CNTL_REG = 0;
@@ -44,7 +46,6 @@ void uart_init() {
 	GPPUDCLK0 = 0;
 
 	AUX_MU_CNTL_REG = 3; //Enable UART fifo's.
-
 }
 
 void uart_putchar(uint32_t c)
@@ -69,34 +70,9 @@ void uart_irq_handler (void)
         		//receiver holds a valid byte
         		received_char = (char)AUX_MU_IO_REG; //read byte from rx fifo
 			// printf("Printed from IRQ Handler: %c\n", received_char);
-			uart_interrupt_enqueue(received_char);
+			enqueue(uart_queue, received_char);
 		}
 	}
 }
 
-void uart_interrupt_enqueue (char recieved_data) {
 
-	if (uart_queue_size == 20) {
-		printf("Queue is Full\n");
-		return -1;
-	}
-	
-	uart_queue_arr[uart_queue_rear] = recieved_data;
-	uart_queue_rear++;
-	uart_queue_rear = uart_queue_rear % (sizeof(uart_queue_arr)/sizeof(char));
-	uart_queue_size++;
-}
-
-char uart_interrupt_dequeue () {
-	
-	if (uart_queue_size == 0) {
-		printf("Queue is Empty\n");
-		return -1;
-	}
-
-	char tmp = uart_queue_arr[uart_queue_front];
-	uart_queue_front++;
-	uart_queue_front = uart_queue_front % (sizeof(uart_queue_arr)/sizeof(char));
-	uart_queue_size--;
-	return tmp;
-}

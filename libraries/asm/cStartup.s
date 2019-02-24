@@ -37,7 +37,7 @@ _start:
 	_prefetch_abort_vector_h:           .word   prefetchAbort
 	_data_abort_vector_h:               .word   _reset_
 	_unused_handler_h:                  .word   _reset_
-	_interrupt_vector_h:                .word   interruptRequest
+	_interrupt_vector_h:                .word   interrupt_context_changer
 	_fast_interrupt_vector_h:           .word   fastInterrupt
 
 
@@ -55,7 +55,7 @@ _reset_:
 	@ Stack pointer for the IRQ mode is being set here
 	mov r0, #(CPSR_MODE_IRQ | CPSR_IRQ_INHIBIT | CPSR_FIQ_INHIBIT )
 	msr cpsr_c, r0
-	mov sp, #0x7000
+	mov sp, #0x3000
 
 	@ Stack pointer for the SVR (SUPERVISER MODE) mode is being set here 
 	@ (NOTE: SVR mode is the mode that our kernel runs in)

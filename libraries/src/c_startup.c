@@ -61,3 +61,18 @@ void _mmu_addSectionEntryToPageTable(uint32_t virtualAddress, uint32_t physicalA
 	*(uint32_t *)sectionDescriptorAddress = ((physicalAddress & 0xFFF00000) | accessMode | 0b10) & ~(1 << 18);
 	//0b10 indicates it is a section entry and no 2nd level coarse page table is used.
 }
+
+void* _sbrk( int incr )
+{
+    extern char _end;
+    static char* heap_end = 0;
+    char* prev_heap_end;
+
+    if( heap_end == 0 )
+        heap_end = &_end;
+
+     prev_heap_end = heap_end;
+
+     heap_end += incr;
+     return (void*)prev_heap_end;
+}

@@ -31,6 +31,7 @@ typedef struct {
 
 static interruptControllerStruct* IRQController = (interruptControllerStruct*) INTERRUPT_CONTROLLER;
 
+void interruptRequest_asm(uint32_t* context_stack_pointer);
 void __attribute__((interrupt("IRQ"))) interruptRequest() ;
 void __attribute__((interrupt("FIQ"))) fastInterrupt() ;
 void __attribute__((interrupt("UNDEF"))) undefinedInstruction() ;

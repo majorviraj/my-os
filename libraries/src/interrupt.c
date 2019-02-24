@@ -1,8 +1,37 @@
 #include <interrupt.h>
 #include <timer.h>
-#include <uart.h>
+#include <lib_uart.h>
 
-void __attribute__((interrupt("IRQ"))) interruptRequest() {
+// Legacy interrupt handler !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
+// void __attribute__((interrupt("IRQ"))) interruptRequest() {
+    
+//     //Enable timer IRQ
+    
+//     if (IRQController->IRQBasicPending & RPI_BASIC_ARM_TIMER_IRQ) {
+//     	//Call timer interrupt handler
+
+// 			ARMrpiTimer -> IRQClear = 1;
+//     			gpioToggle();
+// 			printf("Timer IRQ!!");
+//     } else if (IRQController->IRQBasicPending & RPI_BASIC_PENDING_1_IRQ){
+	    
+// 	    //Interrupt number 29 is Aux_peripheral interrupt. Call the uart_irq_handler function here
+
+// 	    if (IRQController->IRQGPUpending1 & (1<<29)) {
+// 		    uart_irq_handler();
+// 	    }
+//     }
+
+// }
+
+/*
+ * New interrupt handler, called from the asm interrupt vector.
+ * Here the pending interrupts are figured out and corresponding handlers are called
+ * On the timer interrupt, the scheduler is supposed to be called, which loads the
+ * right context into the IRQ stack.
+ */
+
+void interruptRequest_asm(uint32_t* context_stack_pointer) {
     
     //Enable timer IRQ
     
@@ -10,7 +39,7 @@ void __attribute__((interrupt("IRQ"))) interruptRequest() {
     	//Call timer interrupt handler
 
 			ARMrpiTimer -> IRQClear = 1;
-    			gpioToggle();
+    			scheduler(context_stack_pointer);
 			printf("Timer IRQ!!");
     } else if (IRQController->IRQBasicPending & RPI_BASIC_PENDING_1_IRQ){
 	    
@@ -19,6 +48,9 @@ void __attribute__((interrupt("IRQ"))) interruptRequest() {
 	    if (IRQController->IRQGPUpending1 & (1<<29)) {
 		    uart_irq_handler();
 	    }
+    } else 
+    {
+	    return;
     }
 
 }
