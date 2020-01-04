@@ -56,7 +56,7 @@ linked_list_t* tcb_list; //A linked list of all alive tasks
 
 uint8_t nextFreeTaskID;
 
-tcb_t* idleTask;
+tcb_t* idle_task;
 
 queue_t* ready_task_queue;
 

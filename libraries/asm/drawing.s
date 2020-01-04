@@ -515,20 +515,27 @@ drawFilledCircle:
 
 .globl FullScreenToForeColour
 FullScreenToForeColour:
+    push {r4,r5,r6,r7,r8,r9,lr}
+
 	fbAddr .req r4
-	
-	ldr fbAddr,= graphicsAddress
-	ldr fbAddr, [fbAddr]
-	ldr fbAddr, [fbAddr,#32]
+    fbAddr2 .req r5
+	ldr fbAddr2,= graphicsAddress
+    ldr fbAddr2, [fbAddr2]
+
+	@ ldr fbAddr,= graphicsAddress
+	@ ldr fbAddr, [fbAddr]
+	ldr fbAddr, [fbAddr2,#32]
 	
 	colour .req r0
 	ldr colour,= foreColour
 	ldr colour, [colour]
 	y .req r1
-	mov y, #768
+
+
+	ldr y, [fbAddr2, #12]
 	drawRow2$:
 		x .req r2
-		mov x,#1024
+		ldr x, [fbAddr2, #8]
 		drawPixel2$:
 			strh colour,[fbAddr]
 			add fbAddr,#2
@@ -539,7 +546,8 @@ FullScreenToForeColour:
 		sub y,#1
 		teq y,#0
 		bne drawRow2$
-	mov pc,lr
+	pop {r4,r5,r6,r7,r8,r9,pc}
 	.unreq fbAddr
+    .unreq fbAddr2
 	.unreq y
 	.unreq x

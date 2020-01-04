@@ -39,8 +39,13 @@ void interruptRequest_asm(uint32_t* context_stack_pointer) {
     	//Call timer interrupt handler
 
 			ARMrpiTimer -> IRQClear = 1;
-    			scheduler(context_stack_pointer);
-			printf("Timer IRQ!!");
+			// uart_putchar('\n');
+			// uart_putchar('9');
+			// uart_putchar(*(context_stack_pointer + ));
+    			scheduler(context_stack_pointer - 1);
+			printf('\n #');
+			// printf("Timer IRQ!!");
+			
     } else if (IRQController->IRQBasicPending & RPI_BASIC_PENDING_1_IRQ){
 	    
 	    //Interrupt number 29 is Aux_peripheral interrupt. Call the uart_irq_handler function here

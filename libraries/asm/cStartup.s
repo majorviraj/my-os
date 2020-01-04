@@ -72,21 +72,37 @@ _reset_:
 
 	mcr p15,0,r0,c1,c0,0
 
-	@ Enabling VFPU
-	mrc p15, #0, r1, c1, c0, #2
+	@Enabling VFPU
+	mrc p15, 0, r1, c1, c0, 2
 
-	// enable full access for p10,11
+	@ enable full access for p10,11
 	orr r1, r1, #(0xf << 20)
-	mcr p15, #0, r1, c1, c0, #2
-	mov r1, #0
+	mcr p15, 0, r1, c1, c0, 2
+	
 
-	// flush prefetch buffer because of FMXR below
-	mcr p15, #0, r1, c7, c5, #4
-	// and CP 10 & 11 were only just enabled
-
-	// Enable VFP itself
+	@ Enable VFP itself
 	mov r0,#0x40000000
 	fmxr FPEXC, r0
+
+	@ flush prefetch buffer because of FMXR below
+	mov r1, #0
+	mcr p15, #0, r1, c7, c5, #4
+
+
+
+
+
+
+	@  mrc p15, 0, r0, c1, c0, 2
+    	@ orr r0,r0,#0x300000 ;@ single precision
+    	@ orr r0,r0,#0xC00000 ;@ double precision
+    	@ mcr p15, 0, r0, c1, c0, 2
+    	@ mov r0,#0x40000000
+    	@ fmxr fpexc,r0
+
+	@ and CP 10 & 11 were only just enabled
+
+	
 
 	b _bss_clear
 

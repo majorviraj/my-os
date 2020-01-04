@@ -8,13 +8,13 @@
 
 //Structure for a 8 bit queue
 typedef struct ll_properties_struct {
-	ll_node_t* head;
-	ll_node_t* tail;
+	struct ll_node_struct* head;
+	struct ll_node_struct* tail;
 } linked_list_t;
 
 typedef struct ll_node_struct {
-	ll_node_t* next;
-	ll_node_t* prev;
+	struct ll_node_struct* next;
+	struct ll_node_struct* prev;
 	void* data;
 } ll_node_t;
 

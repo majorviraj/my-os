@@ -34,7 +34,8 @@ interrupt_context_changer:
 	cps $CPSR_MODE_IRQ	;@ Change to IRQ mode
 	push {r0-r2}
 
-	mov r0, r1
+	mov r0, sp
+	add r0, #4
 	bl interruptRequest_asm 	;@ stack hase been changed by the sceduler
 					;@ according to the values of the new scheduled task
 

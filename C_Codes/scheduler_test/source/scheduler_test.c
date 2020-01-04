@@ -4,7 +4,7 @@
 #include <lib_uart.h>
 #include <timer.h>
 
-uint8_t x = 3;
+uint8_t x = 0;
 
 void frameBufferSetup(int width, int height, int bitDepth)
 {
@@ -24,24 +24,25 @@ void frameBufferSetup(int width, int height, int bitDepth)
 void task1() {
 	while(1) {
 		// uart_putchar("1");
-		x = 1;
+		x = 3;
+		printf("in task 1");
 	}
 }
 
 void task2() {
 	while(1) {
 		// uart_putchar("2");
-		x = 2;
+		x = 4;
 	}
 }
 
 void task3 () {
 	while (1)
 	{
-		if (x !=0)
-			uart_putchar(x);
+		// if (x !=0)
+		// 	uart_putchar(x);
 
-		x = 0;
+		x = 5;
 	}
 }
 
@@ -49,13 +50,16 @@ void task3 () {
 void kernel_main()
 {
 	char *test = "yoko\nooyyoyo\tyooyoy";
+	
 
+	frameBufferSetup(1024, 768, 16);
+	uart_init();
+	timerInit(2 * LOAD_VALUE_1S_1_PRESCALLAR, Bit23, TIMER_CONTROL_PRESCALLAR_1);
 	_enable_interrupts();
 
-	// frameBufferSetup(1024, 768, 16);
-	uart_init();
+	printf("%x\t", )
+	printf("Begin: asd\n");
 
-	// printf("Full array: ");
 	uart_putchar('B');
 	uart_putchar('E');
 	uart_putchar('G');
@@ -65,11 +69,11 @@ void kernel_main()
 	//Scheduler test initialisations
 	scheduler_init();
 	create_task(task1, "Task1", 1024);
-	create_task(task2, "Task2", 1024);
-	create_task(task3, "Task2", 1024);
-	while (1)
-	{
-		uart_putchar(x);
-		
-	}
+
+	// create_task(task2, "Task2", 1024);
+	// create_task(task3, "Task2", 1024);
+	// while (1)
+	// {
+	// 	printf("%c", x + '0');
+	// }
 }

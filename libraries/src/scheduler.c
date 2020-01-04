@@ -7,16 +7,17 @@ extern _inf_loop;
 tcb_t *current_task;
 void scheduler_init()
 {
-	nextFreeTaskID = 1;
+	nextFreeTaskID = 0;
 	ready_task_queue = create_queue(SCHEDULER_READY_QUEUE_SIZE);
-	tcb_list = create_ll(idleTask);
-
-
-	idleTask = malloc(sizeof(tcb_t));
-	idleTask->task_id = 0;
-	//Creating Idle Task
 	
-	tcb_t *idle_task = malloc(sizeof(tcb_t));
+	//Creating Idle Task
+	// tcb_t *idle_task = malloc(sizeof(tcb_t));
+	
+	idle_task = malloc(sizeof(tcb_t));
+	tcb_list = create_ll(idle_task);
+
+
+	
 	memcpy(&idle_task->name, "idle_task", sizeof("idle_task"));
 	idle_task->task_code_pointer = _inf_loop;
 	idle_task->task_id = nextFreeTaskID++; //Increment next free task id
@@ -27,23 +28,45 @@ void scheduler_init()
 	//Create initial context of new task
 	idle_task->context.pc_original_context = _inf_loop;
 	idle_task->context.sp_original_context = idle_task->stack_base;
-	idle_task->context.spsr_irq = 0x53; //SVR mode with IRQ enabled, FIQ disabled and flags 0
+	idle_task->context.spsr_irq = 0x40000053; //SVR mode with IRQ enabled, FIQ disabled and flags 0
 
 	//add newly created task to the ready queue
 	enqueue(ready_task_queue, idle_task->task_id);
+	
 
-	//add newly created task to the task list. i.e the tcb_list linked list.
-	ll_append(tcb_list, (void *)idle_task);
 }
 
 void scheduler(uint32_t* context_stack_pointer)
 {
 
-	memcpy((void *)&current_task->context, context_stack_pointer, SIZE_OF_THE_REGISTER_BLOCK);
+	//save context of current task
+	memcpy((void *)&current_task->context, (context_stack_pointer), SIZE_OF_THE_REGISTER_BLOCK);
+
+	printf("\nCurrent context : %s ID= %i ", current_task->name, current_task->task_id);
+	for(uint32_t i = 0; i< SIZE_OF_THE_REGISTER_BLOCK; i++) {
+		printf("%x\t", *(context_stack_pointer + i));
+		if (i%8 == 0) {
+			printf("\n");
+		}
+	}
+
+	
 
 	current_task = rr_schedule(current_task);
 
-	memcpy(context_stack_pointer, (void *)&current_task->context, SIZE_OF_THE_REGISTER_BLOCK);
+	//load context of new task
+	memcpy((context_stack_pointer), (void *)&current_task->context, SIZE_OF_THE_REGISTER_BLOCK);
+
+	printf("\nNew context %s ID= %i ", current_task->name, current_task->task_id);
+	for(uint32_t i = 0; i< SIZE_OF_THE_REGISTER_BLOCK; i++) {
+		printf("%x\t", *(context_stack_pointer + i));
+		if (i%8 == 0) {
+			printf("\n");
+		}
+	}
+
+	printf("\n");
+
 }
 
 void create_task(void (*code_pointer)(void), char *task_name, uint32_t stackInBytes)
@@ -85,7 +108,7 @@ tcb_t* get_tcb(uint8_t taskNumber)
 
 	if (taskNumber == 0)
 	{
-		return idleTask;
+		return idle_task;
 	}
 	else
 	{
