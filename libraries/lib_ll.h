@@ -18,14 +18,6 @@ typedef struct ll_properties_struct {
 	struct ll_node_struct* tail;
 } linked_list_t;
 
-<<<<<<< HEAD
-typedef struct ll_node_struct {
-	struct ll_node_struct* next;
-	struct ll_node_struct* prev;
-	void* data;
-} ll_node_t;
-=======
->>>>>>> 00f038816f68a8c575bfa75c8ee765ac2675c95b
 
 //KHADTARE SUNNNN!!!!
 //ARE YOU IN FOR A JOB? TYPE YOUR REPLY BELOW

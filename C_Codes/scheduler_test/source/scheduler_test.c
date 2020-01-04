@@ -57,7 +57,7 @@ void kernel_main()
 	timerInit(2 * LOAD_VALUE_1S_1_PRESCALLAR, Bit23, TIMER_CONTROL_PRESCALLAR_1);
 	_enable_interrupts();
 
-	printf("%x\t", )
+	//printf("%x\t", );
 	printf("Begin: asd\n");
 
 	uart_putchar('B');
