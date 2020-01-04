@@ -67,6 +67,8 @@ void kernel_main()
 	uart_putchar('N');
 
 	//Scheduler test initialisations
+	timerInit(LOAD_VALUE_1S_1_PRESCALLAR, Bit23, TIMER_CONTROL_PRESCALLAR_1);
+	
 	scheduler_init();
 	create_task(task1, "Task1", 1024);
 
