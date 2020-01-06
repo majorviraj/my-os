@@ -43,7 +43,6 @@ void interruptRequest_asm(uint32_t* context_stack_pointer) {
 			// uart_putchar('9');
 			// uart_putchar(*(context_stack_pointer + ));
     			scheduler(context_stack_pointer - 1);
-			printf('\n #');
 			// printf("Timer IRQ!!");
 			
     } else if (IRQController->IRQBasicPending & RPI_BASIC_PENDING_1_IRQ){

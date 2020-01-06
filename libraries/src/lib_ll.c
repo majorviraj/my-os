@@ -7,8 +7,8 @@ linked_list_t *create_ll(void* data_of_first_node)
 	ll->head = malloc(sizeof(ll_node_t));
 	ll->tail = ll->head;
 	ll->head->data = data_of_first_node;
-	ll->head->next = 0;
-	ll->head->prev = 0;
+	ll->head->next = NULL;
+	ll->head->prev = NULL;
 
 	return ll;
 }
@@ -18,7 +18,7 @@ void ll_append(linked_list_t *ll, void *data)
 	ll_node_t* new_node = malloc(sizeof(ll_node_t));
 	new_node->data = data;
 	ll->tail->next = new_node;
-	new_node->next = 0;
+	new_node->next = NULL;
 	new_node->prev = ll->tail;
 	ll->tail = new_node;
 }

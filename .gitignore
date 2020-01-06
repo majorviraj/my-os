@@ -5,6 +5,5 @@
 *.img
 *.o
 *.sh
-*.list
 *.nn
 /.vs

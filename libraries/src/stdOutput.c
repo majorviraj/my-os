@@ -26,6 +26,13 @@ void putChar(char character, uint32_t *cursor)
 	(*cursor)++;
 }
 
+void putChar2(char character, uint32_t *cursor)
+{
+	drawCharacter2(character, startX + ((*cursor) * 8) % (frameBufferData.physical_width - 8),
+		      (uint32_t)(16 * (((*cursor) * 8) / (frameBufferData.physical_width - 8))) + startY);
+	(*cursor)++;
+}
+
 //Checks if monitor is connected and calls putChar to print to display
 //or writes to Serial console.
 void put(char character)
@@ -127,6 +134,7 @@ void printf(char *string, ...)
 				i = va_arg(argumentsList, int);
 				put(i);
 				break;
+                        case 'd':
 			case 'i':
 				i = va_arg(argumentsList, int);
 				putInt(i);

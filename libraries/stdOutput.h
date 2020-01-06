@@ -27,6 +27,7 @@ void setCursor(unsigned int);
 //This is just a wrapper for 
 
 void putChar(char character, uint32_t *cursor);
+void putChar2(char character, uint32_t *cursor);
 
 void put(char character);
 

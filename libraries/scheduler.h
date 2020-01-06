@@ -1,6 +1,8 @@
 #ifndef SCHEDULER_H
 #define SCHEDULER_H
 
+#define SCHEDULER_DEBUG			0
+
 #include <assemblyFunctions.h>
 #include <stdarg.h>
 #include <intTypes.h>
@@ -8,15 +10,15 @@
 #include <lib_queue.h>
 #include <lib_ll.h>
 
-#define TASK_BLOCKED				0
-#define TASK_RUNNING 				1
-#define TASK_READY				2
+#define TASK_BLOCKED			0
+#define TASK_RUNNING 			1
+#define TASK_READY			2
 
-#define SCHEDULER_MAX_TASKS_ALLOWED		100
-#define SIZE_OF_THE_REGISTER_BLOCK		17
-#define SCHEDULER_READY_QUEUE_SIZE		40
+#define SCHEDULER_MAX_TASKS_ALLOWED	100
+#define SIZE_OF_THE_REGISTER_BLOCK	17
+#define SCHEDULER_READY_QUEUE_SIZE	40
 
-#define CURRENT_CPSR 				0x53
+#define CURRENT_CPSR 			0x53
 typedef struct context_stack {
 	uint32_t spsr_irq;
 	uint32_t sp_original_context; //of the context where you came from

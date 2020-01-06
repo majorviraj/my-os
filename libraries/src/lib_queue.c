@@ -13,6 +13,7 @@ void enqueue(queue_t* queue, uint8_t data) {
 	queue->size++;
 }
 
+
 uint8_t dequeue(queue_t* queue) {
 	
 	if (queue->size == 0) {
@@ -57,4 +58,15 @@ int queue_is_empty(queue_t* queue) {
 	else {
 		return 0;
 	}
+}
+
+void print_queue(queue_t* queue) {
+        int i = queue->front;
+        while(i != queue->rear) {
+                printf("%i  ", queue->pointer[i]);
+                i++;
+                if (i > queue->max_size) {
+                        i = 0;
+                }
+        }
 }

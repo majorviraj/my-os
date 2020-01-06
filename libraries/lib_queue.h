@@ -20,6 +20,6 @@ void enqueue(queue_t* queue, uint8_t data);
 uint8_t dequeue(queue_t* queue);
 int queue_is_empty(queue_t* queue);
 int queue_is_full(queue_t* queue);
-
+void print_queue(queue_t* queue);
 
 #endif
