@@ -23,11 +23,22 @@ void frameBufferSetup(int width, int height, int bitDepth)
 	}
 }
 
+void task1() {
+	while(1) {
+		// uart_putchar("1");
+		// x = 3;
+		printf("in task 1");
+		delay(250);
+	}
+}
+
 
 void task2() {
 	while(1) {
 		// uart_putchar("2");
-		x = 4;
+		// x = 4;
+                printf("in task 2");
+		delay(250);
 	}
 }
 
@@ -61,7 +72,8 @@ void kernel_main()
 	//Scheduler test initialisations
 	scheduler_init();
 	
-	//create_task(task1, "Task69", 1024);
+	create_task(task1, "Task69", 1024);
+        create_task(task2, "Task6969", 1024);
 
 	_enable_interrupts();
 	timerInit(3*LOAD_VALUE_1S_1_PRESCALLAR, Bit23, TIMER_CONTROL_PRESCALLAR_1);

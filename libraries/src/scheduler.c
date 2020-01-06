@@ -7,8 +7,6 @@
 extern _inf_loop;
 tcb_t *current_task;
 
-tcb_t task69;
-
 void idle_task_func() {
         while(1) {
                 printf("IDLE\t");
@@ -16,31 +14,15 @@ void idle_task_func() {
         }
 }
 
-void task1() {
-	while(1) {
-		// uart_putchar("1");
-		// x = 3;
-		printf("HIHIHIH SXESXE in task 1");
-                // putChar2('b',&newCursor);
-                // putChar2('a',&newCursor);
-                // putChar2('b',&newCursor);
-                // putChar2('e',&newCursor);
-		delay(5000);
-	}
-}
-
-
 void scheduler_init()
 {
 	nextFreeTaskID = 0;
 	ready_task_queue = create_queue(SCHEDULER_READY_QUEUE_SIZE);
 	
 	//Creating Idle Task
-	// tcb_t *idle_task = malloc(sizeof(tcb_t));
 	
 	idle_task = malloc(sizeof(tcb_t));
 	tcb_list = create_ll(idle_task);
-
 	
 	memcpy(&idle_task->name, "idle_task", sizeof("idle_task"));
 	idle_task->task_code_pointer = idle_task_func; //_inf_loop;
@@ -58,22 +40,6 @@ void scheduler_init()
 	enqueue(ready_task_queue, idle_task->task_id);
         current_task = idle_task;
 
-
-        //TEMPORARY SHHIT. TRYING WITHOUT THE QUEUE AND THE RR SCHEDULER
-        task69.task_id=12;
-        memcpy(task69.name,"Viraj", 6*sizeof(char));
-        task69.stack_size = 1024;
-        task69.stack_base = 0x30000;
-        task69.state = TASK_READY;
-
-        task69.context.pc_original_context = task1;
-	task69.context.sp_original_context = task69.stack_base;
-	task69.context.pc_original_context = task1;
-	task69.context.spsr_irq = 0x53;
-
-
-	
-
 }
 
 void scheduler(uint32_t* context_stack_pointer)
@@ -81,8 +47,8 @@ void scheduler(uint32_t* context_stack_pointer)
 
 	//save context of current task
 	memcpy((void *)&current_task->context, (context_stack_pointer), sizeof(context_stack_t));
-	printf("\nCurrent context : %s ID= %i ", current_task->name, current_task->task_id);
         #if SCHEDULER_DEBUG==1
+	printf("\nCurrent context : %s ID= %i ", current_task->name, current_task->task_id);
 	for(uint32_t i = 0; i< SIZE_OF_THE_REGISTER_BLOCK; i++) {
 		printf("%x\t", *(context_stack_pointer + i));
 		if (i%8 == 0) {
@@ -93,19 +59,13 @@ void scheduler(uint32_t* context_stack_pointer)
 	
         //print_queue(ready_task_queue);
         
-	// current_task = rr_schedule(current_task);
-        if(current_task->task_id == idle_task->task_id) {
-                current_task = &task69;
-        } else {
-                current_task = idle_task;
-        }
+	current_task = rr_schedule(current_task);
 
 	//load context of new task
 	memcpy((context_stack_pointer), (void *)&current_task->context, sizeof(context_stack_t));
 
-	printf("\nNew context %s ID= %i ", current_task->name, current_task->task_id);
-
         #if SCHEDULER_DEBUG==1
+	printf("\nNew context %s ID= %i ", current_task->name, current_task->task_id);
 	for(uint32_t i = 0; i< SIZE_OF_THE_REGISTER_BLOCK; i++) {
 		printf("%x\t", *(context_stack_pointer + i));
 		if (i%8 == 0) {
@@ -133,7 +93,7 @@ void create_task(void (*code_pointer)(void), char *task_name, uint32_t stackInBy
 	newTask->task_id = nextFreeTaskID++; //Increment next free task id
 
 	newTask->stack_size = stackInBytes;
-	newTask->stack_base = malloc(stackInBytes) + stackInBytes - 1;
+	newTask->stack_base = malloc(stackInBytes) + stackInBytes;
 	newTask->state = TASK_READY;
 
 	//Create initial context of new task

@@ -26,12 +26,6 @@ void putChar(char character, uint32_t *cursor)
 	(*cursor)++;
 }
 
-void putChar2(char character, uint32_t *cursor)
-{
-	drawCharacter2(character, startX + ((*cursor) * 8) % (frameBufferData.physical_width - 8),
-		      (uint32_t)(16 * (((*cursor) * 8) / (frameBufferData.physical_width - 8))) + startY);
-	(*cursor)++;
-}
 
 //Checks if monitor is connected and calls putChar to print to display
 //or writes to Serial console.

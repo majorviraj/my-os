@@ -12,7 +12,6 @@ extern void keyboardInit();
 extern char KeyboardGetChar();
 
 extern int drawCharacter(int, int, int);	// char, x, y
-extern int drawCharacter2(int, int, int);	// char, x, y
 
 extern void drawCircle(int, int, int);
 extern void _enable_interrupts();

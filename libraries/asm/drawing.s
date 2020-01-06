@@ -71,49 +71,6 @@ drawPixel:
 
     .unreq pixelAddress
 
-.globl drawPixel2
-drawPixel2:
-    x .req r0
-    y .req r1
-
-    ldr r2, =graphicsAddress
-    ldr r2, [r2]
-    
-
-    ldr r3, [r2, #12]
-    cmp y, r3
-    movhs pc, lr
-
-    ldr r3, [r2, #8]
-    cmp x ,r3
-    movhs pc, lr
-
-    width .req r3
-
-    mla r2, y, width, x
-
-    .unreq width
-    .unreq x
-    .unreq y
-    pixelAddress .req r2
-
-    ldr r3, =frameBufferData
-    ldr r3, [r3, #32]
-
-    add r3, pixelAddress, lsl #1
-    mov pixelAddress, r3
-
-    ldr  r0, =foreColour
-    ldrh r0, [r0]
-
-    strh r0, [pixelAddress]
-
-    mov pc, lr
-
-    .unreq pixelAddress
-
-
-
 .globl drawLine
 drawLine:
 
@@ -244,69 +201,6 @@ drawCharacter:
     .unreq charAddress
     .unreq counter
     .unreq pixelByte
-
-
-.globl drawCharacter2
-drawCharacter2:
-    char .req r4
-    x .req r5
-    y .req r6
-
-    cmp r0, #127
-    movhi r0, #0
-    movhi r1, #0
-    movhi pc, lr
-
-    push {r4,r5,r6,r7,r8,lr}
-
-    mov char, r0
-    mov x, r1
-    mov y, r2
-
-    charAddress .req r7
-    pixelByte .req r8
-    ldr charAddress, =font
-    add charAddress, char, lsl #4
-    .unreq char
-
-    printChar2$:
-        ldrb pixelByte, [charAddress]
-        counter .req r4
-        mov counter, #8
-        add x, #8
-
-            loop22$:
-                subs counter, #1
-                blt endOfLoop2$
-                
-                lsl pixelByte, #1
-                tst pixelByte, #0x100
-                movne r0, x
-                movne r1, y
-                blne drawPixel2
-                
-                sub x, #1
-
-                b loop22$
-            endOfLoop2$:
-                add y, #1
-
-                add charAddress, #1
-                tst charAddress, #15
-                bne printChar2$
-
-    mov r0, #8
-    mov r1, #16
-
-    pop {r4,r5,r6,r7,r8,pc}
-
-    .unreq x
-    .unreq y
-    .unreq charAddress
-    .unreq counter
-    .unreq pixelByte
-
-
 
 .globl printString
 printString:
